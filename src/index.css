@@ -1,7 +1,12 @@
+/* 1. أولاً: استيراد الخطوط (يجب أن تكون في قمة الملف) */
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
+
+/* 2. ثانياً: كلاسات Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 3. ثالثاً: باقي التنسيقات الخاصة بك */
 html,
 body,
 #root {
@@ -10,18 +15,39 @@ body,
   width: 100%;
   min-height: 100vh;
   box-sizing: border-box;
+  font-family: "Cairo", "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-/* إخفاء العين الافتراضية التي يضيفها متصفح Edge و Chrome */
+
+[dir="rtl"] {
+  font-family: "Cairo", sans-serif;
+}
+
+[dir="ltr"] {
+  font-family: "Inter", sans-serif;
+}
+
+/* إخفاء أيقونات الملء التلقائي */
 input::-ms-reveal,
 input::-ms-clear {
   display: none !important;
 }
 
-/* إخفاء أيقونات الملء التلقائي الإضافية التي قد تشوه التصميم */
 input::-webkit-contacts-auto-fill-button,
 input::-webkit-credentials-auto-fill-button {
   visibility: hidden;
   pointer-events: none;
   position: absolute;
   right: 0;
+}
+/* إخفاء شريط التمرير في متصفحات Chrome, Safari, Edge */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* إخفاء شريط التمرير في Firefox */
+.custom-scrollbar {
+  scrollbar-width: none; /* يغير العرض إلى 0 */
+  -ms-overflow-style: none; /* لمتصفح IE */
 }
