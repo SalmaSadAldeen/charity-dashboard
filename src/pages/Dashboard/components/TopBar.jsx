@@ -1,24 +1,22 @@
 import { useLayout } from "../../../hooks/useLayout";
-import { useLanguage } from "../../../context/LanguageContext"; // تأكدي من المسار
+import { useLanguage } from "../../../context/LanguageContext";
 import { THEME_COLORS } from "../../../config/themeConstants";
 
 export default function TopBar() {
   const { searchQuery, handleSearch } = useLayout();
   const { lang, toggleLanguage, t } = useLanguage();
-  const isRtl = lang === "ar";
 
   return (
     <header
-      className="h-16 px-8 flex items-center justify-between shadow-sm z-10"
+      className="h-16 px-8 flex items-center justify-between shadow-lg z-10 backdrop-blur-md"
       style={{
-        backgroundColor: THEME_COLORS.bgCard,
-        borderBottom: `1px solid ${THEME_COLORS.border}20`,
+        backgroundColor: `${THEME_COLORS.bgCard}E6`, // إضافة شفافية خفيفة (E6) للـ Glassmorphism
+        borderBottom: `1px solid rgba(255, 255, 255, 0.05)`,
       }}
     >
-      {/* جهة البحث */}
-      <div className="flex items-center bg-white/5 rounded-xl px-4 py-2 flex-1 max-w-2xl mx-8">
-        {" "}
-        <span className="material-symbols-outlined text-white/50 ml-2">
+      {/* 1. البحث: تصميم انسيابي */}
+      <div className="flex items-center bg-white/5 rounded-2xl px-4 py-2 flex-1 max-w-xl transition-all duration-300 border border-white/5 hover:bg-white/10 focus-within:border-accent/50 focus-within:bg-white/10">
+        <span className="material-symbols-outlined text-white/40 ml-3">
           search
         </span>
         <input
@@ -30,27 +28,28 @@ export default function TopBar() {
         />
       </div>
 
-      {/* جهة اللغة + الملف الشخصي */}
-      <div className="flex items-center gap-6">
-        {/* زر اللغة - الآن في مكانه الأفضل */}
+      {/* 2. جهة اللغة والبروفايل */}
+      <div className="flex items-center gap-4">
+        {/* زر اللغة: تصميم أيقوني أنيق */}
         <button
           onClick={toggleLanguage}
-          className="w-12 h-10 rounded-xl font-bold text-sm transition-all duration-300 hover:bg-white/20 flex items-center justify-center bg-white/10 shadow-lg border border-white/5 active:scale-95"
-          style={{
-            color: THEME_COLORS.accent,
-            backgroundColor: THEME_COLORS.bgMain,
-          }}
+          className="w-12 h-10 rounded-2xl font-bold text-xs transition-all duration-300 flex items-center justify-center border border-white/10 bg-white/5 hover:bg-white/10 active:scale-90"
+          style={{ color: THEME_COLORS.accent }}
         >
           {lang === "ar" ? "EN" : "AR"}
         </button>
 
-        {/* البروفايل */}
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <p className="text-sm font-bold text-white">مدير النظام</p>
+        {/* البروفايل: تصميم احترافي */}
+        {/* البروفايل: استخدام border-s (يعني Start) ليكون ذكياً في الـ RTL والـ LTR */}
+        <div className="flex items-center gap-3 ps-4 border-s border-white/10">
+          <div className="text-start">
+            <p className="text-sm font-bold text-white leading-tight">
+              مدير النظام
+            </p>
+            <p className="text-[10px] text-white/50">Admin</p>
           </div>
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center"
+            className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg border border-white/10"
             style={{ backgroundColor: THEME_COLORS.accent }}
           >
             <span className="material-symbols-outlined text-white">person</span>
