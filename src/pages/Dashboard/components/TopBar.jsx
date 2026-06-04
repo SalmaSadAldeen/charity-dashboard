@@ -1,21 +1,24 @@
 import { useLayout } from "../../../hooks/useLayout";
-import { useLanguage } from "../../../context/LanguageContext";
-import { THEME_COLORS } from "../../../config/themeConstants";
+import { useSelector, useDispatch } from "react-redux";
+import { translations } from "../../../context/translations";
+import { toggleLanguage } from "../../../store/languageSlice";
 
 export default function TopBar() {
   const { searchQuery, handleSearch } = useLayout();
-  const { lang, toggleLanguage, t } = useLanguage();
+  const lang = useSelector((state) => state.language.lang);
+  const dispatch = useDispatch();
+  const t = (key) => translations[lang][key] || key;
 
   return (
     <header
       className="h-16 px-8 flex items-center justify-between shadow-lg z-10 backdrop-blur-md"
       style={{
-        backgroundColor: `${THEME_COLORS.bgCard}E6`, // إضافة شفافية خفيفة (E6) للـ Glassmorphism
-        borderBottom: `1px solid rgba(255, 255, 255, 0.05)`,
+        backgroundColor: "#4d4636E6", // اللون البني الداكن مع شفافية
+        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
       }}
     >
-      {/* 1. البحث: تصميم انسيابي */}
-      <div className="flex items-center bg-white/5 rounded-2xl px-4 py-2 flex-1 max-w-xl transition-all duration-300 border border-white/5 hover:bg-white/10 focus-within:border-accent/50 focus-within:bg-white/10">
+      {/* 1. البحث */}
+      <div className="flex items-center bg-white/10 rounded-2xl px-4 py-2 flex-1 max-w-xl transition-all duration-300 border border-white/5 hover:bg-white/20 focus-within:border-[#fad564]/50 focus-within:bg-white/20">
         <span className="material-symbols-outlined text-white/40 ml-3">
           search
         </span>
@@ -30,17 +33,16 @@ export default function TopBar() {
 
       {/* 2. جهة اللغة والبروفايل */}
       <div className="flex items-center gap-4">
-        {/* زر اللغة: تصميم أيقوني أنيق */}
+        {/* زر اللغة */}
         <button
-          onClick={toggleLanguage}
+          onClick={() => dispatch(toggleLanguage())}
           className="w-12 h-10 rounded-2xl font-bold text-xs transition-all duration-300 flex items-center justify-center border border-white/10 bg-white/5 hover:bg-white/10 active:scale-90"
-          style={{ color: THEME_COLORS.accent }}
+          style={{ color: "#fad564" }} // اللون الخردلي
         >
           {lang === "ar" ? "EN" : "AR"}
         </button>
 
-        {/* البروفايل: تصميم احترافي */}
-        {/* البروفايل: استخدام border-s (يعني Start) ليكون ذكياً في الـ RTL والـ LTR */}
+        {/* البروفايل */}
         <div className="flex items-center gap-3 ps-4 border-s border-white/10">
           <div className="text-start">
             <p className="text-sm font-bold text-white leading-tight">
@@ -50,9 +52,11 @@ export default function TopBar() {
           </div>
           <div
             className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg border border-white/10"
-            style={{ backgroundColor: THEME_COLORS.accent }}
+            style={{ backgroundColor: "#fad564" }} // اللون الخردلي
           >
-            <span className="material-symbols-outlined text-white">person</span>
+            <span className="material-symbols-outlined text-on-surface-variant">
+              person
+            </span>
           </div>
         </div>
       </div>

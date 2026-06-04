@@ -53,7 +53,6 @@ export const useLogin = () => {
       } else {
         dispatch(loginFailure("Invalid authorized credentials."));
       }
-      // eslint-disable-next-line no-unused-vars
     } catch (err) {
       dispatch(loginFailure("Network error, please try again."));
     }

@@ -4,7 +4,7 @@ const LoginHeader = ({ error }) => {
   return (
     <div className="pt-8 pb-6 px-8 flex flex-col items-center text-center">
       {/* أيقونة الشعار الزيتونية */}
-      <div className="w-12 h-12 bg-[#7c766c] rounded-xl flex items-center justify-center mb-4 text-[#fad564] shadow-md">
+      <div className="w-12 h-12 bg-[#7c766c] rounded-xl flex items-center justify-center mb-4 text-[primary-container] shadow-md">
         <span className="material-symbols-outlined text-[24px]">
           volunteer_activism
         </span>

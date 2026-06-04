@@ -18,6 +18,8 @@ body,
   font-family: "Cairo", "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%; /* اجعلي الارتفاع 100% بدل min-height */
+  overflow: hidden;
 }
 
 [dir="rtl"] {
@@ -50,4 +52,19 @@ input::-webkit-credentials-auto-fill-button {
 .custom-scrollbar {
   scrollbar-width: none; /* يغير العرض إلى 0 */
   -ms-overflow-style: none; /* لمتصفح IE */
+}
+:root {
+  --primary: #735c00;
+  --primary-container: #fad564;
+  --on-surface-variant: #4d4636;
+  --surface-container: #f5ede0;
+}
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

@@ -1,25 +1,29 @@
+import { Outlet } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/TopBar";
-import { useLanguage } from "../../context/LanguageContext";
-import { THEME_COLORS } from "../../config/themeConstants";
+import { useSelector } from "react-redux";
 
-export default function DashboardLayout({ children }) {
-  const { lang } = useLanguage();
+// احذفي السطور المكررة تماماً
+
+export default function DashboardLayout() {
+  const lang = useSelector((state) => state.language?.lang || "en");
+  // 2. يجب تعريف isRtl لأنك تستخدمينها في الـ dir
   const isRtl = lang === "ar";
 
+  // دالة الترجمة
   return (
     <div
       className="flex h-screen w-full font-sans overflow-hidden"
       dir={isRtl ? "rtl" : "ltr"}
-      style={{ backgroundColor: THEME_COLORS.bgMain }}
     >
-      {/* 1. السايد بار */}
       <Sidebar />
-
-      {/* 2. المنطقة الرئيسية (Topbar + Content) */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto p-8">{children}</main>
+        {/* اجعلي الـ padding هنا 0 لأن الـ Dashboard يحتوي على p-8 الخاص به */}
+        <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
+          {" "}
+          <Outlet />
+        </main>
       </div>
     </div>
   );
