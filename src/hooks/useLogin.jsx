@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginStart, loginSuccess, loginFailure } from "/src/store/authSlice";
+import { loginStart, loginSuccess, loginFailure } from "@/store/authSlice";
 export const useLogin = () => {
   const dispatch = useDispatch();
 

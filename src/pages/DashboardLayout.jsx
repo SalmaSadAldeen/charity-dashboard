@@ -1,7 +1,8 @@
 import { Outlet } from "react-router-dom";
-import Sidebar from "./components/Sidebar";
-import Topbar from "./components/TopBar";
+import Sidebar from "@/pages/Dashboard/components/Sidebar";
+import Topbar from "@/pages/Dashboard/components/TopBar";
 import { useSelector } from "react-redux";
+import { Toaster } from "react-hot-toast";
 
 // احذفي السطور المكررة تماماً
 
@@ -16,6 +17,17 @@ export default function DashboardLayout() {
       className="flex h-screen w-full font-sans overflow-hidden"
       dir={isRtl ? "rtl" : "ltr"}
     >
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            borderRadius: "16px",
+            background: "#333",
+            color: "#fff",
+          },
+        }}
+      />{" "}
       <Sidebar />
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <Topbar />
