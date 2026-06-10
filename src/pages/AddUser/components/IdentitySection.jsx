@@ -1,3 +1,4 @@
+import { User } from "lucide-react"; // استيراد
 // IdentitySection.jsx
 export default function IdentitySection({
   formData,
@@ -6,11 +7,11 @@ export default function IdentitySection({
   errors,
 }) {
   return (
-    <div className="bg-white p-8 rounded-3xl border border-[#d0c6b0] shadow-sm">
-      <h3 className="font-bold text-lg mb-6 text-[#4d4636]">
-        {t("primaryUserIdentity")}
+    <div className="bg-white p-8 rounded-3xl border border-[#d0c6b0] shadow-md transition-all hover:shadow-lg">
+      <h3 className="font-bold text-lg mb-6 text-[#4d4636] flex items-center gap-2">
+        <User size={20} className="text-[#735c00]" /> {t("primaryUserIdentity")}
       </h3>
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* الاسم الأول */}
         <div>
           <label className="block text-sm font-semibold mb-2">
@@ -20,7 +21,7 @@ export default function IdentitySection({
             name="first_name"
             value={formData.first_name}
             onChange={handleInputChange}
-            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner"
+            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder={t("sarah")}
           />
           {errors.first_name && (
@@ -37,9 +38,12 @@ export default function IdentitySection({
             name="last_name"
             value={formData.last_name}
             onChange={handleInputChange}
-            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner"
+            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder={t("alFahad")}
           />
+          {errors.last_name && (
+            <p className="text-red-500 text-xs mt-1">{errors.last_name}</p>
+          )}
         </div>
 
         {/* البريد الإلكتروني (ملاحظة: هو col-span-2 لذا يجب أن يكون الخطأ داخله) */}
@@ -51,7 +55,7 @@ export default function IdentitySection({
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner"
+            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder="name@charityconnect.org"
           />
           {errors.email && (
@@ -68,9 +72,12 @@ export default function IdentitySection({
             name="country_code"
             value={formData.country_code}
             onChange={handleInputChange}
-            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner"
+            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder="+966"
           />
+          {errors.country_code && (
+            <p className="text-red-500 text-xs mt-1">{errors.country_code}</p>
+          )}
         </div>
 
         {/* الهاتف */}
@@ -82,7 +89,7 @@ export default function IdentitySection({
             name="number"
             value={formData.number}
             onChange={handleInputChange}
-            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner"
+            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder="501234567"
           />
           {errors.number && (
@@ -99,9 +106,12 @@ export default function IdentitySection({
             name="country_name"
             value={formData.country_name}
             onChange={handleInputChange}
-            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner"
+            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder={t("saudiArabia")}
           />
+          {errors.country_name && (
+            <p className="text-red-500 text-xs mt-1">{errors.country_name}</p>
+          )}
         </div>
 
         {/* الجنس */}
@@ -113,7 +123,7 @@ export default function IdentitySection({
             name="gender"
             value={formData.gender}
             onChange={handleInputChange}
-            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner bg-white"
+            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
           >
             <option value="">{t("selectGender")}</option>
             <option value="male">{t("male")}</option>

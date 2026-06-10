@@ -1,98 +1,25 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchRoles } from "@/store/userSlice";
+import { useSelector } from "react-redux";
 import { translations } from "@/context/translations";
-import { useState } from "react"; // تأكدي من إضافة useState هنا
-// استيراد المكونات التي برمجناها
-import toast from "react-hot-toast";
-// استيراد المكتبة
-
 import IdentitySection from "@/pages/AddUser/components/IdentitySection";
 import EmploymentSection from "@/pages/AddUser/components/EmploymentSection";
 import RolesSection from "@/pages/AddUser/components/RolesSection";
-import { useForm } from "@/hooks/useForm";
+import { useAddUserLogic } from "@/hooks/useAddUserLogic"; // الملف الجديد
 
 export default function AddUser() {
-  const dispatch = useDispatch();
   const lang = useSelector((state) => state.language.lang);
   const t = (key) => translations[lang][key] || key;
   const { roles } = useSelector((state) => state.user);
-  const [isLoading, setIsLoading] = useState(false);
-  // 1. الحالة (State) المركزية لكل النموذج
+
+  // استدعاء كل شيء من الـ Hook المنفصل
   const {
     formData,
     setFormData,
     handleInputChange,
     errors,
-    setErrors,
-    validateForm,
-  } = useForm(
-    {
-      first_name: "",
-      last_name: "",
-      email: "",
-      number: "",
-      country_code: "",
-      country_name: "",
-      gender: "",
-      date_of_birth: "",
-      personal_photo: null,
-      role_ids: [],
-    },
-
-    validateEmployee,
-  );
-  // 2. تحديث الحقول النصية (Identity)
-
-  // 3. تحديث الأدوار (Roles)
-  const toggleRole = (roleId) => {
-    setFormData((prev) => ({
-      ...prev,
-      role_ids: prev.role_ids.includes(roleId)
-        ? prev.role_ids.filter((id) => id !== roleId)
-        : [...prev.role_ids, roleId],
-    }));
-  };
-
-  useEffect(() => {
-    dispatch(fetchRoles());
-  }, [dispatch]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) {
-      toast.error(t("pleaseFixErrors"));
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      // --- مكان الربط مع الباك-إند مستقبلاً ---
-      // await dispatch(addUser(formData)).unwrap();
-
-      // -- حالياً نترك المحاكاة --
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      toast.success(t("userAddedSuccessfully"), {
-        /* التنسيق الخاص بكِ */
-      });
-    } catch (error) {
-      toast.error(t("errorOccurred"));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  function validateEmployee(data) {
-    let errors = {};
-
-    if (!data.first_name) errors.first_name = t("firstNameIsRequired");
-    if (!data.email.includes("@")) errors.email = t("invalidEmail");
-    if (data.number.length < 9) errors.number = t("phoneMustBe9Digits");
-    if (!data.gender) errors.gender = t("genderIsRequired");
-
-    return errors;
-  }
+    toggleRole,
+    handleSubmit,
+    isLoading,
+  } = useAddUserLogic(t);
 
   return (
     <div className="p-8 bg-[#f5ede0] min-h-screen">
@@ -112,6 +39,7 @@ export default function AddUser() {
         <EmploymentSection
           formData={formData}
           setFormData={setFormData}
+          errors={errors}
           t={t}
         />
 
@@ -119,13 +47,14 @@ export default function AddUser() {
           roles={roles}
           formData={formData}
           toggleRole={toggleRole}
+          errors={errors}
           t={t}
         />
 
         <button
           type="submit"
           disabled={isLoading} // يمنع الضغط المتكرر أثناء الحفظ
-          className="w-full bg-[#4d4636] text-white py-4 rounded-2xl"
+          className="w-full bg-[#fad564] hover:bg-[#e6c25a] text-[#4d4636] font-bold py-4 rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98]"
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">

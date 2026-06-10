@@ -68,3 +68,16 @@ input::-webkit-credentials-auto-fill-button {
     scrollbar-width: none;
   }
 }
+/* هذا الكود يخفي أيقونة المتصفح الافتراضية */
+.custom-date-input::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
