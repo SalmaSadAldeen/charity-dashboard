@@ -3,12 +3,12 @@ import { translations } from "@/context/translations";
 import IdentitySection from "@/pages/AddUser/components/IdentitySection";
 import EmploymentSection from "@/pages/AddUser/components/EmploymentSection";
 import RolesSection from "@/pages/AddUser/components/RolesSection";
-import { useAddUserLogic } from "@/hooks/useAddUserLogic"; // الملف الجديد
+import { useUserFormLogic } from "@/hooks/useUserFormLogic"; // الملف الجديد
 
 export default function AddUser() {
   const lang = useSelector((state) => state.language.lang);
   const t = (key) => translations[lang][key] || key;
-  const { roles } = useSelector((state) => state.user);
+  const { roles } = useSelector((state) => state.roles.items);
 
   // استدعاء كل شيء من الـ Hook المنفصل
   const {
@@ -19,7 +19,8 @@ export default function AddUser() {
     toggleRole,
     handleSubmit,
     isLoading,
-  } = useAddUserLogic(t);
+    clearError,
+  } = useUserFormLogic(t);
 
   return (
     <div className="p-8 bg-[#f5ede0] min-h-screen">
@@ -41,6 +42,8 @@ export default function AddUser() {
           setFormData={setFormData}
           errors={errors}
           t={t}
+          handleInputChange={handleInputChange} // تمرير الدالة
+          clearError={clearError}
         />
 
         <RolesSection
@@ -49,6 +52,7 @@ export default function AddUser() {
           toggleRole={toggleRole}
           errors={errors}
           t={t}
+          clearError={clearError}
         />
 
         <button

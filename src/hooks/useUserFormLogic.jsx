@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addUser } from "@/store/userSlice";
 import { useForm } from "@/hooks/useForm";
 import toast from "react-hot-toast";
+import { addEmployee, updateEmployee } from "@/store/index"; // تأكدي من المسار الصحيح
 import { useEffect } from "react";
-import { fetchRoles } from "@/store/userSlice"; // استورديها هنا
 
-export const useAddUserLogic = (t) => {
+export const useUserFormLogic = (
+  t,
+  initialData = null,
+  onSuccess = () => {},
+) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  // استنتاج هل نحن في حالة تعديل أم إضافة
+  const isEdit = !!initialData;
 
+  const employeeId = initialData?.id;
   const validateEmployee = (data) => {
     let errors = {};
 
@@ -57,6 +63,7 @@ export const useAddUserLogic = (t) => {
     errors,
     setErrors,
     validateForm,
+    clearError,
   } = useForm(
     {
       first_name: "",
@@ -72,10 +79,15 @@ export const useAddUserLogic = (t) => {
     },
     validateEmployee,
   );
-  useEffect(() => {
-    dispatch(fetchRoles());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchRoles());
+  // }, [dispatch]);
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData, setFormData]);
   const toggleRole = (roleId) => {
     setFormData((prev) => ({
       ...prev,
@@ -83,6 +95,7 @@ export const useAddUserLogic = (t) => {
         ? prev.role_ids.filter((id) => id !== roleId)
         : [...prev.role_ids, roleId],
     }));
+    clearError("role_ids");
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -93,35 +106,53 @@ export const useAddUserLogic = (t) => {
 
     const dataToSend = new FormData();
     Object.keys(formData).forEach((key) => {
-      if (formData[key] !== null) dataToSend.append(key, formData[key]);
+      // اللمسة الذكية: لا نرسل الصورة إذا كانت هي نفسها الرابط القديم (String)
+      // لأن السيرفر يحتاج فقط للملف الجديد إذا أراد الموظف تغيير صورته.
+      if (key === "personal_photo") {
+        if (formData[key] instanceof File) {
+          dataToSend.append(key, formData[key]);
+        }
+        // إذا كانت string (رابط قديم)، لا نفعل شيئاً (نترك السيرفر يحتفظ بالقديمة)
+      } else if (formData[key] !== null) {
+        dataToSend.append(key, formData[key]);
+      }
     });
 
     setIsLoading(true);
     try {
-      await dispatch(addUser(dataToSend)).unwrap();
-      toast.success(t("userAddedSuccessfully"));
+      if (isEdit) {
+        // 1. حالة التعديل: نستخدم updateEmployee
+        await dispatch(
+          updateEmployee({ id: employeeId, data: dataToSend }),
+        ).unwrap();
+        toast.success(t("userUpdatedSuccessfully"));
+        onSuccess();
+      } else {
+        // 2. حالة الإضافة: نستخدم addUser
+        await dispatch(addEmployee(dataToSend)).unwrap();
+        toast.success(t("userAddedSuccessfully"));
 
-      // هنا التصفير الحقيقي
-      setFormData({
-        first_name: "",
-        last_name: "",
-        email: "",
-        number: "",
-        country_code: "",
-        country_name: "",
-        gender: "",
-        date_of_birth: "",
-        personal_photo: null,
-        role_ids: [],
-      });
-      setErrors({});
+        // التصفير (Reset) لا نحتاجه عادة في حالة التعديل لأنه يغلق المودال
+        setFormData({
+          first_name: "",
+          last_name: "",
+          email: "",
+          number: "",
+          country_code: "",
+          country_name: "",
+          gender: "",
+          date_of_birth: "",
+          personal_photo: null,
+          role_ids: [],
+        });
+        setErrors({});
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || t("errorOccurred"));
     } finally {
       setIsLoading(false);
     }
   };
-
   return {
     formData,
     setFormData,
@@ -130,5 +161,6 @@ export const useAddUserLogic = (t) => {
     toggleRole,
     handleSubmit,
     isLoading,
+    clearError,
   };
 };

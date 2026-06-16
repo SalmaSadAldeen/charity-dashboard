@@ -1,10 +1,15 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { translations } from "../../context/translations";
 import StatCard from "./components/StatCard";
 import DonationChart from "./components/DonationChart";
 import RequestsChart from "./components/RequestsChart";
-
+// أضيفي fetchRequestsCharts للقائمة
+import {
+  fetchDashboardStats,
+  fetchCharts,
+  fetchRequestsCharts,
+} from "@/store/dashboardSlice";
 export default function Dashboard() {
   const [view, setView] = useState("weekly");
   const dispatch = useDispatch();
@@ -13,48 +18,15 @@ export default function Dashboard() {
   const t = (key) => translations[lang][key] || key;
   const getDayLabel = (ar, en) => (lang === "ar" ? ar : en);
 
-  const dashboardData = useSelector((state) => state.dashboard);
+  const { stats, charts, isLoading } = useSelector((state) => state.dashboard);
+  console.log("Dashboard Rendered! Stats:", stats, "Charts:", charts);
 
   useEffect(() => {
-    // dispatch(fetchDashboardData());
+    // جلب البيانات الحقيقية من السيرفر عند فتح الصفحة
+    dispatch(fetchDashboardStats());
+    dispatch(fetchCharts("monthly"));
+    dispatch(fetchRequestsCharts());
   }, [dispatch]);
-
-  const weeklyData = useMemo(() => {
-    const source = dashboardData?.weeklyData || [0, 0, 0, 0, 0, 0, 0];
-    return [
-      { day: getDayLabel("اثنين", "Mon"), val: source[0] },
-      { day: getDayLabel("ثلاثاء", "Tue"), val: source[1] },
-      { day: getDayLabel("أربعاء", "Wed"), val: source[2] },
-      { day: getDayLabel("خميس", "Thu"), val: source[3] },
-      { day: getDayLabel("جمعة", "Fri"), val: source[4] },
-      { day: getDayLabel("سبت", "Sat"), val: source[5] },
-      { day: getDayLabel("أحد", "Sun"), val: source[6] },
-    ];
-  }, [dashboardData?.weeklyData, lang]);
-
-  const yearlyData = useMemo(() => {
-    // تأكدي من جلب 12 قيمة من الـ Store
-    const source = dashboardData?.yearlyData || [
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    ];
-
-    return [
-      { day: getDayLabel("يناير", "Jan"), val: source[0] },
-      { day: getDayLabel("فبراير", "Feb"), val: source[1] },
-      { day: getDayLabel("مارس", "Mar"), val: source[2] },
-      { day: getDayLabel("أبريل", "Apr"), val: source[3] },
-      { day: getDayLabel("مايو", "May"), val: source[4] },
-      { day: getDayLabel("يونيو", "Jun"), val: source[5] },
-      { day: getDayLabel("يوليو", "Jul"), val: source[6] },
-      { day: getDayLabel("أغسطس", "Aug"), val: source[7] },
-      { day: getDayLabel("سبتمبر", "Sep"), val: source[8] },
-      { day: getDayLabel("أكتوبر", "Oct"), val: source[9] },
-      { day: getDayLabel("نوفمبر", "Nov"), val: source[10] },
-      { day: getDayLabel("ديسمبر", "Dec"), val: source[11] },
-    ];
-  }, [dashboardData?.yearlyData, lang]);
-
-  const currentData = view === "weekly" ? weeklyData : yearlyData;
 
   return (
     <main
@@ -80,10 +52,14 @@ export default function Dashboard() {
               {t("totalDonations")}
             </p>
             <h3 className="text-[48px] font-extrabold leading-tight mb-4 text-primary">
-              {dashboardData?.totalDonations || "$0"}
+              {stats && stats.total_donations
+                ? `$${stats.total_donations.toLocaleString()}`
+                : "$0"}{" "}
             </h3>
             <div className="flex items-center gap-2 font-semibold text-sm bg-white/30 w-fit px-3 py-1 rounded-full text-primary">
-              <span>📈 {t("growth")}</span>
+              <span>
+                📈 {stats?.donations_growth_percentage || 0}% {t("growth")}
+              </span>
             </div>
           </div>
         </div>
@@ -91,13 +67,17 @@ export default function Dashboard() {
         <StatCard
           icon="task_alt"
           title={t("completedCases")}
-          val={dashboardData?.completedCases || "0"}
+          val={
+            stats && stats.completed_cases
+              ? stats.completed_cases.toLocaleString()
+              : "0"
+          }
           bg="bg-[#e0ea88]"
         />
         <StatCard
           icon="medical_services"
           title={t("assistanceTypes")}
-          val={dashboardData?.assistanceTypes || "0"}
+          val={stats?.assistance_types_count?.toLocaleString() || "0"}
           bg="bg-[#b3e4c2]"
         />
       </div>
@@ -107,10 +87,10 @@ export default function Dashboard() {
         <DonationChart
           view={view}
           setView={setView}
-          currentData={currentData}
+          currentData={charts || []}
           t={t}
         />
-        <RequestsChart t={t} dataFromBackend={dashboardData?.requestsData} />
+        <RequestsChart t={t} dataFromBackend={stats?.requests_data} />
       </div>
     </main>
   );

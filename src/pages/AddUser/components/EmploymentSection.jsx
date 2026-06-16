@@ -7,6 +7,8 @@ export default function EmploymentSection({
   setFormData,
   t,
   errors,
+  handleInputChange, // أضيفيها هنا
+  clearError, // وأضيفيها هنا
 }) {
   // نستخدم useRef للإشارة إلى حقل الملف المخفي
   const fileInputRef = useRef(null);
@@ -16,6 +18,7 @@ export default function EmploymentSection({
     const file = e.target.files[0];
     if (file) {
       setFormData((prev) => ({ ...prev, personal_photo: file }));
+      clearError("personal_photo"); // ستعمل الآن لأننا صدرناها
     }
   };
 
@@ -36,12 +39,7 @@ export default function EmploymentSection({
             type="date"
             name="date_of_birth"
             value={formData.date_of_birth}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                date_of_birth: e.target.value,
-              }))
-            }
+            onChange={handleInputChange}
             className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
           />
           {errors.date_of_birth && (
@@ -57,16 +55,35 @@ export default function EmploymentSection({
           {/* الجزء القابل للضغط */}
           <div
             onClick={() => fileInputRef.current.click()}
-            className="w-full h-[60px] border-2 border-dashed border-[#d0c6b0] rounded-2xl flex items-center justify-center gap-3 cursor-pointer bg-white transition-all shadow-inner"
+            className="w-full h-[60px] border-2 border-dashed border-[#d0c6b0] rounded-2xl flex items-center justify-center gap-3 cursor-pointer bg-white transition-all shadow-inner overflow-hidden"
           >
-            {/* إضافة الأيقونة هنا */}
-            <FileUp className="text-[#735c00] opacity-60" size={20} />
-
-            <span className="text-sm font-medium text-[#4d4636]">
-              {formData.personal_photo
-                ? formData.personal_photo.name
-                : t("uploadProfilePicture")}
-            </span>
+            {/* هنا المعاينة الذكية */}
+            {formData.personal_photo ? (
+              <div className="flex items-center gap-2">
+                {/* إذا كان نصاً (رابط) نعرضه كصورة صغيرة */}
+                {typeof formData.personal_photo === "string" ? (
+                  <img
+                    src={formData.personal_photo}
+                    alt="Preview"
+                    className="w-10 h-10 rounded-full object-cover border border-[#d0c6b0]"
+                  />
+                ) : (
+                  <FileUp className="text-[#735c00]" size={20} />
+                )}
+                <span className="text-sm font-medium text-[#4d4636] truncate max-w-[150px]">
+                  {typeof formData.personal_photo === "string"
+                    ? t("currentPhoto")
+                    : formData.personal_photo.name}
+                </span>
+              </div>
+            ) : (
+              <>
+                <FileUp className="text-[#735c00] opacity-60" size={20} />
+                <span className="text-sm font-medium text-[#4d4636]">
+                  {t("uploadProfilePicture")}
+                </span>
+              </>
+            )}
           </div>
           {errors.personal_photo && (
             <p className="text-red-500 text-xs mt-1">{errors.personal_photo}</p>

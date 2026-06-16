@@ -9,8 +9,12 @@ export const useForm = (initialState, validate) => {
     const newData = { ...formData, [name]: value };
     setFormData(newData);
     // تنفيذ التحقق إذا كان موجوداً
-    if (validate) {
-      setErrors(validate(newData));
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name]; // مسح الخطأ لهذا الحقل فقط
+        return newErrors;
+      });
     }
   };
   const validateForm = () => {
@@ -21,6 +25,14 @@ export const useForm = (initialState, validate) => {
     }
     return true;
   };
+  // داخل useForm.js
+  const clearError = (name) => {
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[name];
+      return newErrors;
+    });
+  };
 
   return {
     formData,
@@ -29,5 +41,6 @@ export const useForm = (initialState, validate) => {
     errors,
     setErrors,
     validateForm,
+    clearError,
   };
 };

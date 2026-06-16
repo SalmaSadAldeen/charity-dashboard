@@ -20,7 +20,7 @@ export const translations = {
     dashboardSubtitle:
       "Performance overview and resource allocation metrics for fiscal year 2024.",
     totalDonations: "Total Donations",
-    growth: "+12.4% from last quarter",
+    growth: " from last quarter",
     completedCases: "Completed Cases",
     casesVal: "1,248",
     assistanceTypes: "Assistance Types",

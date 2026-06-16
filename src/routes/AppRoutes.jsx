@@ -1,28 +1,25 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 // import Dashboard from "../pages/Dashboard/components/Dashboard";
 import DashboardLayout from "@/pages/DashboardLayout";
-import AddUser from "@/pages/AddUser/AddUser";
-import AddOrphan from "@/pages/AddOrphan/AddOrphan";
-
+// import AddUser from "@/pages/AddUser/AddUser";
+// import AddOrphan from "@/pages/AddOrphan/AddOrphan";
+import EmployeesDirectory from "@/pages/EmployeesDirectory/EmployeesDirectory";
+import AddUser from "@/pages/AddUser/AddUser"; // استيراد صفحتك
+import Dashboard from "@/pages/Dashboard/Dashboard";
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* تحويل الرابط الرئيسي إلى الداشبورد مباشرة */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      {/* الربط هنا: الـ DashboardLayout هو الأب، والـ Dashboard هو الابن */}
       <Route path="/dashboard" element={<DashboardLayout />}>
-        <Route
-          index
-          element={
-            // <Dashboard />
-            // <AddOrphan />
-            <AddUser />
-          }
-        />
+        {/* هذا هو المسار الرئيسي للداشبورد (الصفحة التي تحتوي الإحصائيات) */}
+        {/* <Route index element={<Dashboard />} /> */}
+        {/* 
+        {/* هذا مسار صفحة إضافة مستخدم */}
+        {/* <Route path="add-user" element={<AddUser />} />
 
-        {/* إذا أضفتِ صفحات مستقبلاً، ستكون هنا، مثال: */}
-        {/* <Route path="donations" element={<DonationsPage />} /> */}
+        {/* مسار الموظفين (مثلاً) */}
+        <Route path="employees" element={<EmployeesDirectory />} />
       </Route>
     </Routes>
   );

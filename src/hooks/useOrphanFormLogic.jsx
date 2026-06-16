@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addOrphan } from "@/store/orphanSlice";
 import { useForm } from "@/hooks/useForm";
 import toast from "react-hot-toast";
+import { addOrphan, updateOrphan } from "@/store/index"; // تأكدي من المسار الصحيح
 
 export const useOrphanFormLogic = (t) => {
   const dispatch = useDispatch();

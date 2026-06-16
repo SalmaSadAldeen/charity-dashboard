@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 
 export default function DonationChart({ view, setView, currentData, t }) {
+  const dataToRender = Array.isArray(currentData) ? currentData : [];
+
   return (
     <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-[#d0c6b0] shadow-sm">
       <div className="flex justify-between items-center mb-8">
@@ -22,7 +24,7 @@ export default function DonationChart({ view, setView, currentData, t }) {
       </div>
 
       <div className="h-64 flex items-end justify-between gap-3 px-2">
-        {currentData.map((item, i) => (
+        {dataToRender.map((item, i) => (
           <div
             key={i}
             className="flex-1 flex flex-col items-center justify-end h-full group"
