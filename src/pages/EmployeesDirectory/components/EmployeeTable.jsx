@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Edit2, Trash2 } from "lucide-react";
-import { useEmployeeActions } from "@/hooks/useEmployeeActions";
+import { useEmployeeActions } from "@/hooks/useUserActions";
 import ConfirmModal from "./ConfirmModal"; // هذا المودال سننشئه
 
 export default function EmployeeTable({ data, onEdit }) {
@@ -20,48 +20,49 @@ export default function EmployeeTable({ data, onEdit }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-[#f5ede0]">
-          {data.map((emp) => (
-            <tr
-              key={emp.id}
-              className="hover:bg-[#fcfbf9] transition-all duration-200"
-            >
-              <td className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#f5ede0] flex items-center justify-center text-[#735c00] font-bold">
-                    {emp.name?.charAt(0)}
+          {Array.isArray(data) &&
+            data.map((emp) => (
+              <tr
+                key={emp.id}
+                className="hover:bg-[#fcfbf9] transition-all duration-200"
+              >
+                <td className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-[#f5ede0] flex items-center justify-center text-[#735c00] font-bold">
+                      {emp.name?.charAt(0)}
+                    </div>
+                    <div>
+                      <span className="block font-bold text-[#4d4636]">
+                        {emp.name}
+                      </span>
+                      <span className="text-xs text-[#735c00]/60">
+                        {emp.email}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="block font-bold text-[#4d4636]">
-                      {emp.name}
-                    </span>
-                    <span className="text-xs text-[#735c00]/60">
-                      {emp.email}
-                    </span>
+                </td>
+                <td className="p-6 text-[#4d4636] font-medium">{emp.role}</td>
+                <td className="p-6">
+                  <StatusBadge status={emp.status} />
+                </td>
+                <td className="p-6 text-center">
+                  <div className="flex justify-center gap-3">
+                    <button
+                      onClick={() => onEdit(emp)}
+                      className="p-2.5 text-[#735c00] hover:bg-[#fad564]/20 rounded-xl"
+                    >
+                      <Edit2 size={18} />
+                    </button>
+                    <button
+                      onClick={() => setDeleteId(emp.id)}
+                      className="p-2.5 text-red-400 hover:bg-red-50 rounded-xl"
+                    >
+                      <Trash2 size={18} />
+                    </button>
                   </div>
-                </div>
-              </td>
-              <td className="p-6 text-[#4d4636] font-medium">{emp.role}</td>
-              <td className="p-6">
-                <StatusBadge status={emp.status} />
-              </td>
-              <td className="p-6 text-center">
-                <div className="flex justify-center gap-3">
-                  <button
-                    onClick={() => onEdit(emp)}
-                    className="p-2.5 text-[#735c00] hover:bg-[#fad564]/20 rounded-xl"
-                  >
-                    <Edit2 size={18} />
-                  </button>
-                  <button
-                    onClick={() => setDeleteId(emp.id)}
-                    className="p-2.5 text-red-400 hover:bg-red-50 rounded-xl"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
 

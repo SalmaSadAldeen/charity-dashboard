@@ -17,7 +17,7 @@ export default function RolesSection({
         {Array.isArray(roles) &&
           roles.map((role) => {
             // نتحقق هل هذا الدور موجود في مصفوفة الـ ids المختارة؟
-            const isSelected = formData.role_ids.includes(role.id);
+            const isSelected = formData.roleIds.includes(role.id);
 
             return (
               <button

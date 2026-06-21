@@ -1,30 +1,51 @@
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import EmployeeTable from "./components/EmployeeTable";
 import StatsCard from "./components/StatsCard";
-import { fetchEmployees, deleteEmployee } from "@/store/index";
-import { useNavigate } from "react-router-dom";
+import ConfirmModal from "./components/ConfirmModal";
 import EditUser from "../EditUser/EditUser";
+import { fetchEmployees, fetchRoles } from "@/store/index";
+import { useEmployeeActions } from "@/hooks/useUserActions";
+
+// عدلي هذا الرقم كما ترغبين (10, 5, 20...)
+const ITEMS_PER_PAGE = 10;
 
 export default function EmployeesDirectory() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // 1. استخراج البيانات من الـ Store (يجب أن يكون في الأعلى)
+  const {
+    items: employees = [],
+    status,
+    pagination,
+  } = useSelector((state) => state.employees);
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(null);
+
+  const { handleDelete } = useEmployeeActions();
+
+  // جلب البيانات عند التحميل أو عند تغيير الصفحة
+  useEffect(() => {
+    const page = pagination?.currentPage || 1;
+    dispatch(fetchEmployees({ page, limit: ITEMS_PER_PAGE }));
+    dispatch(fetchRoles());
+  }, [dispatch, pagination?.currentPage]);
+
   const handleEditClick = (emp) => {
     setSelectedEmployee(emp);
     setIsEditModalOpen(true);
   };
-  // 1. استخرجنا pagination من الـ state هنا:
-  const {
-    items: employees,
-    status,
-    pagination,
-  } = useSelector((state) => state.employees);
-  // useEffect(() => {
-  //   dispatch(fetchEmployees());
-  // }, [dispatch]);
+
+  const confirmDelete = async () => {
+    await handleDelete(idToDelete);
+    setIsDeleteModalOpen(false);
+  };
 
   return (
     <div className="p-8 bg-[#fbfaf8] min-h-screen">
@@ -46,40 +67,63 @@ export default function EmployeesDirectory() {
             <EmployeeTable
               data={employees}
               onEdit={handleEditClick}
-              onDelete={(id) => dispatch(deleteEmployee(id))}
+              onDelete={(id) => {
+                setIdToDelete(id);
+                setIsDeleteModalOpen(true);
+              }}
             />
-            {/* شريط الترقيم (الآن سيعمل لأننا عرفنا pagination في الـ useSelector) */}
+
+            <ConfirmModal
+              isOpen={isDeleteModalOpen}
+              onConfirm={confirmDelete}
+              onCancel={() => setIsDeleteModalOpen(false)}
+            />
+
             <div className="flex justify-between items-center mt-6 px-6 py-4 bg-gray-50/50 rounded-2xl border border-gray-100">
               <span className="text-xs font-medium text-gray-500">
-                عرض {pagination.currentPage} من {pagination.lastPage}
+                عرض {pagination?.currentPage || 1} من{" "}
+                {pagination?.lastPage || 1}
               </span>
 
               <div className="flex items-center gap-1">
+                {/* زر السابق */}
                 <button
-                  disabled={pagination.currentPage === 1}
+                  disabled={pagination?.currentPage === 1}
                   onClick={() =>
-                    dispatch(fetchEmployees(pagination.currentPage + 1))
+                    dispatch(
+                      fetchEmployees({
+                        page: pagination.currentPage - 1,
+                        limit: ITEMS_PER_PAGE,
+                      }),
+                    )
                   }
                   className="p-2 rounded-lg hover:bg-[#fad564]/20 text-[#735c00] disabled:opacity-30 transition-all"
                 >
                   <ChevronLeft size={18} />
                 </button>
 
+                {/* زر التالي */}
                 <button
-                  disabled={pagination.currentPage === pagination.lastPage}
+                  disabled={pagination?.currentPage === pagination?.lastPage}
                   onClick={() =>
-                    dispatch(fetchEmployees(pagination.currentPage - 1))
-                  } // السابق
+                    dispatch(
+                      fetchEmployees({
+                        page: pagination.currentPage + 1,
+                        limit: ITEMS_PER_PAGE,
+                      }),
+                    )
+                  }
                   className="p-2 rounded-lg hover:bg-[#fad564]/20 text-[#735c00] disabled:opacity-30 transition-all"
                 >
                   <ChevronRight size={18} />
                 </button>
               </div>
-            </div>{" "}
+            </div>
           </>
         )}
       </div>
 
+      {/* باقي التصميم (StatsCard & Modal) كما هو دون تغيير */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <StatsCard
           title="إجمالي المتبرعين"
@@ -98,16 +142,15 @@ export default function EmployeesDirectory() {
           iconBg="bg-white/10"
         />
       </div>
+
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-white p-8 rounded-3xl w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-            {/* استدعاء مكون التعديل */}
             <EditUser
               employeeId={selectedEmployee?.id}
               onClose={() => setIsEditModalOpen(false)}
             />
           </div>
-          onClick={() => setIsEditModalOpen(false)}
         </div>
       )}
     </div>

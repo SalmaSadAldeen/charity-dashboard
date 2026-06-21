@@ -5,25 +5,29 @@ export const useForm = (initialState, validate) => {
   const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    const newData = { ...formData, [name]: value };
-    setFormData(newData);
-    // تنفيذ التحقق إذا كان موجوداً
+    const { name, value, files, type } = e.target;
+
+    // إذا كان الحقل من نوع ملف، نأخذ أول ملف مختار، وإلا نأخذ القيمة النصية
+    const newValue = type === "file" ? files[0] : value;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }));
+
+    // مسح الخطأ عند التعديل
     if (errors[name]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
-        delete newErrors[name]; // مسح الخطأ لهذا الحقل فقط
+        delete newErrors[name];
         return newErrors;
       });
     }
   };
   const validateForm = () => {
-    if (validate) {
-      const newErrors = validate(formData);
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
-    }
-    return true;
+    const validationErrors = validate(formData); // استخدام دالة التحقق التي مررتِها للهوك
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
   };
   // داخل useForm.js
   const clearError = (name) => {

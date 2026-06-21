@@ -1,7 +1,6 @@
-// translations.js
 export const translations = {
   en: {
-    // نصوص الشريط الجانبي (Sidebar)
+    // --- Sidebar & Dashboard ---
     logoSubtitle: "Charity Management System",
     coreOps: "Core Operations",
     sysControl: "System Control",
@@ -34,6 +33,8 @@ export const translations = {
     fin: "Financial",
     med: "Medical",
     search: "Search...",
+
+    // --- Users (Add/Edit) ---
     addNewSystemUser: "Add New System User",
     primaryUserIdentity: "Primary User Identity",
     firstName: "First Name",
@@ -55,23 +56,9 @@ export const translations = {
     uploadProfilePicture: "Upload Profile Picture",
     accessLevel: "Access Level & Role Selection",
     confirmAndSave: "Confirm & Save System User",
-    selectAtLeastOneRole: "Please select at least one role",
-    firstNameIsRequired: "First name is required",
-    lastNameIsRequired: "Last name is required",
-    invalidEmail: "Please enter a valid email",
-    phoneMustBe9Digits: "Phone number must be at least 9 digits",
-    genderIsRequired: "Please select gender",
-    dateIsRequired: "Date of birth is required",
-    personalPhotoIsRequired: "Personal photo is required",
-    pleaseFixErrors: "Please fix the errors in the form",
-    userAddedSuccessfully: "User added successfully",
-    errorOccurred: "An error occurred, please try again",
     saving: "Saving",
-    countryCodeRequired: "Country code is required",
-    countryNameRequired: "Country name is required",
-    // يمكنكِ هنا مستقبلاً إضافة نصوص الجداول والشاشات الأخرى بكل سهولة:
-    // donorsTableTitle: "Active Donors List",
-    // saveBtn: "Save Changes",
+
+    // --- Orphans ---
     addNewOrphan: "Add New Orphan",
     primaryOrphanIdentity: "Orphan Identity Information",
     fatherName: "Father's Name",
@@ -83,18 +70,34 @@ export const translations = {
     isSupported: "Is Currently Supported",
     familyStatementFile: "Family Statement File",
     orphanAddedSuccessfully: "Orphan added successfully",
+    guardianName: "Guardian Name",
+    guaranteedPhone: "Guaranteed Phone",
+    brotherNumber: "Number of Siblings",
+
+    // --- Validation & Feedback ---
+    selectAtLeastOneRole: "Please select at least one role",
+    firstNameIsRequired: "First name is required",
+    lastNameIsRequired: "Last name is required",
+    invalidEmail: "Please enter a valid email",
+    phoneMustBe9Digits: "Phone number must be at least 9 digits",
+    genderIsRequired: "Please select gender",
+    dateIsRequired: "Date of birth is required",
+    personalPhotoIsRequired: "Personal photo is required",
+    pleaseFixErrors: "Please fix the errors in the form",
+    userAddedSuccessfully: "User added successfully",
+    errorOccurred: "An error occurred, please try again",
+    countryCodeRequired: "Country code is required",
+    countryNameRequired: "Country name is required",
     fatherNameIsRequired: "Father's name is required",
     motherNameIsRequired: "Mother's name is required",
     classIsRequired: "Class is required",
     fileIsRequired: "Family statement is required",
-    guardianName: "Guardian Name",
     guardianNameRequired: "Guardian name is required",
-    guaranteedPhone: "Guaranteed Phone",
     guaranteedPhoneRequired: "Guaranteed phone is required",
-    brotherNumber: "Number of Siblings",
   },
+
   ar: {
-    // نصوص الشريط الجانبي (Sidebar)
+    // --- Sidebar & Dashboard ---
     logoSubtitle: "نظام إدارة الجمعيات الخيرية",
     coreOps: "العمليات الأساسية",
     sysControl: "إدارة النظام والتحكم",
@@ -127,16 +130,15 @@ export const translations = {
     fin: "مالية",
     med: "طبية",
     search: "بحث...",
-    // تكملة الترجمة للشاشات الأخرى:
-    // donorsTableTitle: "قائمة المتبرعين النشطين",
-    // saveBtn: "حفظ التعديلات",
+
+    // --- Users (Add/Edit) ---
     addNewSystemUser: "إضافة مستخدم نظام جديد",
     primaryUserIdentity: "معلومات الهوية الأساسية",
     firstName: "الاسم الأول",
     lastName: "اسم العائلة",
     sarah: "مثال: سارة",
     alFahad: "مثال: الفهد",
-    corporateEmail: "البريد الإلكتروني ",
+    corporateEmail: "البريد الإلكتروني",
     countryCode: "رمز الدولة",
     phoneNumber: "رقم الهاتف",
     countryName: "اسم الدولة",
@@ -151,20 +153,9 @@ export const translations = {
     uploadProfilePicture: "رفع الصورة الشخصية",
     accessLevel: "مستوى الوصول واختيار الصلاحيات",
     confirmAndSave: "تأكيد وحفظ بيانات المستخدم",
-    selectAtLeastOneRole: "يجب اختيار صلاحية واحدة على الأقل",
-    firstNameIsRequired: "الاسم الأول مطلوب",
-    lastNameIsRequired: "اسم العائلة مطلوب",
-    invalidEmail: "يرجى إدخال بريد إلكتروني صحيح",
-    phoneMustBe9Digits: "يجب أن يتكون رقم الهاتف من 9 أرقام على الأقل",
-    genderIsRequired: "يرجى اختيار الجنس",
-    dateIsRequired: "تاريخ الميلاد مطلوب",
-    personalPhotoIsRequired: "الصورة الشخصية مطلوبة",
-    pleaseFixErrors: "يرجى تصحيح الأخطاء في النموذج",
-    userAddedSuccessfully: "تمت إضافة المستخدم بنجاح",
-    errorOccurred: "حدث خطأ ما، يرجى المحاولة لاحقاً",
     saving: "جاري الحفظ",
-    countryCodeRequired: "رمز الدولة مطلوب",
-    countryNameRequired: "اسم الدولة مطلوب",
+
+    // --- Orphans ---
     addNewOrphan: "إضافة يتيم جديد",
     primaryOrphanIdentity: "معلومات هوية اليتيم",
     fatherName: "اسم الأب",
@@ -176,14 +167,29 @@ export const translations = {
     isSupported: "مكفول حالياً",
     familyStatementFile: "ملف بيان الوضع العائلي",
     orphanAddedSuccessfully: "تمت إضافة اليتيم بنجاح",
+    guardianName: "اسم الوصي",
+    guaranteedPhone: "هاتف الكفيل",
+    brotherNumber: "عدد الإخوة والأخوات",
+
+    // --- Validation & Feedback ---
+    selectAtLeastOneRole: "يجب اختيار صلاحية واحدة على الأقل",
+    firstNameIsRequired: "الاسم الأول مطلوب",
+    lastNameIsRequired: "اسم العائلة مطلوب",
+    invalidEmail: "يرجى إدخال بريد إلكتروني صحيح",
+    phoneMustBe9Digits: "يجب أن يتكون رقم الهاتف من 9 أرقام على الأقل",
+    genderIsRequired: "يرجى اختيار الجنس",
+    dateIsRequired: "تاريخ الميلاد مطلوب",
+    personalPhotoIsRequired: "الصورة الشخصية مطلوبة",
+    pleaseFixErrors: "يرجى تصحيح الأخطاء في النموذج",
+    userAddedSuccessfully: "تمت إضافة المستخدم بنجاح",
+    errorOccurred: "حدث خطأ ما، يرجى المحاولة لاحقاً",
+    countryCodeRequired: "رمز الدولة مطلوب",
+    countryNameRequired: "اسم الدولة مطلوب",
     fatherNameIsRequired: "اسم الأب مطلوب",
     motherNameIsRequired: "اسم الأم مطلوب",
     classIsRequired: "الصف الدراسي مطلوب",
     fileIsRequired: "ملف بيان الحالة العائلية مطلوب",
-    guardianName: "اسم الوصي", // تعريف التسمية
-    guardianNameRequired: "اسم الوصي مطلوب", // رسالة الخطأ
-    guaranteedPhone: "هاتف الكفيل",
+    guardianNameRequired: "اسم الوصي مطلوب",
     guaranteedPhoneRequired: "رقم هاتف الكفيل مطلوب",
-    brotherNumber: "عدد الإخوة والأخوات",
   },
 };

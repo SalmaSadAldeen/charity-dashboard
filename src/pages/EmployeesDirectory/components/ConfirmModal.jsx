@@ -3,6 +3,7 @@ import { translations } from "@/context/translations";
 
 export default function ConfirmModal({ isOpen, onConfirm, onCancel }) {
   // احذفي t من هنا
+
   const lang = useSelector((state) => state.language.lang);
   const t = (key) => translations[lang][key] || key; // تعريف واحد فقط لـ t
 

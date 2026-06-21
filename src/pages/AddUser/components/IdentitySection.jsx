@@ -18,14 +18,14 @@ export default function IdentitySection({
             {t("firstName")}
           </label>
           <input
-            name="first_name"
-            value={formData.first_name}
+            name="firstName"
+            value={formData.firstName}
             onChange={handleInputChange}
             className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder={t("sarah")}
           />
           {errors.first_name && (
-            <p className="text-red-500 text-xs mt-1">{errors.first_name}</p>
+            <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
           )}
         </div>
 
@@ -35,14 +35,14 @@ export default function IdentitySection({
             {t("lastName")}
           </label>
           <input
-            name="last_name"
-            value={formData.last_name}
+            name="lastName"
+            value={formData.lastName}
             onChange={handleInputChange}
             className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder={t("alFahad")}
           />
-          {errors.last_name && (
-            <p className="text-red-500 text-xs mt-1">{errors.last_name}</p>
+          {errors.lastName && (
+            <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
           )}
         </div>
 
@@ -69,14 +69,14 @@ export default function IdentitySection({
             {t("countryCode")}
           </label>
           <input
-            name="country_code"
-            value={formData.country_code}
+            name="countryCode"
+            value={formData.countryCode}
             onChange={handleInputChange}
             className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder="+966"
           />
           {errors.country_code && (
-            <p className="text-red-500 text-xs mt-1">{errors.country_code}</p>
+            <p className="text-red-500 text-xs mt-1">{errors.countryCode}</p>
           )}
         </div>
 
@@ -103,14 +103,14 @@ export default function IdentitySection({
             {t("countryName")}
           </label>
           <input
-            name="country_name"
-            value={formData.country_name}
+            name="countryName"
+            value={formData.countryName}
             onChange={handleInputChange}
             className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
             placeholder={t("saudiArabia")}
           />
-          {errors.country_name && (
-            <p className="text-red-500 text-xs mt-1">{errors.country_name}</p>
+          {errors.countryName && (
+            <p className="text-red-500 text-xs mt-1">{errors.countryName}</p>
           )}
         </div>
 

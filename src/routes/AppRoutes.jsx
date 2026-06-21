@@ -1,26 +1,35 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-// import Dashboard from "../pages/Dashboard/components/Dashboard";
 import DashboardLayout from "@/pages/DashboardLayout";
-// import AddUser from "@/pages/AddUser/AddUser";
-// import AddOrphan from "@/pages/AddOrphan/AddOrphan";
-import EmployeesDirectory from "@/pages/EmployeesDirectory/EmployeesDirectory";
-import AddUser from "@/pages/AddUser/AddUser"; // استيراد صفحتك
 import Dashboard from "@/pages/Dashboard/Dashboard";
+import EmployeesDirectory from "@/pages/EmployeesDirectory/EmployeesDirectory";
+import AddUser from "@/pages/AddUser/AddUser";
+import LoginPage from "@/pages/Login/LoginPage";
+import { PrivateRoute } from "@/routes/PrivateRoute";
 export default function AppRoutes() {
   return (
     <Routes>
+      {/* 1. مسار تسجيل الدخول (خارج الداشبورد) */}
+      <Route path="/login" element={<LoginPage />} />
+
+      {/* 2. المسار الرئيسي (إعادة توجيه للداشبورد أو اللوج إن) */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      <Route path="/dashboard" element={<DashboardLayout />}>
-        {/* هذا هو المسار الرئيسي للداشبورد (الصفحة التي تحتوي الإحصائيات) */}
-        {/* <Route index element={<Dashboard />} /> */}
-        {/* 
-        {/* هذا مسار صفحة إضافة مستخدم */}
-        {/* <Route path="add-user" element={<AddUser />} />
-
-        {/* مسار الموظفين (مثلاً) */}
+      {/* 3. مسارات الداشبورد المحمية */}
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <DashboardLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<Dashboard />} />
         <Route path="employees" element={<EmployeesDirectory />} />
+        <Route path="add-user" element={<AddUser />} />
       </Route>
+
+      {/* 4. معالجة أي مسار غير معروف */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

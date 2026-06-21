@@ -1,15 +1,17 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { translations } from "@/context/translations";
 import IdentitySection from "@/pages/AddUser/components/IdentitySection";
 import EmploymentSection from "@/pages/AddUser/components/EmploymentSection";
 import RolesSection from "@/pages/AddUser/components/RolesSection";
 import { useUserFormLogic } from "@/hooks/useUserFormLogic"; // الملف الجديد
-
+import { fetchRoles } from "@/store";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useEffect } from "react";
 export default function AddUser() {
-  const lang = useSelector((state) => state.language.lang);
-  const t = (key) => translations[lang][key] || key;
-  const { roles } = useSelector((state) => state.roles.items);
-
+  const { t, lang } = useTranslation();
+  const dispatch = useDispatch();
+  const roles = useSelector((state) => state.roles.items);
+  console.log("Roles from Redux:", roles);
   // استدعاء كل شيء من الـ Hook المنفصل
   const {
     formData,
@@ -21,13 +23,27 @@ export default function AddUser() {
     isLoading,
     clearError,
   } = useUserFormLogic(t);
+  // في AddUser.jsx
+  useEffect(() => {
+    console.log("AddUser: useEffect بدأ التنفيذ...");
+    const token = localStorage.getItem("token");
 
+    if (token) {
+      console.log("AddUser: التوكن موجود، سأقوم الآن بطلب الأدوار...");
+      console.log("AddUser: التوكن موجود، جاري طلب الأدوار...");
+      dispatch(fetchRoles()); // تأكدي أن fetchRoles مستوردة من store.js
+    } else {
+      console.warn("AddUser: لا يوجد توكن!");
+    }
+  }, [dispatch]);
   return (
-    <div className="p-8 bg-[#f5ede0] min-h-screen">
+    <div
+      className={`p-8 bg-[#f5ede0] min-h-screen ${lang === "ar" ? "rtl" : "ltr"}`}
+    >
+      {" "}
       <h2 className="text-[32px] font-bold mb-8 text-[#1f1b14]">
         {t("addNewSystemUser")}
       </h2>
-
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* نمرر لكل قسم البيانات والدوال التي يحتاجها فقط */}
         <IdentitySection
@@ -57,8 +73,13 @@ export default function AddUser() {
 
         <button
           type="submit"
-          disabled={isLoading} // يمنع الضغط المتكرر أثناء الحفظ
-          className="w-full bg-[#fad564] hover:bg-[#e6c25a] text-[#4d4636] font-bold py-4 rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98]"
+          disabled={isLoading}
+          className={`w-full font-bold py-4 rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98] 
+    ${
+      isLoading
+        ? "bg-[#d0c6b0] cursor-not-allowed opacity-70"
+        : "bg-[#fad564] hover:bg-[#e6c25a] text-[#4d4636]"
+    }`}
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">

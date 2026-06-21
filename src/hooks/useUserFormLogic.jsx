@@ -1,18 +1,15 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "@/hooks/useForm";
 import toast from "react-hot-toast";
 import { addEmployee, updateEmployee } from "@/store/index"; // تأكدي من المسار الصحيح
 import { useEffect } from "react";
-
-export const useUserFormLogic = (
-  t,
-  initialData = null,
-  onSuccess = () => {},
-) => {
+import { API } from "@/services/adminService";
+export const useUserFormLogic = (t, initialData = null) => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
   // استنتاج هل نحن في حالة تعديل أم إضافة
+
+  const { status } = useSelector((state) => state.employees);
+  const isLoading = status === "loading";
   const isEdit = !!initialData;
 
   const employeeId = initialData?.id;
@@ -20,10 +17,10 @@ export const useUserFormLogic = (
     let errors = {};
 
     // 1. التحقق من الأسماء
-    if (!data.first_name || !data.first_name.trim())
-      errors.first_name = t("firstNameIsRequired");
-    if (!data.last_name || !data.last_name.trim())
-      errors.last_name = t("lastNameIsRequired");
+    if (!data.firstName || !data.firstName.trim())
+      errors.firstName = t("firstNameIsRequired");
+    if (!data.lastName || !data.lastName.trim())
+      errors.lastName = t("lastNameIsRequired");
 
     // 2. التحقق من الإيميل
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -38,121 +35,115 @@ export const useUserFormLogic = (
     if (!data.gender) errors.gender = t("genderIsRequired");
 
     // 5. التحقق من تاريخ الميلاد
-    if (!data.date_of_birth) errors.date_of_birth = t("dateIsRequired");
+    if (!data.dateOfBirth) errors.dateOfBirth = t("dateIsRequired");
 
     // 6. التحقق من الأدوار (لازم يختار واحد على الأقل)
-    if (!data.role_ids || data.role_ids.length === 0)
-      errors.role_ids = t("selectAtLeastOneRole");
+    if (!data.roleIds || data.roleIds.length === 0)
+      errors.roleIds = t("selectAtLeastOneRole");
 
     // 7. التحقق من الدولة (الرمز والاسم)
-    if (!data.country_code || !data.country_code.trim())
-      errors.country_code = t("countryCodeRequired");
-    if (!data.country_name || !data.country_name.trim())
-      errors.country_name = t("countryNameRequired");
+    if (!data.countryCode || !data.countryCode.trim())
+      errors.countryCode = t("countryCodeRequired");
+    if (!data.countryName || !data.countryName.trim())
+      errors.countryName = t("countryNameRequired");
 
     // 8. التحقق من الصورة الشخصية
-    if (!data.personal_photo)
-      errors.personal_photo = t("personalPhotoIsRequired");
+    if (!data.personalPhoto)
+      errors.personalPhoto = t("personalPhotoIsRequired");
 
     return errors;
   };
+  // في useUserFormLogic.js - تأكدي أن الأسماء هي نفسها:
   const {
     formData,
     setFormData,
     handleInputChange,
     errors,
-    setErrors,
-    validateForm,
+    validateForm, // هذه الدالة جاهزة الآن
     clearError,
   } = useForm(
     {
-      first_name: "",
-      last_name: "",
+      firstName: "",
+      lastName: "", // تأكدي أن الـ input name في الـ Component هو "lastName"
       email: "",
       number: "",
-      country_code: "",
-      country_name: "",
+      countryCode: "",
+      countryName: "", // تأكدي أن الـ input name في الـ Component هو "countryName"
       gender: "",
-      date_of_birth: "",
-      personal_photo: null,
-      role_ids: [],
+      dateOfBirth: "",
+      personalPhoto: null,
+      roleIds: [], // هنا الاسم roleIds
     },
     validateEmployee,
   );
-  // useEffect(() => {
-  //   dispatch(fetchRoles());
-  // }, [dispatch]);
 
   useEffect(() => {
     if (initialData) {
       setFormData(initialData);
     }
   }, [initialData, setFormData]);
+
   const toggleRole = (roleId) => {
     setFormData((prev) => ({
       ...prev,
-      role_ids: prev.role_ids.includes(roleId)
-        ? prev.role_ids.filter((id) => id !== roleId)
-        : [...prev.role_ids, roleId],
+      roleIds: prev.roleIds.includes(roleId)
+        ? prev.roleIds.filter((id) => id !== roleId)
+        : [...prev.roleIds, roleId],
     }));
-    clearError("role_ids");
+    clearError("roleIds");
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      toast.error(t("pleaseFixErrors"));
-      return;
-    }
-
-    const dataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
-      // اللمسة الذكية: لا نرسل الصورة إذا كانت هي نفسها الرابط القديم (String)
-      // لأن السيرفر يحتاج فقط للملف الجديد إذا أراد الموظف تغيير صورته.
-      if (key === "personal_photo") {
-        if (formData[key] instanceof File) {
-          dataToSend.append(key, formData[key]);
-        }
-        // إذا كانت string (رابط قديم)، لا نفعل شيئاً (نترك السيرفر يحتفظ بالقديمة)
-      } else if (formData[key] !== null) {
-        dataToSend.append(key, formData[key]);
-      }
-    });
-
-    setIsLoading(true);
+    if (!validateForm()) return;
     try {
+      let photoUrl = formData.personalPhoto; // القيمة الافتراضية
+
+      // إذا كان المختار "ملف" وليس رابطاً، يجب رفعه أولاً
+      if (formData.personalPhoto instanceof File) {
+        const formDataFile = new FormData();
+        formDataFile.append("file", formData.personalPhoto);
+
+        // طلب رفع الصورة للسيرفر
+        const uploadResponse = await API.post(
+          "/employee/upload",
+          formDataFile,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        );
+        photoUrl = uploadResponse.data.url; // الحصول على الرابط من السيرفر
+      }
+
+      // الآن نجهز البيانات لإرسالها
+      const dataToSend = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        number: formData.number,
+        gender: formData.gender.toUpperCase(),
+        dateOfBirth: formData.dateOfBirth,
+        countryCode: formData.countryCode,
+        countryName: formData.countryName,
+        personalPhoto: photoUrl, // هنا الرابط النصي الذي استلمناه
+        roleIds: formData.roleIds.map(Number),
+      };
+
       if (isEdit) {
-        // 1. حالة التعديل: نستخدم updateEmployee
         await dispatch(
           updateEmployee({ id: employeeId, data: dataToSend }),
         ).unwrap();
         toast.success(t("userUpdatedSuccessfully"));
-        onSuccess();
       } else {
-        // 2. حالة الإضافة: نستخدم addUser
+        // إذا كان إضافة
         await dispatch(addEmployee(dataToSend)).unwrap();
         toast.success(t("userAddedSuccessfully"));
-
-        // التصفير (Reset) لا نحتاجه عادة في حالة التعديل لأنه يغلق المودال
-        setFormData({
-          first_name: "",
-          last_name: "",
-          email: "",
-          number: "",
-          country_code: "",
-          country_name: "",
-          gender: "",
-          date_of_birth: "",
-          personal_photo: null,
-          role_ids: [],
-        });
-        setErrors({});
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || t("errorOccurred"));
-    } finally {
-      setIsLoading(false);
+      console.error("خطأ:", error);
+      toast.error(t("errorOccurred"));
     }
   };
+
   return {
     formData,
     setFormData,
@@ -162,5 +153,6 @@ export const useUserFormLogic = (
     handleSubmit,
     isLoading,
     clearError,
+    isEdit,
   };
 };

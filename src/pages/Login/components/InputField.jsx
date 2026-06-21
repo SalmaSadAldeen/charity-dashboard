@@ -8,6 +8,7 @@ const InputField = ({
   placeholder,
   icon,
   children,
+  autoComplete,
 }) => {
   return (
     <div>
@@ -27,6 +28,7 @@ const InputField = ({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
+          autoComplete={autoComplete}
           className="w-full pl-10 pr-10 py-3 bg-white border-2 border-[#e1ded7] rounded-lg text-sm text-[#4a453e] placeholder-[#c4bebc] focus:outline-none focus:border-[#6b6459] transition-colors duration-300 ease-in-out [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
           required
         />

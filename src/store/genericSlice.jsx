@@ -1,59 +1,39 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { adminService } from "@/services/adminService";
 export const createGenericActions = (resource) => ({
-  //   fetchItems: createAsyncThunk(`${resource}/fetchAll`, async (page) => {
-  //     // إذا كان هناك صفحة، نرسلها في الـ query، وإلا نجلب الكل
-  //     const url = page ? `${resource}?page=${page}` : resource;
-  //     const response = await adminService.getAll(url); // تأكدي أن adminService يدعم المسار المباشر
-  //     return response.data;
-  //   }),
-
-  // genericSlice.js
-  fetchItems: createAsyncThunk(`${resource}/fetchAll`, async (page) => {
-    // محاكاة تأخير السيرفر
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // مصفوفة الموظفين الخاصة بكِ
-    return {
-      // في genericSlice.js
-      data: [
-        { id: 1, name: "أحمد", email: "a@test.com", role: "مدير" },
-        { id: 2, name: "سارة", email: "s@test.com", role: "موظفة" },
-        { id: 3, name: "ببب", email: "s@test.com", role: "موظفة" },
-        { id: 4, name: "لسس", email: "s@test.com", role: "موظفة" },
-        {
-          id: 5,
-          name: "للل",
-          email: "s@test.com",
-          role: "موظفة",
-          status: "active",
-        },
-      ],
-      meta: { currentPage: 1, lastPage: 1 },
-    };
+  fetchItems: createAsyncThunk(`${resource}/fetchAll`, async (params = {}) => {
+    // نستخدم الـ resource لتحديد الدالة الصحيحة
+    if (resource === "roles") return (await adminService.getRoles()).data;
+    if (resource === "employees")
+      return (await adminService.getEmployees(params.page, params.limit)).data;
+    // ... أضيفي بقية الموارد هنا
   }),
+  // 1. إضافة عنصر جديد (addItem)
   addItem: createAsyncThunk(`${resource}/add`, async (data) => {
-    // إذا كنتِ تستخدمين السيرفر، استبدلي السطر التالي بـ adminService.addRecord
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return data; // نرجع البيانات لنضيفها في الـ extraReducers
+    let response;
+    if (resource === "employees")
+      response = await adminService.addEmployee(data);
+    else if (resource === "orphans")
+      response = await adminService.addOrphan(data);
+    else throw new Error(`Add action not defined for ${resource}`);
+    return response.data;
   }),
-
-  //   deleteItem: createAsyncThunk(`${resource}/delete`, async (id) => {
-  //     await adminService.deleteRecord(resource, id);
-  //     return id;
-  //   }),
-  // في genericSlice.js - عدلي دالة deleteItem لتصبح هكذا:
   deleteItem: createAsyncThunk(`${resource}/delete`, async (id) => {
-    // محاكاة تأخير السيرفر فقط
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    return id; // إرجاع الـ id مباشرة سيؤدي لتشغيل الـ extraReducer والحذف من المصفوفة
+    if (resource === "employees") await adminService.deleteEmployee(id);
+    else if (resource === "orphans") await adminService.deleteOrphan(id);
+    else throw new Error(`Delete action not defined for ${resource}`);
+    return id;
   }),
   updateItem: createAsyncThunk(`${resource}/update`, async ({ id, data }) => {
-    const response = await adminService.updateRecord(resource, id, data);
+    let response;
+    if (resource === "employees")
+      response = await adminService.updateEmployee(id, data);
+    else if (resource === "orphans")
+      response = await adminService.updateOrphan(id, data);
+    else throw new Error(`Update action not defined for ${resource}`);
     return response.data;
   }),
 });
-
 export const createGenericSlice = (resource) => {
   const { fetchItems, deleteItem, updateItem, addItem } =
     createGenericActions(resource);
@@ -76,14 +56,21 @@ export const createGenericSlice = (resource) => {
             state.status = "loading";
           })
           .addCase(fetchItems.fulfilled, (state, action) => {
-            if (action.payload.data) {
-              state.items = action.payload.data;
-              state.pagination = action.payload.meta;
-            } else {
-              // إذا كان الـ payload هو المصفوفة مباشرة (مثل الأدوار)
-              state.items = action.payload;
-              state.pagination = { currentPage: 1, lastPage: 1 }; // لا يوجد ترقيم
+            const payload = action.payload;
+
+            // 1. إذا كان الـ payload يحتوي على مفتاح data (مثل استجابة الأدوار التي أرسلتِها)
+            if (payload && payload.data && Array.isArray(payload.data)) {
+              state.items = payload.data;
             }
+            // 2. إذا كان الـ payload هو المصفوفة مباشرة
+            else if (Array.isArray(payload)) {
+              state.items = payload;
+            }
+            // 3. إذا كان هناك pagination (للموظفين)
+            if (payload.meta) {
+              state.pagination = payload.meta;
+            }
+
             state.status = "succeeded";
           })
           .addCase(fetchItems.rejected, (state, action) => {
@@ -105,22 +92,34 @@ export const createGenericSlice = (resource) => {
             state.status = "failed";
             state.error = action.error.message;
           })
+          // داخل extraReducers
+          // --- حالات الإضافة (addItem) ---
+          .addCase(addItem.pending, (state) => {
+            state.status = "loading"; // المستخدم يرى دائرة تحميل
+          })
           .addCase(addItem.fulfilled, (state, action) => {
-            state.items.push(action.payload); // إضافة الموظف الجديد للمصفوفة
+            state.items.push(action.payload);
             state.status = "succeeded";
-            console.log("تم استلام البيانات في الـ Slice:", action.payload);
           })
           .addCase(addItem.rejected, (state, action) => {
             state.status = "failed";
-            state.error = action.error.message;
+            state.error = action.error.message; // المستخدم يرى رسالة خطأ
           })
-          // --- حالات التحديث ---
+
+          // --- حالات التحديث (updateItem) ---
+          .addCase(updateItem.pending, (state) => {
+            state.status = "loading";
+          })
           .addCase(updateItem.fulfilled, (state, action) => {
             const index = state.items.findIndex(
               (item) => item.id === action.payload.id,
             );
             if (index !== -1) state.items[index] = action.payload;
             state.status = "succeeded";
+          })
+          .addCase(updateItem.rejected, (state, action) => {
+            state.status = "failed";
+            state.error = action.error.message;
           });
       },
     }),

@@ -29,6 +29,7 @@ export default function Dashboard() {
   }, [dispatch]);
 
   return (
+    
     <main
       dir={lang === "ar" ? "rtl" : "ltr"}
       className="p-8 bg-[#f5ede0] text-on-surface-variant"
