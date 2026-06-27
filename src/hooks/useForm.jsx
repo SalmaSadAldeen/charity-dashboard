@@ -4,43 +4,50 @@ export const useForm = (initialState, validate) => {
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
 
+  // تعديل ذكي: الدالة الجديدة بتقبل تحديث جزئي (Merge) بدل ما تمسح كلشي
+  const updateFormData = (newData) => {
+    setFormData((prev) => {
+      // إذا كان newData دالة (مثل التحديث التقليدي)، نفذها. إذا كائن، ادمجه
+      const updatedData =
+        typeof newData === "function" ? newData(prev) : { ...prev, ...newData };
+      return updatedData;
+    });
+  };
+
   const handleInputChange = (e) => {
     const { name, value, files, type } = e.target;
 
-    // إذا كان الحقل من نوع ملف، نأخذ أول ملف مختار، وإلا نأخذ القيمة النصية
-    const newValue = type === "file" ? files[0] : value;
+    // إذا كان ملف، خذ الملف، وإلا خذ النص
+    const newValue =
+      type === "file" ? (files && files[0] ? files[0] : null) : value;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: newValue,
-    }));
+    updateFormData({ [name]: newValue });
 
-    // مسح الخطأ عند التعديل
+    // مسح الخطأ عند التعديل (أضفتلك حذف آمن)
     if (errors[name]) {
       setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
+        const { [name]: _, ...rest } = prev;
+        return rest;
       });
     }
   };
+
   const validateForm = () => {
-    const validationErrors = validate(formData); // استخدام دالة التحقق التي مررتِها للهوك
+    const validationErrors = validate(formData);
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
-  // داخل useForm.js
+
   const clearError = (name) => {
     setErrors((prev) => {
-      const newErrors = { ...prev };
-      delete newErrors[name];
-      return newErrors;
+      const { [name]: _, ...rest } = prev;
+      return rest;
     });
   };
 
   return {
     formData,
-    setFormData,
+    setFormData: updateFormData, // رجعنا الدالة المدمجة
     handleInputChange,
     errors,
     setErrors,

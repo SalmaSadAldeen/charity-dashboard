@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { translations } from "../../context/translations";
+import { useTranslation } from "@/hooks/useTranslation";
 import StatCard from "./components/StatCard";
 import DonationChart from "./components/DonationChart";
 import RequestsChart from "./components/RequestsChart";
@@ -14,8 +14,8 @@ export default function Dashboard() {
   const [view, setView] = useState("weekly");
   const dispatch = useDispatch();
 
-  const lang = useSelector((state) => state.language.lang);
-  const t = (key) => translations[lang][key] || key;
+  const { t, lang } = useTranslation();
+
   const getDayLabel = (ar, en) => (lang === "ar" ? ar : en);
 
   const { stats, charts, isLoading } = useSelector((state) => state.dashboard);
@@ -29,14 +29,13 @@ export default function Dashboard() {
   }, [dispatch]);
 
   return (
-    
     <main
       dir={lang === "ar" ? "rtl" : "ltr"}
-      className="p-8 bg-[#f5ede0] text-on-surface-variant"
+      className="p-8 bg-surface-container text-on-surface-variant"
     >
       {/* العنوان */}
       <div className="mb-8">
-        <h2 className="text-[32px] font-bold text-[#1f1b14] mb-1">
+        <h2 className="text-[32px] font-bold text-on-surface-variant mb-1">
           {t("dashboardTitle")}
         </h2>
         <p className="text-on-surface-variant">{t("dashboardSubtitle")}</p>
@@ -44,7 +43,7 @@ export default function Dashboard() {
 
       {/* الإحصائيات */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="md:col-span-2 bg-[#fad564] p-8 rounded-3xl shadow-[0_10px_30px_-5px_rgba(250,213,100,0.5)] text-primary relative overflow-hidden border border-white/30">
+        <div className="md:col-span-2 bg-primary-container p-8 rounded-3xl shadow-[0_10px_30px_-5px_rgba(250,213,100,0.5)] text-primary relative overflow-hidden border border-white/30">
           <span className="material-symbols-outlined absolute -right-4 -bottom-6 text-[160px] opacity-20 pointer-events-none select-none">
             payments
           </span>

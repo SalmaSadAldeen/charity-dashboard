@@ -1,12 +1,13 @@
-/* 1. أولاً: استيراد الخطوط (يجب أن تكون في قمة الملف) */
 @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
 
-/* 2. ثانياً: كلاسات Tailwind */
+/* 1. توجيهات Tailwind يجب أن تكون في البداية تماماً */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 3. ثالثاً: باقي التنسيقات الخاصة بك */
+/* 2. الآن استوردي الخطوط تحتها */
+
+/* 3. باقي التنسيقات الخاصة بك */
 html,
 body,
 #root {
@@ -18,18 +19,16 @@ body,
   font-family: "Cairo", "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: 100%; /* اجعلي الارتفاع 100% بدل min-height */
-  overflow: hidden;
 }
 
 [dir="rtl"] {
   font-family: "Cairo", sans-serif;
 }
-
 [dir="ltr"] {
   font-family: "Inter", sans-serif;
 }
 
+/* إخفاء أيقونات الملء التلقائي وأشرطة التمرير كما كنتِ واضعة... */
 /* إخفاء أيقونات الملء التلقائي */
 input::-ms-reveal,
 input::-ms-clear {
@@ -42,22 +41,23 @@ input::-webkit-credentials-auto-fill-button {
   pointer-events: none;
   position: absolute;
   right: 0;
-}
-/* إخفاء شريط التمرير في متصفحات Chrome, Safari, Edge */
-.custom-scrollbar::-webkit-scrollbar {
-  display: none;
+} /* 1. هذا الكلاس سيجعل أي عنصر يمرر دون إظهار الشريط */
+.custom-scrollbar {
+  /* لمتصفحات كروم، سفاري، وإيدج */
+  scrollbar-width: none; /* لمتصفح فايرفوكس */
+  -ms-overflow-style: none; /* لمتصفح إنترنت إكسبلورر */
 }
 
-/* إخفاء شريط التمرير في Firefox */
-.custom-scrollbar {
-  scrollbar-width: none; /* يغير العرض إلى 0 */
-  -ms-overflow-style: none; /* لمتصفح IE */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none !important; /* هذا هو السطر الذي يخفي الشريط نهائياً */
+  width: 0 !important;
+  height: 0 !important;
 }
 :root {
-  --primary: #735c00;
+  /* --primary: #735c00;
   --primary-container: #fad564;
   --on-surface-variant: #4d4636;
-  --surface-container: #f5ede0;
+  --surface-container: #f5ede0; */
 }
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {

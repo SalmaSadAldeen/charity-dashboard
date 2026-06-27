@@ -1,11 +1,9 @@
-import { useSelector } from "react-redux";
-import { translations } from "@/context/translations";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function ConfirmModal({ isOpen, onConfirm, onCancel }) {
   // احذفي t من هنا
 
-  const lang = useSelector((state) => state.language.lang);
-  const t = (key) => translations[lang][key] || key; // تعريف واحد فقط لـ t
+  const { t } = useTranslation();
 
   if (!isOpen) return null;
 

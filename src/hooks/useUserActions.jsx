@@ -1,12 +1,12 @@
-import { useDispatch, useSelector } from "react-redux"; // أضفنا useSelector
-import { translations } from "@/context/translations";
+import { useDispatch } from "react-redux"; // أضفنا useSelector
 import { deleteEmployee } from "@/store/index"; // تأكدي من المسار الصحيح
 // استيراد كائن الترجمة
+import { useTranslation } from "@/hooks/useTranslation";
+
 import toast from "react-hot-toast";
 export const useEmployeeActions = () => {
   const dispatch = useDispatch();
-  const lang = useSelector((state) => state.language.lang);
-  const t = (key) => translations[lang][key] || key;
+  const { t } = useTranslation();
 
   // إزالة الـ confirm هنا لأننا سنستخدم المودال في الجدول
   const handleDelete = async (id) => {

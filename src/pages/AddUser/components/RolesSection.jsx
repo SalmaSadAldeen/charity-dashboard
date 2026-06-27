@@ -7,28 +7,30 @@ export default function RolesSection({
   t,
   errors,
 }) {
+  console.log("Roles from Redux in Edit:", roles);
   return (
-    <div className="bg-white p-8 rounded-3xl border border-[#d0c6b0] shadow-md transition-all hover:shadow-lg">
-      <h3 className="font-bold text-lg mb-6 text-[#4d4636] flex items-center gap-2">
-        <ShieldCheck size={20} className="text-[#735c00]" /> {t("accessLevel")}
+    <div className="bg-white p-8 rounded-3xl border border-border shadow-md transition-all hover:shadow-lg">
+      <h3 className="font-bold text-lg mb-6 text-on-surface-variant flex items-center gap-2">
+        <ShieldCheck size={20} className="text-primary" /> {t("accessLevel")}
       </h3>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
+        {" "}
         {Array.isArray(roles) &&
           roles.map((role) => {
             // نتحقق هل هذا الدور موجود في مصفوفة الـ ids المختارة؟
-            const isSelected = formData.roleIds.includes(role.id);
-
+            const roleIdNumber = Number(role.id);
+            const isSelected =
+              formData?.roleIds?.includes(roleIdNumber) || false;
             return (
               <button
                 type="button"
                 key={role.id}
-                onClick={() => toggleRole(role.id)}
-                className={`p-6 border rounded-2xl transition-all duration-300 text-left 
-                ${
+                onClick={() => toggleRole(roleIdNumber)}
+                className={`p-4 border rounded-2xl transition-all duration-300 text-center flex items-center justify-center min-h-[60px] break-words               ${
                   isSelected
-                    ? "border-[#4d4636] bg-[#f5ede0] shadow-inner font-bold text-[#4d4636]"
-                    : "border-[#e5e1da] bg-white hover:border-[#d0c6b0]"
+                    ? "border-[#735c00] bg-amber-50 shadow-inner font-bold text-[#4d4636] scale-[1.02]"
+                    : "border-[#e5e1da] bg-white hover:border-[#735c00]/50"
                 }`}
               >
                 {role.name}
@@ -36,9 +38,9 @@ export default function RolesSection({
             );
           })}
       </div>
-      {errors.role_ids && (
+      {errors.roleIds && (
         <p className="text-red-500 text-sm mt-4 font-semibold">
-          {errors.role_ids}
+          {errors.roleIds}
         </p>
       )}
     </div>

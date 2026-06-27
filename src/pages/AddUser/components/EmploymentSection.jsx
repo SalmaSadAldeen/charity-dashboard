@@ -23,9 +23,9 @@ export default function EmploymentSection({
   };
 
   return (
-    <div className="bg-white p-8 rounded-3xl border border-[#d0c6b0] shadow-md transition-all hover:shadow-lg">
-      <h3 className="font-bold text-lg mb-6 text-[#4d4636] flex items-center gap-2">
-        <Briefcase size={20} className="text-[#735c00]" />{" "}
+    <div className="bg-white p-8 rounded-3xl border border-border shadow-md transition-all hover:shadow-lg">
+      <h3 className="font-bold text-lg mb-6 text-on-surface-variant flex items-center gap-2">
+        <Briefcase size={20} className="text-primary" />{" "}
         {t("employmentDetails")}
       </h3>
 
@@ -40,62 +40,69 @@ export default function EmploymentSection({
             name="dateOfBirth"
             value={formData.dateOfBirth}
             onChange={handleInputChange}
-            className="w-full p-4 border border-[#d0c6b0] rounded-2xl shadow-inner focus:border-[#735c00] outline-none transition-all"
+            className="w-full p-4 border border-border rounded-2xl shadow-inner focus:border-secondary outline-none transition-all"
           />
-          {errors.date_of_birth && (
-            <p className="text-red-500 text-xs mt-1">{errors.date_of_birth}</p>
+          {errors.dateOfBirth && (
+            <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>
           )}
         </div>
 
-        {/* حقل رفع الصورة */}
-        <div>
-          <label className="block text-sm font-semibold mb-2">
-            {t("personalPhoto")}
-          </label>
-          {/* الجزء القابل للضغط */}
-          <div
-            onClick={() => fileInputRef.current.click()}
-            className="w-full h-[60px] border-2 border-dashed border-[#d0c6b0] rounded-2xl flex items-center justify-center gap-3 cursor-pointer bg-white transition-all shadow-inner overflow-hidden"
-          >
-            {/* هنا المعاينة الذكية */}
-            {formData.personalPhoto ? (
-              <div className="flex items-center gap-2">
-                {/* إذا كان نصاً (رابط) نعرضه كصورة صغيرة */}
+        {/* حقل رفع الصورة - بعد التعديل */}
+        <div
+          onClick={() => fileInputRef.current.click()}
+          className="w-full h-[60px] border-2 border-dashed border-border rounded-2xl flex items-center px-4 cursor-pointer bg-white transition-all hover:border-primary/50 overflow-hidden"
+        >
+          {formData.personalPhoto ? (
+            <div className="flex items-center gap-3 w-full">
+              {/* الحاوية الدائرية */}
+              <div className="w-10 h-10 rounded-full overflow-hidden border border-border shrink-0 flex items-center justify-center bg-surface">
                 {typeof formData.personalPhoto === "string" ? (
                   <img
                     src={formData.personalPhoto}
                     alt="Preview"
-                    className="w-10 h-10 rounded-full object-cover border border-[#d0c6b0]"
+                    className="w-full h-full object-cover"
+                    // هذا الجزء هو الحل: عند حدوث أي خطأ في التحميل، نخفي الصورة ونظهر أيقونة بديلة
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.nextSibling?.classList.remove("hidden");
+                    }}
                   />
-                ) : (
-                  <FileUp className="text-[#735c00]" size={20} />
-                )}
-                <span className="text-sm font-medium text-[#4d4636] truncate max-w-[150px]">
-                  {typeof formData.personalPhoto === "string"
-                    ? t("currentPhoto")
-                    : formData.personalPhoto.name}
-                </span>
-              </div>
-            ) : (
-              <>
-                <FileUp className="text-[#735c00] opacity-60" size={20} />
-                <span className="text-sm font-medium text-[#4d4636]">
-                  {t("uploadProfilePicture")}
-                </span>
-              </>
-            )}
-          </div>
-          {errors.personalPhoto && (
-            <p className="text-red-500 text-xs mt-1">{errors.personalPhoto}</p>
-          )}
+                ) : null}
 
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={handleFileChange}
-          />
+                {/* الأيقونة التي ستظهر إذا حدث خطأ في تحميل الصورة */}
+                <FileUp
+                  className={`text-primary ${typeof formData.personalPhoto === "string" ? "hidden" : ""}`}
+                  size={18}
+                />
+              </div>
+
+              <span className="text-sm font-medium text-on-surface-variant truncate flex-1">
+                {typeof formData.personalPhoto === "string"
+                  ? t("currentPhoto")
+                  : formData.personalPhoto.name}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 w-full">
+              <div className="w-10 h-10 rounded-full bg-surface-lowest flex items-center justify-center border border-border shrink-0">
+                <FileUp className="text-primary opacity-60" size={18} />
+              </div>
+              <span className="text-sm font-medium text-on-surface-variant">
+                {t("uploadProfilePicture")}
+              </span>
+            </div>
+          )}
         </div>
+        {errors.personalPhoto && (
+          <p className="text-red-500 text-xs mt-1">{errors.personalPhoto}</p>
+        )}
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileChange}
+        />
       </div>
     </div>
   );

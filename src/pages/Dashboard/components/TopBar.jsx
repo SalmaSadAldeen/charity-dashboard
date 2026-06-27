@@ -1,13 +1,12 @@
 import { useLayout } from "../../../hooks/useLayout";
-import { useSelector, useDispatch } from "react-redux";
-import { translations } from "../../../context/translations";
+import { useDispatch } from "react-redux";
 import { toggleLanguage } from "../../../store/languageSlice";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function TopBar() {
   const { searchQuery, handleSearch } = useLayout();
-  const lang = useSelector((state) => state.language.lang);
+  const { t, lang } = useTranslation();
   const dispatch = useDispatch();
-  const t = (key) => translations[lang][key] || key;
 
   return (
     <header

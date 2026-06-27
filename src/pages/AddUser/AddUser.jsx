@@ -1,5 +1,4 @@
 import { useSelector, useDispatch } from "react-redux";
-import { translations } from "@/context/translations";
 import IdentitySection from "@/pages/AddUser/components/IdentitySection";
 import EmploymentSection from "@/pages/AddUser/components/EmploymentSection";
 import RolesSection from "@/pages/AddUser/components/RolesSection";
@@ -38,10 +37,10 @@ export default function AddUser() {
   }, [dispatch]);
   return (
     <div
-      className={`p-8 bg-[#f5ede0] min-h-screen ${lang === "ar" ? "rtl" : "ltr"}`}
+      className={`p-8 bg-surface-container min-h-screen ${lang === "ar" ? "rtl" : "ltr"}`}
     >
       {" "}
-      <h2 className="text-[32px] font-bold mb-8 text-[#1f1b14]">
+      <h2 className="text-[32px] font-bold mb-8 text-on-surface-variant">
         {t("addNewSystemUser")}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -52,7 +51,6 @@ export default function AddUser() {
           errors={errors}
           t={t}
         />
-
         <EmploymentSection
           formData={formData}
           setFormData={setFormData}
@@ -61,16 +59,14 @@ export default function AddUser() {
           handleInputChange={handleInputChange} // تمرير الدالة
           clearError={clearError}
         />
-
         <RolesSection
-          roles={roles}
-          formData={formData}
+          roles={roles.map((r) => ({ ...r, id: Number(r.id) }))}
+          formData={formData} // تأكدي أن هذا السطر موجود
           toggleRole={toggleRole}
           errors={errors}
           t={t}
           clearError={clearError}
         />
-
         <button
           type="submit"
           disabled={isLoading}
@@ -78,7 +74,7 @@ export default function AddUser() {
     ${
       isLoading
         ? "bg-[#d0c6b0] cursor-not-allowed opacity-70"
-        : "bg-[#fad564] hover:bg-[#e6c25a] text-[#4d4636]"
+        : "bg-primary-container hover:bg-[#e6c25a] text-on-surface-variant"
     }`}
         >
           {isLoading ? (

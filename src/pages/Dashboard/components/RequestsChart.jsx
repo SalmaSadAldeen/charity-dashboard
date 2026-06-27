@@ -14,7 +14,7 @@ export default function RequestsChart({ t, dataFromBackend }) {
   // القسم الخامس (المشاريع) سيقفل الدائرة تلقائياً من نهاية الرابع وحتى 100%
 
   return (
-    <div className="bg-white p-8 rounded-3xl border border-[#d0c6b0] shadow-sm flex flex-col items-center">
+    <div className="bg-white p-8 rounded-3xl border border-border shadow-sm flex flex-col items-center">
       <h4 className="font-bold text-lg mb-6 w-full text-center">
         {t("incomingRequests")}
       </h4>
@@ -37,7 +37,7 @@ export default function RequestsChart({ t, dataFromBackend }) {
           {/* الحفرة البيضاء في المنتصف لعمل تأثير الـ Donut */}
           <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center z-10">
             <div className="text-center">
-              <span className="text-3xl font-bold block text-[#1f1b14]">
+              <span className="text-3xl font-bold block text-on-surface-variant">
                 {dataFromBackend?.total || 0}
               </span>
               <span className="text-xs text-on-surface-variant">
@@ -53,8 +53,12 @@ export default function RequestsChart({ t, dataFromBackend }) {
         {[
           { label: "edu", color: "bg-[#e0ea88]", val: `${eduPercent}%` },
           { label: "med", color: "bg-[#3b674c]", val: `${medPercent}%` },
-          { label: "food", color: "bg-[#fad564]", val: `${foodPercent}%` },
-          { label: "housing", color: "bg-[#735c00]", val: `${houPercent}%` },
+          {
+            label: "food",
+            color: "bg-primary-container",
+            val: `${foodPercent}%`,
+          },
+          { label: "housing", color: "bg-primary", val: `${houPercent}%` },
           { label: "projects", color: "bg-[#c29900]", val: `${projPercent}%` },
         ].map((item, i) => (
           <div key={i} className="flex justify-between items-center">

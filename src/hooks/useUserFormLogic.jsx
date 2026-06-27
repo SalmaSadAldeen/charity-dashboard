@@ -1,146 +1,153 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "@/hooks/useForm";
 import toast from "react-hot-toast";
-import { addEmployee, updateEmployee } from "@/store/index"; // تأكدي من المسار الصحيح
-import { useEffect } from "react";
+import { addEmployee, updateEmployee } from "@/store/index";
+import { useEffect, useState } from "react"; // أضفنا useState
 import { API } from "@/services/adminService";
-export const useUserFormLogic = (t, initialData = null) => {
+
+export const useUserFormLogic = (t, initialData = null, onClose) => {
   const dispatch = useDispatch();
-  // استنتاج هل نحن في حالة تعديل أم إضافة
 
+  // حالة التحميل الخاصة بعملية الحفظ (لضمان دقة الزر)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // حالة الـ status العامة للـ Store (لأي عمليات أخرى)
   const { status } = useSelector((state) => state.employees);
-  const isLoading = status === "loading";
-  const isEdit = !!initialData;
 
+  const isEdit = !!initialData;
   const employeeId = initialData?.id;
+
   const validateEmployee = (data) => {
     let errors = {};
-
-    // 1. التحقق من الأسماء
     if (!data.firstName || !data.firstName.trim())
       errors.firstName = t("firstNameIsRequired");
     if (!data.lastName || !data.lastName.trim())
       errors.lastName = t("lastNameIsRequired");
-
-    // 2. التحقق من الإيميل
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!data.email || !emailRegex.test(data.email))
       errors.email = t("invalidEmail");
-
-    // 3. التحقق من رقم الهاتف
     if (!data.number || data.number.length < 9)
       errors.number = t("phoneMustBe9Digits");
-
-    // 4. التحقق من الجنس
     if (!data.gender) errors.gender = t("genderIsRequired");
-
-    // 5. التحقق من تاريخ الميلاد
     if (!data.dateOfBirth) errors.dateOfBirth = t("dateIsRequired");
-
-    // 6. التحقق من الأدوار (لازم يختار واحد على الأقل)
     if (!data.roleIds || data.roleIds.length === 0)
       errors.roleIds = t("selectAtLeastOneRole");
-
-    // 7. التحقق من الدولة (الرمز والاسم)
     if (!data.countryCode || !data.countryCode.trim())
       errors.countryCode = t("countryCodeRequired");
     if (!data.countryName || !data.countryName.trim())
       errors.countryName = t("countryNameRequired");
-
-    // 8. التحقق من الصورة الشخصية
     if (!data.personalPhoto)
       errors.personalPhoto = t("personalPhotoIsRequired");
-
     return errors;
   };
-  // في useUserFormLogic.js - تأكدي أن الأسماء هي نفسها:
+
   const {
     formData,
     setFormData,
     handleInputChange,
     errors,
-    validateForm, // هذه الدالة جاهزة الآن
+    validateForm,
     clearError,
   } = useForm(
     {
       firstName: "",
-      lastName: "", // تأكدي أن الـ input name في الـ Component هو "lastName"
+      lastName: "",
       email: "",
       number: "",
       countryCode: "",
-      countryName: "", // تأكدي أن الـ input name في الـ Component هو "countryName"
+      countryName: "",
       gender: "",
       dateOfBirth: "",
       personalPhoto: null,
-      roleIds: [], // هنا الاسم roleIds
+      roleIds: [],
     },
     validateEmployee,
-  );
-
+  ); // داخل useUserFormLogic.jsx
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
-    }
-  }, [initialData, setFormData]);
+      // 1. هنا نتحقق: هل البيانات التي في الـ Form حالياً (formData)
+      // هي نفسها التي وصلت من initialData؟
+      // إذا كانت متطابقة، لا داعي لإعادة التحديث.
+      if (
+        formData.firstName === initialData.firstName &&
+        formData.email === initialData.email
+      ) {
+        return;
+      }
 
+      // 2. إذا لم تكن متطابقة، نقوم بالتحديث (Set)
+      setFormData({
+        firstName: initialData.firstName || "",
+        lastName: initialData.lastName || "",
+        email: initialData.email || "",
+        number: initialData.number || "",
+        countryCode: initialData.countryCode || "",
+        countryName: initialData.countryName || "",
+        gender: initialData.gender || "",
+        dateOfBirth: initialData.dateOfBirth || "",
+        personalPhoto: initialData.personalPhoto || null,
+        // في useUserFormLogic.jsx
+        roleIds: initialData.roleIds || [], // استخدمي المفتاح المباشر
+      });
+    }
+  }, [initialData]); // تأكدي أنها تبقى هكذا، ولا تضعي formData في المصفوفة
   const toggleRole = (roleId) => {
+    const idAsNumber = Number(roleId); // تأكيد أننا نتعامل مع رقم
     setFormData((prev) => ({
       ...prev,
-      roleIds: prev.roleIds.includes(roleId)
-        ? prev.roleIds.filter((id) => id !== roleId)
-        : [...prev.roleIds, roleId],
+      roleIds: prev.roleIds.includes(idAsNumber)
+        ? prev.roleIds.filter((id) => id !== idAsNumber)
+        : [...prev.roleIds, idAsNumber],
     }));
     clearError("roleIds");
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
+    setIsSubmitting(true);
     try {
-      let photoUrl = formData.personalPhoto; // القيمة الافتراضية
+      const formDataToSend = new FormData();
 
-      // إذا كان المختار "ملف" وليس رابطاً، يجب رفعه أولاً
+      // إضافة البيانات النصية
+      formDataToSend.append("firstName", formData.firstName);
+      formDataToSend.append("lastName", formData.lastName);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("number", formData.number);
+      formDataToSend.append("gender", formData.gender.toUpperCase());
+      formDataToSend.append("dateOfBirth", formData.dateOfBirth);
+      formDataToSend.append("countryCode", formData.countryCode);
+      formDataToSend.append("countryName", formData.countryName);
+
+      // التعديل المهم هنا: دمج الأدوار في نص واحد مفصول بفاصلة (مثل: "1,2")
+      // هذا هو التنسيق الذي قبله الـ Curl الناجح
+      formDataToSend.append("roleIds", formData.roleIds.join(","));
+      // أضيفي هذا الكود قبل الإرسال مباشرة لترين ما الذي يتم إرساله
+      console.log("البيانات المرسلة للباك إند:");
+      for (let pair of formDataToSend.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+      // إضافة الصورة
       if (formData.personalPhoto instanceof File) {
-        const formDataFile = new FormData();
-        formDataFile.append("file", formData.personalPhoto);
-
-        // طلب رفع الصورة للسيرفر
-        const uploadResponse = await API.post(
-          "/employee/upload",
-          formDataFile,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          },
-        );
-        photoUrl = uploadResponse.data.url; // الحصول على الرابط من السيرفر
+        formDataToSend.append("personalPhoto", formData.personalPhoto);
       }
 
-      // الآن نجهز البيانات لإرسالها
-      const dataToSend = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        number: formData.number,
-        gender: formData.gender.toUpperCase(),
-        dateOfBirth: formData.dateOfBirth,
-        countryCode: formData.countryCode,
-        countryName: formData.countryName,
-        personalPhoto: photoUrl, // هنا الرابط النصي الذي استلمناه
-        roleIds: formData.roleIds.map(Number),
-      };
-
+      // الإرسال
       if (isEdit) {
         await dispatch(
-          updateEmployee({ id: employeeId, data: dataToSend }),
+          updateEmployee({ id: employeeId, data: formDataToSend }),
         ).unwrap();
         toast.success(t("userUpdatedSuccessfully"));
       } else {
-        // إذا كان إضافة
-        await dispatch(addEmployee(dataToSend)).unwrap();
+        await dispatch(addEmployee(formDataToSend)).unwrap();
         toast.success(t("userAddedSuccessfully"));
       }
+      if (onClose) onClose();
     } catch (error) {
       console.error("خطأ:", error);
       toast.error(t("errorOccurred"));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -151,7 +158,7 @@ export const useUserFormLogic = (t, initialData = null) => {
     errors,
     toggleRole,
     handleSubmit,
-    isLoading,
+    isLoading: isSubmitting, // نرسل حالة الحفظ للواجهة
     clearError,
     isEdit,
   };

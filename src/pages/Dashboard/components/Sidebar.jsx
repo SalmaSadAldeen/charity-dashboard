@@ -1,11 +1,10 @@
 import { useLayout } from "../../../hooks/useLayout";
-import { useSelector } from "react-redux";
-import { translations } from "../../../context/translations";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Sidebar() {
   const { currentTab, changeTab } = useLayout();
-  const lang = useSelector((state) => state.language.lang);
-  const t = (key) => translations[lang][key] || key;
+  const { t, lang } = useTranslation();
+
   const isRtl = lang === "ar";
 
   const menuItems = {

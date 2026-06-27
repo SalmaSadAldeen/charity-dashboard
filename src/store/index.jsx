@@ -15,6 +15,7 @@ export const {
   fetchItems: fetchEmployees,
   deleteItem: deleteEmployee,
   updateItem: updateEmployee,
+  fetchItemById: fetchEmployeeById, // أضيفي هذا السطر
 } = employees.actions;
 
 export const {

@@ -23,10 +23,16 @@ API.interceptors.request.use(
 export { API }; // نحتاجها في ملف useLogin
 export const adminService = {
   // الموظفين والأدوار
-  getEmployees: (page = 1, limit = 10) =>
+  getEmployees: (page, limit) =>
     API.get(`/employee?page=${page}&limit=${limit}`),
-
-  addEmployee: (data) => API.post("/employee", data, {}),
+  getOneEmployee: (id) => API.get(`/employee/${id}`),
+  // في adminService.jsx
+  addEmployee: (data) =>
+    API.post("/employee", data, {
+      headers: {
+        "Content-Type": "multipart/form-data", // جربي إضافتها هنا يدوياً
+      },
+    }),
   deleteEmployee: (id) => API.delete(`/employee/${id}`),
   updateEmployee: (id, data) => API.patch(`/employee/${id}`, data),
 
@@ -38,5 +44,5 @@ export const adminService = {
 
   getRequestsCharts: () => API.get(`/admin/dashboard/charts/requests`),
   getRoles: () => API.get("role"),
-  uploadImage: (formData) => API.post("/employee/upload", formData),
+  // uploadImage: (formData) => API.post("/employee/upload", formData),
 };

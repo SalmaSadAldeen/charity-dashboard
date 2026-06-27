@@ -32,7 +32,7 @@ export default function DashboardLayout() {
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <Topbar />
         {/* اجعلي الـ padding هنا 0 لأن الـ Dashboard يحتوي على p-8 الخاص به */}
-        <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
+        <main className="flex-1 w-full overflow-y-auto overflow-x-hidden">
           {" "}
           <Outlet />
         </main>

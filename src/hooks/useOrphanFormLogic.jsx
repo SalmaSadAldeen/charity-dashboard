@@ -10,14 +10,14 @@ export const useOrphanFormLogic = (t) => {
 
   const validateOrphan = (data) => {
     let errors = {};
-    if (!data.first_name?.trim()) errors.first_name = t("firstNameIsRequired");
-    if (!data.last_name?.trim()) errors.last_name = t("lastNameIsRequired");
+    if (!data.firstName?.trim()) errors.firstName = t("firstNameIsRequired");
+    if (!data.lastName?.trim()) errors.lastName = t("lastNameIsRequired");
     if (!data.father_name?.trim())
       errors.father_name = t("fatherNameIsRequired");
     if (!data.mother_name?.trim())
       errors.mother_name = t("motherNameIsRequired");
     if (!data.gender) errors.gender = t("genderIsRequired");
-    if (!data.date_of_birth) errors.date_of_birth = t("dateIsRequired");
+    if (!data.dateOfBirth) errors.dateOfBirth = t("dateIsRequired");
     if (!data.class?.trim()) errors.class = t("classIsRequired");
     if (!data.Guardian_name?.trim())
       errors.Guardian_name = t("guardianNameRequired");
@@ -34,12 +34,12 @@ export const useOrphanFormLogic = (t) => {
     validateForm,
   } = useForm(
     {
-      first_name: "",
-      last_name: "",
+      firstName: "",
+      lastName: "",
       father_name: "",
       mother_name: "",
       gender: "",
-      date_of_birth: "",
+      dateOfBirth: "",
       class: "",
       Guardian_name: "",
       How_brother_and_sister_number: 0,
@@ -73,12 +73,12 @@ export const useOrphanFormLogic = (t) => {
 
       // تصفير النموذج
       setFormData({
-        first_name: "",
-        last_name: "",
+        firstName: "",
+        lastName: "",
         father_name: "",
         mother_name: "",
         gender: "",
-        date_of_birth: "",
+        dateOfBirth: "",
         class: "",
         Guardian_name: "",
         How_brother_and_sister_number: 0,

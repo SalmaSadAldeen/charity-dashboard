@@ -6,7 +6,6 @@ import { store } from "./store";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom"; // 1. أضيفي هذا
 import AppRoutes from "./routes/AppRoutes"; // 2. استدعي ملف المسارات
-import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -14,7 +13,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         {" "}
         {/* 3. غلفي التطبيق بالراوتر */}
-        <AppRoutes /> 4. ضعي المسارات هنا
+        <AppRoutes /> 
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,
