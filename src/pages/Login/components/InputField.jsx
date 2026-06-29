@@ -1,4 +1,4 @@
-import "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const InputField = ({
   label,
@@ -10,16 +10,20 @@ const InputField = ({
   children,
   autoComplete,
 }) => {
+  const { lang } = useTranslation();
+  const isRtl = lang === "ar";
+
   return (
     <div>
-      {/* تعديل لون العنوان ليصبح دافئاً وأكثر وضوحاً بشكل أنيق */}
       <label className="block text-[11px] font-bold text-[#7a7366] tracking-wider uppercase mb-2">
         {label}
       </label>
 
       <div className="relative flex items-center">
-        {/* الأيقونة الجانبية بلون رمادي دافئ متناسق */}
-        <span className="material-symbols-outlined absolute left-3 text-[#b5aea3] text-[20px]">
+        {/* أيقونة القفل (الأيقونة الأساسية) */}
+        <span
+          className={`material-symbols-outlined absolute ${isRtl ? "right-3" : "left-3"} text-[#b5aea3] text-[20px] z-10`}
+        >
           {icon}
         </span>
 
@@ -29,12 +33,19 @@ const InputField = ({
           onChange={onChange}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className="w-full pl-10 pr-10 py-3 bg-white border-2 border-[#e1ded7] rounded-lg text-sm text-[#4a453e] placeholder-[#c4bebc] focus:outline-none focus:border-[#6b6459] transition-colors duration-300 ease-in-out [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
+          // استخدام padding ثابت (10 للأيقونة الأساسية، 12 للعين)
+          className="w-full px-12 py-3 bg-white border-2 border-[#e1ded7] rounded-lg text-sm text-[#4a453e] placeholder-[#c4bebc] focus:outline-none focus:border-[#6b6459] transition-colors duration-300 ease-in-out [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
           required
         />
 
-        {/* زر العين المخصص لباقي الحقول */}
-        {children}
+        {/* تعديل زر العين ليكون في الجهة المعاكسة دائماً */}
+        {children && (
+          <div
+            className={`absolute ${isRtl ? "left-3" : "right-3"} flex items-center z-10`}
+          >
+            {children}
+          </div>
+        )}
       </div>
     </div>
   );

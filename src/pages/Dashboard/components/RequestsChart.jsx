@@ -12,7 +12,7 @@ export default function RequestsChart({ t, dataFromBackend }) {
   const foodEnd = medEnd + foodPercent;
   const houEnd = foodEnd + houPercent;
   // القسم الخامس (المشاريع) سيقفل الدائرة تلقائياً من نهاية الرابع وحتى 100%
-
+  console.log("Data from backend:", dataFromBackend);
   return (
     <div className="bg-white p-8 rounded-3xl border border-border shadow-sm flex flex-col items-center">
       <h4 className="font-bold text-lg mb-6 w-full text-center">
@@ -53,13 +53,9 @@ export default function RequestsChart({ t, dataFromBackend }) {
         {[
           { label: "edu", color: "bg-[#e0ea88]", val: `${eduPercent}%` },
           { label: "med", color: "bg-[#3b674c]", val: `${medPercent}%` },
-          {
-            label: "food",
-            color: "bg-primary-container",
-            val: `${foodPercent}%`,
-          },
-          { label: "housing", color: "bg-primary", val: `${houPercent}%` },
-          { label: "projects", color: "bg-[#c29900]", val: `${projPercent}%` },
+          { label: "food", color: "bg-[#fad564]", val: `${foodPercent}%` }, // تأكدي من لون الخلفية هنا
+          { label: "hou", color: "bg-[#735c00]", val: `${houPercent}%` }, // تم استخدام "hou"
+          { label: "proj", color: "bg-[#c29900]", val: `${projPercent}%` }, // غيرتها لـ proj لتطابق الـ key
         ].map((item, i) => (
           <div key={i} className="flex justify-between items-center">
             <div className="flex items-center gap-2">

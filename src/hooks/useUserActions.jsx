@@ -1,22 +1,27 @@
-import { useDispatch } from "react-redux"; // أضفنا useSelector
+import { useDispatch, useSelector } from "react-redux"; // أضفنا useSelector
 import { deleteEmployee } from "@/store/index"; // تأكدي من المسار الصحيح
 // استيراد كائن الترجمة
 import { useTranslation } from "@/hooks/useTranslation";
 
 import toast from "react-hot-toast";
-export const useEmployeeActions = () => {
+export const useUserActions = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { status } = useSelector((state) => state.employees);
 
-  // إزالة الـ confirm هنا لأننا سنستخدم المودال في الجدول
   const handleDelete = async (id) => {
+    if (status === "loading") return;
     try {
-      await dispatch(deleteEmployee(id)).unwrap();
-      toast.success(t("deletedSuccessfully"));
+      // طلب واحد فقط يكفي
+      const result = await dispatch(deleteEmployee(id)).unwrap();
+      const successMessage = result?.message || t("deletedSuccessfully");
+
+      toast.success(successMessage);
     } catch (error) {
-      toast.error(t("errorOccurred"));
+      const serverMessage = error?.response?.data?.message || error;
+      toast.error(serverMessage || t("errorOccurred"));
     }
   };
 
-  return { handleDelete };
+  return { handleDelete, isLoading: status === "loading" };
 };

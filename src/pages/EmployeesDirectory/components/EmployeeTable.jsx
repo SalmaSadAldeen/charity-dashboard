@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Edit2, Trash2 } from "lucide-react";
-import { useEmployeeActions } from "@/hooks/useUserActions";
+import { useUserActions } from "@/hooks/useUserActions";
 import { useTranslation } from "@/hooks/useTranslation";
 import ConfirmModal from "./ConfirmModal";
 
@@ -10,7 +10,7 @@ export default function EmployeeTable({
   onSelect,
   selectedEmployee,
 }) {
-  const { handleDelete } = useEmployeeActions();
+  const { handleDelete, isLoading } = useUserActions();
   const { t } = useTranslation();
   const [deleteId, setDeleteId] = useState(null);
 
@@ -104,6 +104,7 @@ export default function EmployeeTable({
       </table>
       <ConfirmModal
         isOpen={!!deleteId}
+        disabled={isLoading} // سيتم التعطيل بناءً على حالة الـ Redux
         onConfirm={() => {
           handleDelete(deleteId);
           setDeleteId(null);

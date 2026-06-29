@@ -23,6 +23,7 @@ export default function ConfirmModal({ isOpen, onConfirm, onCancel }) {
           </button>
           <button
             onClick={onConfirm}
+            
             className="px-6 py-2 bg-red-600 text-white rounded-xl"
           >
             {t("confirm")}

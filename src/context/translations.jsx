@@ -13,7 +13,6 @@ export const translations = {
     donors: "Donors Management",
     employees: "Employees Management",
     campaigns: "Campaigns & Projects",
-    audit: "Audit & Security Logs",
     profile: "My Profile",
     dashboardTitle: "Global Association Analytics",
     dashboardSubtitle:
@@ -32,7 +31,19 @@ export const translations = {
     edu: "Educational",
     fin: "Financial",
     med: "Medical",
+    food: "Food",
+    hou: "Housing",
+    proj: "Projects",
     search: "Search...",
+
+    // --- Login Page ---
+    email: "Email Address",
+    securePassword: "Secure Password",
+    keepMeLoggedIn: "Keep me logged in",
+    accessing: "Accessing...",
+    signInAccess: "Sign In & Access Dashboard",
+    loginFooterNote:
+      "Access Restricted. For password retrieval or account inquiries, please contact the System Super Administrator directly.",
 
     // --- Users (Add/Edit) ---
     addNewSystemUser: "Add New System User",
@@ -41,11 +52,10 @@ export const translations = {
     lastName: "Last Name",
     sarah: "e.g. Sarah",
     alFahad: "e.g. Al-Fahad",
-    email: "email",
     countryCode: "Country Code",
     phoneNumber: "Phone Number",
     countryName: "Country Name",
-    saudiArabia: "Saudi Arabia",
+    syria: "Syria",
     gender: "Gender",
     selectGender: "Select Gender",
     male: "Male",
@@ -57,20 +67,24 @@ export const translations = {
     accessLevel: "Access Level & Role Selection",
     confirmAndSave: "Confirm & Save System User",
     saving: "Saving",
+    saveChanges: "Save Changes",
+    editProfile: "Edit Profile",
+    youAreEditingEmployeeInfo: "You are editing employee info",
+    note: "Note",
 
     // --- Table & Profiles ---
     employee: "Employee",
     jobRole: "Job Role",
     actions: "Actions",
     noRole: "No Role",
-    clickToViewDetails: "Click to view details",
+    view_profile: "View Profile",
     deleteConfirmTitle: "Are you sure?",
     deleteConfirmMessage:
       "The employee will be deleted permanently, are you sure you want to continue?",
     cancel: "Cancel",
     confirm: "Confirm",
     birthDate: "Birth Date",
-    grantedRoles: "Granted ROLS",
+    grantedRoles: "Granted Roles",
 
     // --- Validation ---
     selectAtLeastOneRole: "Please select at least one role",
@@ -82,7 +96,6 @@ export const translations = {
     dateIsRequired: "Date of birth is required",
     personalPhotoIsRequired: "Personal photo is required",
     errorOccurred: "An error occurred, please try again",
-
     employeesRecord: "Employees Directory",
     addEmployee: "Add Employee",
     loading: "Loading data...",
@@ -90,9 +103,14 @@ export const translations = {
     from: "of",
     totalDonors: "Total Donors",
     totalBeneficiaries: "Total Beneficiaries",
-
     joinedAt: "Joined At",
     userType: "Account Type",
+    closeDetails: "Close details",
+    currentPhoto: "Current Photo",
+    noChangesDetected: "No changes detected",
+    charityOSAccess: "CharityOS - Administrative Access",
+    authorizedCredentialsNote:
+      "Please enter your authorized credentials to secure your session.",
   },
 
   ar: {
@@ -109,7 +127,6 @@ export const translations = {
     donors: "إدارة شؤون المتبرعين",
     employees: "إدارة شؤون الموظفين",
     campaigns: "إدارة الحملات والمشاريع",
-    audit: "سجلات الرقابة والأمان Audit",
     profile: "الملف الشخصي (البروفايل)",
     dashboardTitle: "تحليلات الجمعية العالمية",
     dashboardSubtitle:
@@ -128,7 +145,19 @@ export const translations = {
     edu: "تعليمية",
     fin: "مالية",
     med: "طبية",
+    food: "غذائي",
+    hou: "سكني",
+    proj: "مشاريع",
     search: "بحث...",
+
+    // --- Login Page ---
+    email: "البريد الإلكتروني",
+    securePassword: "كلمة المرور الآمنة",
+    keepMeLoggedIn: "ابقني مسجل الدخول",
+    accessing: "جاري الدخول...",
+    signInAccess: "تسجيل الدخول والوصول للوحة التحكم",
+    loginFooterNote:
+      "الوصول مقيد. لاستعادة كلمة المرور أو الاستفسار عن الحساب، يرجى التواصل مع مدير النظام مباشرة.",
 
     // --- Users (Add/Edit) ---
     addNewSystemUser: "إضافة مستخدم نظام جديد",
@@ -137,11 +166,10 @@ export const translations = {
     lastName: "اسم العائلة",
     sarah: "مثال: سارة",
     alFahad: "مثال: الفهد",
-    email: "البريد الإلكتروني",
     countryCode: "رمز الدولة",
     phoneNumber: "رقم الهاتف",
     countryName: "اسم الدولة",
-    saudiArabia: "المملكة العربية السعودية",
+    syria: "سوريا",
     gender: "الجنس",
     selectGender: "اختر الجنس",
     male: "ذكر",
@@ -159,7 +187,7 @@ export const translations = {
     jobRole: "الدور الوظيفي",
     actions: "الإجراءات",
     noRole: "بدون دور",
-    clickToViewDetails: "اضغط لعرض التفاصيل",
+    view_profile: "لعرض التفاصيل",
     deleteConfirmTitle: "هل أنت متأكد؟",
     deleteConfirmMessage: "سيتم حذف الموظف نهائياً، هل تريد المتابعة؟",
     cancel: "إلغاء",
@@ -177,7 +205,6 @@ export const translations = {
     dateIsRequired: "تاريخ الميلاد مطلوب",
     personalPhotoIsRequired: "الصورة الشخصية مطلوبة",
     errorOccurred: "حدث خطأ ما، يرجى المحاولة لاحقاً",
-
     employeesRecord: "سجل الموظفين",
     addEmployee: "إضافة موظف",
     loading: "جاري تحميل البيانات...",
@@ -185,8 +212,17 @@ export const translations = {
     from: "من",
     totalDonors: "إجمالي المتبرعين",
     totalBeneficiaries: "إجمالي المستفيدين",
-
     joinedAt: "تاريخ الانضمام",
     userType: "نوع الحساب",
+    closeDetails: "إغلاق التفاصيل",
+    saveChanges: "حفظ التعديلات",
+    editProfile: "تعديل الملف",
+    youAreEditingEmployeeInfo: "أنت تعدل معلومات الموظف",
+    note: "ملاحظة",
+    currentPhoto: "الصورة الحالية",
+    noChangesDetected: "لا يوجد تغيير",
+    charityOSAccess: "نظام CharityOS - وصول إداري",
+    authorizedCredentialsNote:
+      "يرجى إدخال بيانات الاعتماد المعتمدة لتأمين جلستك.",
   },
 };

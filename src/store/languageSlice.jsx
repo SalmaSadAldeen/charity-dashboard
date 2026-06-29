@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const languageSlice = createSlice({
   name: "language",
-  initialState: { lang: "en" }, // اللغة الافتراضية
+  initialState: {
+    lang: localStorage.getItem("preferredLang") || "ar", // ابدئي باللغة المحفوظة أو العربية
+  }, // اللغة الافتراضية
   reducers: {
     toggleLanguage: (state) => {
       // تبديل القيمة فقط
@@ -10,6 +12,7 @@ const languageSlice = createSlice({
 
       // تحديث الاتجاه في المتصفح فوراً
       document.documentElement.dir = state.lang === "ar" ? "rtl" : "ltr";
+      localStorage.setItem("preferredLang", state.lang);
     },
   },
 });

@@ -4,26 +4,26 @@ export const useForm = (initialState, validate) => {
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
 
-  // تعديل ذكي: الدالة الجديدة بتقبل تحديث جزئي (Merge) بدل ما تمسح كلشي
   const updateFormData = (newData) => {
-    setFormData((prev) => {
-      // إذا كان newData دالة (مثل التحديث التقليدي)، نفذها. إذا كائن، ادمجه
-      const updatedData =
-        typeof newData === "function" ? newData(prev) : { ...prev, ...newData };
-      return updatedData;
-    });
+    setFormData((prev) => ({
+      ...prev,
+      ...(typeof newData === "function" ? newData(prev) : newData),
+    }));
   };
 
   const handleInputChange = (e) => {
     const { name, value, files, type } = e.target;
 
-    // إذا كان ملف، خذ الملف، وإلا خذ النص
-    const newValue =
-      type === "file" ? (files && files[0] ? files[0] : null) : value;
+    // حماية حقل رقم الهاتف: أرقام فقط وبحد أقصى 10 خانات
+    let newValue;
+    if (name === "number") {
+      newValue = value.replace(/[^0-9]/g, "").slice(0, 10);
+    } else {
+      newValue = type === "file" ? (files ? files[0] : null) : value;
+    }
 
     updateFormData({ [name]: newValue });
 
-    // مسح الخطأ عند التعديل (أضفتلك حذف آمن)
     if (errors[name]) {
       setErrors((prev) => {
         const { [name]: _, ...rest } = prev;
@@ -47,7 +47,7 @@ export const useForm = (initialState, validate) => {
 
   return {
     formData,
-    setFormData: updateFormData, // رجعنا الدالة المدمجة
+    setFormData: updateFormData,
     handleInputChange,
     errors,
     setErrors,

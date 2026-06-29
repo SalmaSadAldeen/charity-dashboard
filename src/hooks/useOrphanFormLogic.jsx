@@ -69,8 +69,15 @@ export const useOrphanFormLogic = (t) => {
     setIsLoading(true);
     try {
       await dispatch(addOrphan(dataToSend)).unwrap();
-      toast.success(t("orphanAddedSuccessfully"));
-
+      // بدلاً من toast.info(...)
+      toast(t("noChangesDetected"), {
+        icon: "ℹ️",
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
       // تصفير النموذج
       setFormData({
         firstName: "",

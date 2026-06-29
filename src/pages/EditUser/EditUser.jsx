@@ -1,20 +1,26 @@
-import { useSelector } from "react-redux";
-import { useMemo } from "react";
 import IdentitySection from "@/pages/AddUser/components/IdentitySection";
 import EmploymentSection from "@/pages/AddUser/components/EmploymentSection";
 import RolesSection from "@/pages/AddUser/components/RolesSection";
 import { useUserFormLogic } from "@/hooks/useUserFormLogic";
 import { useTranslation } from "@/hooks/useTranslation";
+import { fetchRoles } from "@/store/index";
+import { useSelector, useDispatch } from "react-redux"; // السطر الأهم
+import { useMemo, useEffect } from "react";
+// ... باقي الاستيرادات
 
 export default function EditUser({ employeeId, onClose }) {
   const { t, lang } = useTranslation();
-
+  // const dispatch = useDispatch(); // أضيفي هذا
   const roles = useSelector((state) => state.roles.items || []);
   const employee = useSelector((state) =>
     state.employees.items.find((e) => e.id === employeeId),
   );
+  // useEffect(() => {
+  //   dispatch(fetchRoles());
+  // }, [lang, dispatch]);
 
   const initialData = useMemo(() => {
+    //console.log("Employee:", employee);
     if (!employee) return null;
     return {
       ...employee,
@@ -23,8 +29,8 @@ export default function EditUser({ employeeId, onClose }) {
       lastName: employee.lastName || "",
       email: employee.email || "",
       number: employee.number || "",
-      countryCode: employee.countryCode || "",
-      countryName: employee.countryName || "",
+      // countryCode: employee.countryCode || "",
+      // countryName: employee.countryName || "",
       gender: employee.gender || "",
       dateOfBirth: employee.employee?.dateOfBirth
         ? employee.employee.dateOfBirth.split("T")[0]
@@ -92,11 +98,12 @@ export default function EditUser({ employeeId, onClose }) {
             clearError={clearError}
           />
           <RolesSection
-            roles={roles.map((r) => ({ ...r, id: Number(r.id) }))}
+            roles={roles}
             formData={formData}
             toggleRole={toggleRole}
             errors={errors}
             t={t}
+            lang={lang} // أضيفي هذا السطر ليتم تمرير اللغة
             clearError={clearError}
           />
         </form>

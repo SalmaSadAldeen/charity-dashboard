@@ -10,7 +10,7 @@ export default function AddUser() {
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
   const roles = useSelector((state) => state.roles.items);
-  console.log("Roles from Redux:", roles);
+  //console.log("Roles from Redux:", roles);
   // استدعاء كل شيء من الـ Hook المنفصل
   const {
     formData,
@@ -24,15 +24,14 @@ export default function AddUser() {
   } = useUserFormLogic(t);
   // في AddUser.jsx
   useEffect(() => {
-    console.log("AddUser: useEffect بدأ التنفيذ...");
+    //console.log("AddUser: useEffect بدأ التنفيذ...");
     const token = localStorage.getItem("token");
 
     if (token) {
-      console.log("AddUser: التوكن موجود، سأقوم الآن بطلب الأدوار...");
-      console.log("AddUser: التوكن موجود، جاري طلب الأدوار...");
-      dispatch(fetchRoles()); // تأكدي أن fetchRoles مستوردة من store.js
+      //console.log("AddUser: التوكن موجود، سأقوم الآن بطلب الأدوار...");
+      // dispatch(fetchRoles()); // تأكدي أن fetchRoles مستوردة من store.js
     } else {
-      console.warn("AddUser: لا يوجد توكن!");
+      //console.warn("AddUser: لا يوجد توكن!");
     }
   }, [dispatch]);
   return (
@@ -60,11 +59,12 @@ export default function AddUser() {
           clearError={clearError}
         />
         <RolesSection
-          roles={roles.map((r) => ({ ...r, id: Number(r.id) }))}
+          roles={roles}
           formData={formData} // تأكدي أن هذا السطر موجود
           toggleRole={toggleRole}
           errors={errors}
           t={t}
+          lang={lang} // أضيفي هذا السطر ليتم تمرير اللغة
           clearError={clearError}
         />
         <button

@@ -50,8 +50,8 @@ export default function EmployeeProfile({ employee }) {
             />
             <DetailRow
               icon={<Globe size={18} />}
-              label={t("country")}
-              value={employee.countryName}
+              label={t("countryName")}
+              value={t("syria")}
             />
             <DetailRow
               icon={<Calendar size={18} />}
@@ -103,7 +103,7 @@ export default function EmployeeProfile({ employee }) {
 
 // تعديل التنسيق ليكون متساوياً تماماً
 const DetailRow = ({ icon, label, value }) => (
-  <div className="flex items-center gap-4 text-on-surface-variant">
+  <div className="flex items-center gap-2 text-on-surface-variant">
     <div className="text-primary w-6 flex justify-center">{icon}</div>
     <span className="text-sm font-bold text-gray-400 w-28 text-start flex-shrink-0">
       {label}:

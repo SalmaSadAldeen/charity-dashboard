@@ -2,66 +2,95 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { adminService } from "@/services/adminService";
 
 export const createGenericActions = (resource) => ({
-  fetchItems: createAsyncThunk(`${resource}/fetchAll`, async (params = {}) => {
-    // 1. حالة الأدوار: لا تحتاج بارامترات (أو كما يطلب الـ API)
-    if (resource === "roles") {
-      return (await adminService.getRoles()).data;
-    }
+  fetchItems: createAsyncThunk(
+    `${resource}/fetchAll`,
+    async (params = {}, { rejectWithValue }) => {
+      try {
+        if (resource === "roles") return await adminService.getRoles();
+        if (resource === "employees")
+          return (
+            await adminService.getEmployees(
+              params.page || 1,
+              params.limit || 10,
+            )
+          ).data;
+        if (resource === "orphans")
+          return (
+            await adminService.getOrphans(params.page || 1, params.limit || 10)
+          ).data;
+        throw new Error(`Fetch action not defined for ${resource}`);
+      } catch (err) {
+        return rejectWithValue(err.response?.data?.message || err.message);
+      }
+    },
+  ),
 
-    // 2. حالة الموظفين: نمرر الـ params (page, limit)
-    if (resource === "employees") {
-      return (
-        await adminService.getEmployees(params.page || 1, params.limit || 10)
-      ).data;
-    }
+  fetchItemById: createAsyncThunk(
+    `${resource}/fetchOne`,
+    async (id, { rejectWithValue }) => {
+      try {
+        if (resource === "employees")
+          return (await adminService.getOneEmployee(id)).data;
+        throw new Error(`Fetch single action not defined for ${resource}`);
+      } catch (err) {
+        return rejectWithValue(err.response?.data?.message || err.message);
+      }
+    },
+  ),
 
-    // 3. حالة الأيتام: نمرر الـ params إذا كانت مدعومة
-    if (resource === "orphans") {
-      // افترضي أن لديك دالة getOrphans في الـ adminService
-      return (
-        await adminService.getOrphans(params.page || 1, params.limit || 10)
-      ).data;
-    }
+  addItem: createAsyncThunk(
+    `${resource}/add`,
+    async (data, { rejectWithValue }) => {
+      try {
+        let response;
+        if (resource === "employees")
+          response = await adminService.addEmployee(data);
+        else if (resource === "orphans")
+          response = await adminService.addOrphan(data);
+        else throw new Error(`Add action not defined for ${resource}`);
+        return response.data;
+      } catch (err) {
+        return rejectWithValue(err.response?.data?.message || err.message);
+      }
+    },
+  ),
 
-    throw new Error(`Fetch action not defined for ${resource}`);
-  }),
+  // في ملف الـ slice، عدلي دالة deleteItem:
+  deleteItem: createAsyncThunk(
+    `${resource}/delete`,
+    async (id, { rejectWithValue }) => {
+      try {
+        let response;
+        if (resource === "employees")
+          response = await adminService.deleteEmployee(id);
+        else if (resource === "orphans")
+          response = await adminService.deleteOrphan(id);
+        else throw new Error(`Delete action not defined for ${resource}`);
 
-  // أضيفي هذا داخل الدالة createGenericActions
-  fetchItemById: createAsyncThunk(`${resource}/fetchOne`, async (id) => {
-    if (resource === "employees") {
-      return (await adminService.getOneEmployee(id)).data;
-    }
-    // يمكنك إضافة حالات أخرى للأيتام لاحقاً
-    throw new Error(`Fetch single action not defined for ${resource}`);
-  }),
+        // هنا التعديل: نرجع الاستجابة كاملة (response.data) بدلاً من id فقط
+        return { id, message: response.data.message };
+      } catch (err) {
+        return rejectWithValue(err.response?.data?.message || err.message);
+      }
+    },
+  ),
 
-  // 1. إضافة عنصر جديد (addItem)
-  addItem: createAsyncThunk(`${resource}/add`, async (data) => {
-    let response;
-    if (resource === "employees")
-      response = await adminService.addEmployee(data);
-    else if (resource === "orphans")
-      response = await adminService.addOrphan(data);
-    else throw new Error(`Add action not defined for ${resource}`);
-    return response.data;
-  }),
-
-  deleteItem: createAsyncThunk(`${resource}/delete`, async (id) => {
-    if (resource === "employees") await adminService.deleteEmployee(id);
-    else if (resource === "orphans") await adminService.deleteOrphan(id);
-    else throw new Error(`Delete action not defined for ${resource}`);
-    return id;
-  }),
-
-  updateItem: createAsyncThunk(`${resource}/update`, async ({ id, data }) => {
-    let response;
-    if (resource === "employees")
-      response = await adminService.updateEmployee(id, data);
-    else if (resource === "orphans")
-      response = await adminService.updateOrphan(id, data);
-    else throw new Error(`Update action not defined for ${resource}`);
-    return response.data;
-  }),
+  updateItem: createAsyncThunk(
+    `${resource}/update`,
+    async ({ id, data }, { rejectWithValue }) => {
+      try {
+        let response;
+        if (resource === "employees")
+          response = await adminService.updateEmployee(id, data);
+        else if (resource === "orphans")
+          response = await adminService.updateOrphan(id, data);
+        else throw new Error(`Update action not defined for ${resource}`);
+        return response.data;
+      } catch (err) {
+        return rejectWithValue(err.response?.data?.message || err.message);
+      }
+    },
+  ),
 });
 
 export const createGenericSlice = (resource) => {
@@ -75,36 +104,55 @@ export const createGenericSlice = (resource) => {
       initialState: {
         items: [],
         status: "idle",
-        selectedEmployee: null, // أضيفي هذا
+        selectedItem: null,
         pagination: { currentPage: 1, lastPage: 1 },
         error: null,
       },
-      reducers: {},
+      reducers: {
+        setSelectedItem: (state, action) => {
+          state.selectedItem = action.payload;
+        },
+        clearSelected: (state) => {
+          state.selectedItem = null;
+        },
+      },
       extraReducers: (builder) => {
         builder
           // --- حالات الجلب ---
           .addCase(fetchItems.pending, (state) => {
             state.status = "loading";
+            state.error = null;
           })
           .addCase(fetchItems.fulfilled, (state, action) => {
-            const payload = action.payload; // payload هنا هو الكائن الذي يحتوي على data و meta
+            const payload = action.payload;
 
-            state.items = payload.data || [];
+            // 1. تحديد البيانات الخام (المصفوفة):
+            // إذا كان الـ payload نفسه مصفوفة نأخذه، وإلا نبحث عن مفتاح 'data'
+            const itemsData = Array.isArray(payload)
+              ? payload
+              : payload?.data || [];
 
-            // تحديث الـ pagination بناءً على الهيكلية المرسلة في الـ JSON الخاص بكِ
-            state.pagination = {
-              currentPage: payload.meta?.page || 1,
-              lastPage: payload.meta?.totalPages || 1,
-              total: payload.meta?.totalCount || 0,
-              hasNextPage: payload.meta?.hasNextPage || false,
-              hasPreviousPage: payload.meta?.hasPreviousPage || false,
-            };
+            // 2. تحويل البيانات (تحويل الـ id إلى رقم):
+            state.items = itemsData.map((item) => ({
+              ...item,
+              id: Number(item.id),
+            }));
+
+            // 3. تحديث الـ pagination (فقط إذا وجد meta في الـ payload):
+            const meta = payload?.meta;
+            if (meta) {
+              state.pagination = {
+                currentPage: meta.page || 1,
+                lastPage: meta.totalPages || 1,
+                total: meta.totalCount || 0,
+              };
+            }
 
             state.status = "succeeded";
           })
           .addCase(fetchItems.rejected, (state, action) => {
             state.status = "failed";
-            state.error = action.error.message;
+            state.error = action.payload;
           })
 
           // --- حالات الحذف ---
@@ -112,57 +160,61 @@ export const createGenericSlice = (resource) => {
             state.status = "loading";
           })
           .addCase(deleteItem.fulfilled, (state, action) => {
+            // بما أننا نرجع {id, message} من الـ Thunk، نستخدم action.payload.id
             state.items = state.items.filter(
-              (item) => item.id !== action.payload,
+              (item) => item.id !== action.payload.id,
             );
+            if (state.selectedItem?.id === action.payload.id)
+              state.selectedItem = null;
             state.status = "succeeded";
           })
           .addCase(deleteItem.rejected, (state, action) => {
             state.status = "failed";
-            state.error = action.error.message;
+            state.error = action.payload;
           })
-          // داخل extraReducers
-          // --- حالات الإضافة (addItem) ---
+
+          // --- حالات الإضافة ---
           .addCase(addItem.pending, (state) => {
-            state.status = "loading"; // المستخدم يرى دائرة تحميل
+            state.status = "loading";
           })
           .addCase(addItem.fulfilled, (state, action) => {
-            state.items.push(action.payload);
+            state.items.push(action.payload.data || action.payload);
             state.status = "succeeded";
           })
           .addCase(addItem.rejected, (state, action) => {
             state.status = "failed";
-            state.error = action.error.message; // المستخدم يرى رسالة خطأ
+            state.error = action.payload;
           })
 
-          // --- حالات التحديث (updateItem) ---
+          // --- حالات التحديث ---
           .addCase(updateItem.pending, (state) => {
             state.status = "loading";
           })
           .addCase(updateItem.fulfilled, (state, action) => {
-            const index = state.items.findIndex(
-              (item) => item.id === action.payload.id,
+            const updatedItem = action.payload.data;
+            state.items = state.items.map((item) =>
+              item.id === updatedItem.id ? updatedItem : item,
             );
-            if (index !== -1) {
-              // التأكد من دمج التعديلات مع الـ roles الجديدة
-              state.items[index] = { ...state.items[index], ...action.payload };
-            }
+            if (state.selectedItem?.id === updatedItem.id)
+              state.selectedItem = updatedItem;
             state.status = "succeeded";
           })
           .addCase(updateItem.rejected, (state, action) => {
             state.status = "failed";
-            state.error = action.error.message;
+            state.error = action.payload;
           })
+
+          // --- حالات الجلب المفرد ---
           .addCase(fetchItemById.pending, (state) => {
             state.status = "loading";
           })
           .addCase(fetchItemById.fulfilled, (state, action) => {
-            state.selectedEmployee = action.payload; // حفظ الموظف المجلوب
+            state.selectedItem = action.payload.data || action.payload;
             state.status = "succeeded";
           })
           .addCase(fetchItemById.rejected, (state, action) => {
             state.status = "failed";
-            state.error = action.error.message;
+            state.error = action.payload;
           });
       },
     }),

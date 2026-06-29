@@ -2,12 +2,14 @@ import { useLayout } from "../../../hooks/useLayout";
 import { useDispatch } from "react-redux";
 import { toggleLanguage } from "../../../store/languageSlice";
 import { useTranslation } from "@/hooks/useTranslation";
-
+import { fetchEmployees, fetchRoles } from "@/store/index";
 export default function TopBar() {
   const { searchQuery, handleSearch } = useLayout();
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
-
+  const handleLangChange = () => {
+    dispatch(toggleLanguage());
+  };
   return (
     <header
       className="h-16 px-8 flex items-center justify-between shadow-lg z-10 backdrop-blur-md"
@@ -34,7 +36,7 @@ export default function TopBar() {
       <div className="flex items-center gap-4">
         {/* زر اللغة */}
         <button
-          onClick={() => dispatch(toggleLanguage())}
+          onClick={handleLangChange} // بدون dispatch() وبدون () => قبلها
           className="w-12 h-10 rounded-2xl font-bold text-xs transition-all duration-300 flex items-center justify-center border border-white/10 bg-white/5 hover:bg-white/10 active:scale-90"
           style={{ color: "#fad564" }} // اللون الخردلي
         >

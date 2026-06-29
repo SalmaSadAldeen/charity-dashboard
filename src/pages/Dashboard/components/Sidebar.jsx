@@ -1,31 +1,65 @@
-import { useLayout } from "../../../hooks/useLayout";
 import { useTranslation } from "@/hooks/useTranslation";
+import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
-  const { currentTab, changeTab } = useLayout();
   const { t, lang } = useTranslation();
-
   const isRtl = lang === "ar";
 
   const menuItems = {
     operational: [
-      { id: "dashboard", name: t("dashboard"), icon: "dashboard" },
-      { id: "requests", name: t("requests"), icon: "volunteer_activism" },
-      { id: "beneficiaries", name: t("beneficiaries"), icon: "groups" },
-      { id: "orphans", name: t("orphans"), icon: "child_care" },
+      {
+        id: "dashboard",
+        name: t("dashboard"),
+        icon: "dashboard",
+        path: "/dashboard",
+      },
+      {
+        id: "requests",
+        name: t("requests"),
+        icon: "volunteer_activism",
+        path: "/dashboard/requests",
+      },
+      {
+        id: "beneficiaries",
+        name: t("beneficiaries"),
+        icon: "groups",
+        path: "/dashboard/beneficiaries",
+      },
+      {
+        id: "orphans",
+        name: t("orphans"),
+        icon: "child_care",
+        path: "/dashboard/orphans",
+      },
     ],
     administrative: [
-      { id: "donors", name: t("donors"), icon: "favorite" },
-      { id: "employees", name: t("employees"), icon: "badge" },
-      { id: "audit", name: t("audit"), icon: "admin_panel_settings" },
+      {
+        id: "donors",
+        name: t("donors"),
+        icon: "favorite",
+        path: "/dashboard/donors",
+      },
+      {
+        id: "employees",
+        name: t("employees"),
+        icon: "badge",
+        path: "/dashboard/employees",
+      },
     ],
-    account: [{ id: "profile", name: t("profile"), icon: "account_circle" }],
+    account: [
+      {
+        id: "profile",
+        name: t("profile"),
+        icon: "account_circle",
+        path: "/dashboard/profile",
+      },
+    ],
   };
 
   return (
     <aside
       className="w-64 min-w-[264px] h-full flex flex-col shadow-2xl select-none font-sans transition-all duration-300"
-      style={{ backgroundColor: "#4d4636" }} // تم تصحيح اللون هنا
+      style={{ backgroundColor: "#4d4636" }}
     >
       <div className="h-24 flex-shrink-0 flex flex-col items-center justify-center border-b border-white/10">
         <span className="text-xl font-bold text-white">
@@ -46,34 +80,28 @@ export default function Sidebar() {
                   ? t("sysControl")
                   : t("account")}
             </p>
-            {items.map((item) => {
-              const isActive = currentTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => changeTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 mb-1 
-    ${
-      isActive
-        ? "bg-white/10 shadow-lg text-white"
-        : "hover:bg-white/5 text-[#e9ebef]"
-    }`}
-                  style={{
-                    borderRight:
-                      isActive && isRtl ? `4px solid #fad564` : "none",
-                    borderLeft:
-                      isActive && !isRtl ? `4px solid #fad564` : "none",
-                  }}
-                >
-                  <span className="material-symbols-outlined text-xl">
-                    {item.icon}
-                  </span>
-                  <span className="flex-1 text-start whitespace-nowrap">
-                    {item.name}
-                  </span>
-                </button>
-              );
-            })}
+            {items.map((item) => (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                end={item.id === "dashboard"}
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 mb-1 
+                  ${isActive ? "bg-white/10 shadow-lg text-white" : "hover:bg-white/5 text-[#e9ebef]"}`
+                }
+                style={({ isActive }) => ({
+                  borderRight: isActive && isRtl ? `4px solid #fad564` : "none",
+                  borderLeft: isActive && !isRtl ? `4px solid #fad564` : "none",
+                })}
+              >
+                <span className="material-symbols-outlined text-xl">
+                  {item.icon}
+                </span>
+                <span className="flex-1 text-start whitespace-nowrap">
+                  {item.name}
+                </span>
+              </NavLink>
+            ))}
           </div>
         ))}
       </div>
@@ -81,9 +109,7 @@ export default function Sidebar() {
       <div className="p-4 border-t border-white/10">
         <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-300 hover:bg-rose-500/10 transition-colors">
           <span
-            className={`material-symbols-outlined text-xl ${
-              isRtl ? "rotate-180" : ""
-            }`}
+            className={`material-symbols-outlined text-xl ${isRtl ? "rotate-180" : ""}`}
           >
             logout
           </span>

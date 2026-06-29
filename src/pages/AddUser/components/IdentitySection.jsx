@@ -11,7 +11,7 @@ export default function IdentitySection({
       <h3 className="font-bold text-lg mb-6 text-on-surface-variant flex items-center gap-2">
         <User size={20} className="text-primary" /> {t("primaryUserIdentity")}
       </h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
         {/* الاسم الأول */}
         <div>
           <label className="block text-sm font-semibold mb-2">
@@ -70,14 +70,14 @@ export default function IdentitySection({
           </label>
           <input
             name="countryCode"
-            value={formData.countryCode}
+            value="+963"
             onChange={handleInputChange}
             className="w-full p-4 border border-border rounded-2xl shadow-inner focus:border-secondary outline-none transition-all"
-            placeholder="+966"
+            // placeholder="+966"
           />
-          {errors.countryCode && (
+          {/* {errors.countryCode && (
             <p className="text-red-500 text-xs mt-1">{errors.countryCode}</p>
-          )}
+          )} */}
         </div>
 
         {/* الهاتف */}
@@ -104,14 +104,14 @@ export default function IdentitySection({
           </label>
           <input
             name="countryName"
-            value={formData.countryName}
+            value={t("syria")}
             onChange={handleInputChange}
             className="w-full p-4 border border-border rounded-2xl shadow-inner focus:border-secondary outline-none transition-all"
-            placeholder={t("saudiArabia")}
+            // placeholder={t("saudiArabia")}
           />
-          {errors.countryName && (
+          {/* {errors.countryName && (
             <p className="text-red-500 text-xs mt-1">{errors.countryName}</p>
-          )}
+          )} */}
         </div>
 
         {/* الجنس */}
@@ -126,8 +126,10 @@ export default function IdentitySection({
             className="w-full p-4 border border-border rounded-2xl shadow-inner focus:border-secondary outline-none transition-all"
           >
             <option value="">{t("selectGender")}</option>
-            <option value="male">{t("male")}</option>
-            <option value="female">{t("female")}</option>
+            <option value="MALE">{t("male")}</option>{" "}
+            {/* لاحظي تغيير القيمة لـ MALE */}
+            <option value="FEMALE">{t("female")}</option>{" "}
+            {/* لاحظي تغيير القيمة لـ FEMALE */}
           </select>
           {errors.gender && (
             <p className="text-red-500 text-xs mt-1">{errors.gender}</p>

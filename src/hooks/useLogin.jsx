@@ -2,27 +2,21 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginSuccess, loginFailure } from "@/store/authSlice";
 import { API } from "@/services/adminService";
-// تأكدي من استيراد الـ API الخاص بكِ
-import { useNavigate } from "react-router-dom"; // 1. الاستيراد
+import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state) => state.auth);
 
+  // تخزين الإيميل فقط ليظهر في حقل الإدخال تلقائياً
   const [email, setEmail] = useState(
     localStorage.getItem("rememberedEmail") || "",
   );
-  const [password, setPassword] = useState(
-    localStorage.getItem("rememberedPassword") || "",
-  );
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(
-    localStorage.getItem("rememberMe") === "true",
-  );
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const toggleRememberMe = () => setRememberMe(!rememberMe);
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -33,24 +27,16 @@ export const useLogin = () => {
       const response = await API.post("/auth/login", { email, password });
       const { accessToken, user } = response.data;
 
-      // 2. تخزين الـ token
+      // 2. تخزين الـ token (أمان: لا تخزني كلمة المرور أبداً)
       localStorage.setItem("token", accessToken);
 
-      // 3. إدارة "تذكرني"
-      if (rememberMe) {
-        localStorage.setItem("rememberedEmail", email);
-        localStorage.setItem("rememberedPassword", password);
-        localStorage.setItem("rememberMe", "true");
-      } else {
-        localStorage.removeItem("rememberedEmail");
-        localStorage.removeItem("rememberedPassword");
-        localStorage.removeItem("rememberMe");
-      }
+      // 3. تخزين الإيميل فقط لتسهيل الدخول القادم
+      localStorage.setItem("rememberedEmail", email);
 
       // 4. تحديث الـ Redux
       dispatch(loginSuccess(user));
 
-      // navigate("/dashboard");
+      // 5. التوجيه للوحة التحكم
       navigate("/dashboard/employees");
     } catch (err) {
       // التعامل مع الأخطاء
@@ -65,11 +51,9 @@ export const useLogin = () => {
     password,
     setPassword,
     showPassword,
-    rememberMe,
     isLoading,
     error,
     togglePasswordVisibility,
-    toggleRememberMe,
     handleLoginSubmit,
   };
 };
