@@ -3,11 +3,14 @@ import IdentitySection from "@/pages/AddUser/components/IdentitySection";
 import EmploymentSection from "@/pages/AddUser/components/EmploymentSection";
 import RolesSection from "@/pages/AddUser/components/RolesSection";
 import { useUserFormLogic } from "@/hooks/useUserFormLogic"; // الملف الجديد
-import { fetchRoles } from "@/store";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useEffect } from "react";
+import { fetchRoles } from "@/store/index";
+import AppButton from "@/pages/Dashboard/components/AppButton";
+import { useNavigate } from "react-router-dom";
 export default function AddUser() {
   const { t, lang } = useTranslation();
+  const navigate = useNavigate(); // 2. عرفي الـ navigate
   const dispatch = useDispatch();
   const roles = useSelector((state) => state.roles.items);
   //console.log("Roles from Redux:", roles);
@@ -21,19 +24,20 @@ export default function AddUser() {
     handleSubmit,
     isLoading,
     clearError,
-  } = useUserFormLogic(t);
+  } = useUserFormLogic(t, null, () => {
+    navigate("/dashboard/employees");
+  }); // ه
   // في AddUser.jsx
-  useEffect(() => {
-    //console.log("AddUser: useEffect بدأ التنفيذ...");
-    const token = localStorage.getItem("token");
 
-    if (token) {
-      //console.log("AddUser: التوكن موجود، سأقوم الآن بطلب الأدوار...");
-      // dispatch(fetchRoles()); // تأكدي أن fetchRoles مستوردة من store.js
-    } else {
-      //console.warn("AddUser: لا يوجد توكن!");
+  // الحارس الذكي: يجلب الأدوار فقط إذا كانت الحالة idle (يعني لم تُجلب بعد)
+  const rolesStatus = useSelector((state) => state.roles.status); // تأكدي من استدعاء هذا السطر
+
+  useEffect(() => {
+    // جلب الأدوار فقط إذا كانت الحالة 'idle' (لم يتم الطلب بعد)
+    if (rolesStatus === "idle") {
+      dispatch(fetchRoles());
     }
-  }, [dispatch]);
+  }, [dispatch, rolesStatus]); // الاعتماد هنا ثابت ولا يسبب حلقة
   return (
     <div
       className={`p-8 bg-surface-container min-h-screen ${lang === "ar" ? "rtl" : "ltr"}`}
@@ -67,25 +71,11 @@ export default function AddUser() {
           lang={lang} // أضيفي هذا السطر ليتم تمرير اللغة
           clearError={clearError}
         />
-        <button
-          type="submit"
-          disabled={isLoading}
-          className={`w-full font-bold py-4 rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98] 
-    ${
-      isLoading
-        ? "bg-[#d0c6b0] cursor-not-allowed opacity-70"
-        : "bg-primary-container hover:bg-[#e6c25a] text-on-surface-variant"
-    }`}
-        >
-          {isLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              {t("saving")}...
-            </span>
-          ) : (
-            t("confirmAndSave")
-          )}
-        </button>
+        <AppButton
+          isLoading={isLoading}
+          text={t("confirmAndSave")}
+          loadingText={t("saving")}
+        />
       </form>
     </div>
   );

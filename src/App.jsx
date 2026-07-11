@@ -3,21 +3,22 @@ import AppRoutes from "./routes/AppRoutes";
 import { PrivateRoute } from "@/routes/PrivateRoute";
 import { fetchEmployees, fetchRoles } from "@/store/index";
 import { useEffect, useDispatch } from "react";
+import { useTranslation } from "@/hooks/useTranslation"; // استيراد الهوك الخاص باللغة
 function App() {
+  console.log("المسارات المتاحة:", window.location.pathname);
   const dispatch = useDispatch();
-  // في App.js
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      // جلب البيانات مرة واحدة فقط عند تحميل التطبيق
-      dispatch(fetchEmployees({}));
-      dispatch(fetchRoles());
-    }
-  }, [dispatch]); // أزلت lang من المصفوفة لأن الـ Interceptor الخاص بالـ API هو من يقرأ اللغة من localStorage
+  // App.js
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (token) {
+  //     // جلب البيانات مرة واحدة فقط عند فتح التطبيق
+  //     dispatch(fetchEmployees({}));
+  //     dispatch(fetchRoles());
+  //   }
+  // }, [dispatch]); // بدون lang هناأضفنا lang هنا!
   return (
     <BrowserRouter>
       <PrivateRoute>
-        {/* تأكدي من وضعه هنا داخل BrowserRouter */}
         <AppRoutes />
       </PrivateRoute>
     </BrowserRouter>

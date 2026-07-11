@@ -7,7 +7,7 @@ export default function IdentitySection({
   errors,
 }) {
   return (
-    <div className="bg-white p-8 rounded-3xl border border-border shadow-md transition-all hover:shadow-lg">
+    <div className="bg-surface-lowest p-8 rounded-3xl border border-border shadow-md transition-all hover:shadow-lg">
       <h3 className="font-bold text-lg mb-6 text-on-surface-variant flex items-center gap-2">
         <User size={20} className="text-primary" /> {t("primaryUserIdentity")}
       </h3>
@@ -25,7 +25,7 @@ export default function IdentitySection({
             placeholder={t("sarah")}
           />
           {errors.firstName && (
-            <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+            <p className="text-error text-xs mt-1">{errors.firstName}</p>
           )}
         </div>
 
@@ -42,7 +42,7 @@ export default function IdentitySection({
             placeholder={t("alFahad")}
           />
           {errors.lastName && (
-            <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+            <p className="text-error text-xs mt-1">{errors.lastName}</p>
           )}
         </div>
 
@@ -59,7 +59,7 @@ export default function IdentitySection({
             placeholder="name@charityconnect.org"
           />
           {errors.email && (
-            <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            <p className="text-error text-xs mt-1">{errors.email}</p>
           )}
         </div>
 
@@ -76,7 +76,7 @@ export default function IdentitySection({
             // placeholder="+966"
           />
           {/* {errors.countryCode && (
-            <p className="text-red-500 text-xs mt-1">{errors.countryCode}</p>
+            <p className="text-error text-xs mt-1">{errors.countryCode}</p>
           )} */}
         </div>
 
@@ -93,7 +93,7 @@ export default function IdentitySection({
             placeholder="501234567"
           />
           {errors.number && (
-            <p className="text-red-500 text-xs mt-1">{errors.number}</p>
+            <p className="text-error text-xs mt-1">{errors.number}</p>
           )}
         </div>
 
@@ -110,7 +110,7 @@ export default function IdentitySection({
             // placeholder={t("saudiArabia")}
           />
           {/* {errors.countryName && (
-            <p className="text-red-500 text-xs mt-1">{errors.countryName}</p>
+            <p className="text-error text-xs mt-1">{errors.countryName}</p>
           )} */}
         </div>
 
@@ -132,7 +132,7 @@ export default function IdentitySection({
             {/* لاحظي تغيير القيمة لـ FEMALE */}
           </select>
           {errors.gender && (
-            <p className="text-red-500 text-xs mt-1">{errors.gender}</p>
+            <p className="text-error text-xs mt-1">{errors.gender}</p>
           )}
         </div>
       </div>

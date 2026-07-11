@@ -14,7 +14,7 @@ export default function RequestsChart({ t, dataFromBackend }) {
   // القسم الخامس (المشاريع) سيقفل الدائرة تلقائياً من نهاية الرابع وحتى 100%
   console.log("Data from backend:", dataFromBackend);
   return (
-    <div className="bg-white p-8 rounded-3xl border border-border shadow-sm flex flex-col items-center">
+    <div className="bg-surface-lowest p-8 rounded-3xl border border-border shadow-sm flex flex-col items-center">
       <h4 className="font-bold text-lg mb-6 w-full text-center">
         {t("incomingRequests")}
       </h4>
@@ -35,7 +35,7 @@ export default function RequestsChart({ t, dataFromBackend }) {
           }}
         >
           {/* الحفرة البيضاء في المنتصف لعمل تأثير الـ Donut */}
-          <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center z-10">
+          <div className="w-28 h-28 bg-surface-lowest rounded-full flex items-center justify-center z-10">
             <div className="text-center">
               <span className="text-3xl font-bold block text-on-surface-variant">
                 {dataFromBackend?.total || 0}
@@ -54,7 +54,7 @@ export default function RequestsChart({ t, dataFromBackend }) {
           { label: "edu", color: "bg-[#e0ea88]", val: `${eduPercent}%` },
           { label: "med", color: "bg-[#3b674c]", val: `${medPercent}%` },
           { label: "food", color: "bg-[#fad564]", val: `${foodPercent}%` }, // تأكدي من لون الخلفية هنا
-          { label: "hou", color: "bg-[#735c00]", val: `${houPercent}%` }, // تم استخدام "hou"
+          { label: "hou", color: "bg-primary", val: `${houPercent}%` }, // تم استخدام "hou"
           { label: "proj", color: "bg-[#c29900]", val: `${projPercent}%` }, // غيرتها لـ proj لتطابق الـ key
         ].map((item, i) => (
           <div key={i} className="flex justify-between items-center">

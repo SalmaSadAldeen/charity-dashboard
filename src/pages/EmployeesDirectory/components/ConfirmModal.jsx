@@ -1,6 +1,11 @@
 import { useTranslation } from "@/hooks/useTranslation";
 
-export default function ConfirmModal({ isOpen, onConfirm, onCancel }) {
+export default function ConfirmModal({
+  isOpen,
+  onConfirm,
+  onCancel,
+  isLoading,
+}) {
   // احذفي t من هنا
 
   const { t } = useTranslation();
@@ -9,7 +14,7 @@ export default function ConfirmModal({ isOpen, onConfirm, onCancel }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-3xl shadow-xl w-96 text-center">
+      <div className="bg-surface-lowest p-8 rounded-3xl shadow-xl w-96 text-center">
         <h3 className="text-xl font-bold text-red-600 mb-4">
           {t("deleteConfirmTitle")}
         </h3>
@@ -23,10 +28,9 @@ export default function ConfirmModal({ isOpen, onConfirm, onCancel }) {
           </button>
           <button
             onClick={onConfirm}
-            
             className="px-6 py-2 bg-red-600 text-white rounded-xl"
           >
-            {t("confirm")}
+            {isLoading ? t("deleting") + "..." : t("confirm")}{" "}
           </button>
         </div>
       </div>

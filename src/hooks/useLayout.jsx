@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { setTab, setSearch } from "../store/layoutSlice";
+import {  setSearch } from "../store/layoutSlice";
 export function useLayout() {
   const dispatch = useDispatch();
   const searchQuery = useSelector((state) => state.layout.searchQuery);

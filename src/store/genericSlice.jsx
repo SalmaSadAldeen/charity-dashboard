@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { adminService } from "@/services/adminService";
-
+import { orphanService } from "@/services/orphanService"; // استيراد الخدمة الجديدة
 export const createGenericActions = (resource) => ({
   fetchItems: createAsyncThunk(
     `${resource}/fetchAll`,
@@ -9,14 +9,14 @@ export const createGenericActions = (resource) => ({
         if (resource === "roles") return await adminService.getRoles();
         if (resource === "employees")
           return (
-            await adminService.getEmployees(
+            await adminService.fetchEmployees(
               params.page || 1,
               params.limit || 10,
             )
           ).data;
         if (resource === "orphans")
           return (
-            await adminService.getOrphans(params.page || 1, params.limit || 10)
+            await orphanService.getOrphans(params.page || 1, params.limit || 10)
           ).data;
         throw new Error(`Fetch action not defined for ${resource}`);
       } catch (err) {
@@ -25,12 +25,19 @@ export const createGenericActions = (resource) => ({
     },
   ),
 
+  // في genericSlice.jsx
   fetchItemById: createAsyncThunk(
     `${resource}/fetchOne`,
-    async (id, { rejectWithValue }) => {
+    async ({ id }, { rejectWithValue }) => {
+      // استقبال id و lang
       try {
-        if (resource === "employees")
-          return (await adminService.getOneEmployee(id)).data;
+        if (resource === "employees") {
+          // إرسال الطلب، الـ Interceptor سيلتقط اللغة المحدثة تلقائياً
+          return (await adminService.fetchEmployeeById(id)).data;
+        }
+        if (resource === "orphans") {
+          return (await orphanService.fetchOrphanById(id)).data;
+        }
         throw new Error(`Fetch single action not defined for ${resource}`);
       } catch (err) {
         return rejectWithValue(err.response?.data?.message || err.message);
@@ -46,7 +53,7 @@ export const createGenericActions = (resource) => ({
         if (resource === "employees")
           response = await adminService.addEmployee(data);
         else if (resource === "orphans")
-          response = await adminService.addOrphan(data);
+          response = await orphanService.addOrphan(data);
         else throw new Error(`Add action not defined for ${resource}`);
         return response.data;
       } catch (err) {
@@ -64,7 +71,7 @@ export const createGenericActions = (resource) => ({
         if (resource === "employees")
           response = await adminService.deleteEmployee(id);
         else if (resource === "orphans")
-          response = await adminService.deleteOrphan(id);
+          response = await orphanService.deleteOrphan(id);
         else throw new Error(`Delete action not defined for ${resource}`);
 
         // هنا التعديل: نرجع الاستجابة كاملة (response.data) بدلاً من id فقط
@@ -83,7 +90,7 @@ export const createGenericActions = (resource) => ({
         if (resource === "employees")
           response = await adminService.updateEmployee(id, data);
         else if (resource === "orphans")
-          response = await adminService.updateOrphan(id, data);
+          response = await orphanService.updateOrphan(id, data);
         else throw new Error(`Update action not defined for ${resource}`);
         return response.data;
       } catch (err) {
@@ -105,6 +112,8 @@ export const createGenericSlice = (resource) => {
         items: [],
         status: "idle",
         selectedItem: null,
+        selectedDetails: null, // <--- أضيفي هذا
+        detailsStatus: "idle",
         pagination: { currentPage: 1, lastPage: 1 },
         error: null,
       },
@@ -115,7 +124,12 @@ export const createGenericSlice = (resource) => {
         clearSelected: (state) => {
           state.selectedItem = null;
         },
+        clearSelectedDetails: (state) => {
+          state.selectedDetails = null;
+          state.detailsStatus = "idle";
+        },
       },
+
       extraReducers: (builder) => {
         builder
           // --- حالات الجلب ---
@@ -205,15 +219,16 @@ export const createGenericSlice = (resource) => {
           })
 
           // --- حالات الجلب المفرد ---
+          // داخل الـ extraReducers:
           .addCase(fetchItemById.pending, (state) => {
-            state.status = "loading";
+            state.detailsStatus = "loading"; // استخدمنا حالة التفاصيل
           })
           .addCase(fetchItemById.fulfilled, (state, action) => {
-            state.selectedItem = action.payload.data || action.payload;
-            state.status = "succeeded";
+            state.selectedDetails = action.payload?.data || action.payload; // خزنّا في الـ Details
+            state.detailsStatus = "succeeded";
           })
           .addCase(fetchItemById.rejected, (state, action) => {
-            state.status = "failed";
+            state.detailsStatus = "failed";
             state.error = action.payload;
           });
       },

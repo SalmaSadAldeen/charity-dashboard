@@ -3,14 +3,17 @@ import EmploymentSection from "@/pages/AddUser/components/EmploymentSection";
 import RolesSection from "@/pages/AddUser/components/RolesSection";
 import { useUserFormLogic } from "@/hooks/useUserFormLogic";
 import { useTranslation } from "@/hooks/useTranslation";
-import { fetchRoles } from "@/store/index";
-import { useSelector, useDispatch } from "react-redux"; // السطر الأهم
-import { useMemo, useEffect } from "react";
-// ... باقي الاستيرادات
+import { useSelector } from "react-redux"; // السطر الأهم
+import { useMemo } from "react";
 
+import { useEffect } from "react"; // تأكدي من استيراده
+import { useDispatch } from "react-redux"; // تأكدي من استيراده
+import { fetchRoles } from "@/store/index";
 export default function EditUser({ employeeId, onClose }) {
   const { t, lang } = useTranslation();
+  const dispatch = useDispatch(); // أضيفي هذا السطر
   // const dispatch = useDispatch(); // أضيفي هذا
+  const rolesStatus = useSelector((state) => state.roles.status);
   const roles = useSelector((state) => state.roles.items || []);
   const employee = useSelector((state) =>
     state.employees.items.find((e) => e.id === employeeId),
@@ -19,6 +22,12 @@ export default function EditUser({ employeeId, onClose }) {
   //   dispatch(fetchRoles());
   // }, [lang, dispatch]);
 
+  useEffect(() => {
+    // جلب الأدوار فقط إذا كانت الحالة 'idle' (لم يتم الطلب بعد)
+    if (rolesStatus === "idle") {
+      dispatch(fetchRoles());
+    }
+  }, [dispatch, rolesStatus]); // الاعتماد هنا ثابت ولا يسبب حلقة
   const initialData = useMemo(() => {
     //console.log("Employee:", employee);
     if (!employee) return null;
@@ -52,8 +61,12 @@ export default function EditUser({ employeeId, onClose }) {
     isEdit,
   } = useUserFormLogic(t, initialData, onClose);
 
-  if (!employee) return <div className="p-8 text-center">{t("loading")}</div>;
-
+  // إذا كان لا يزال يحمل، أظهري Loading
+  if (rolesStatus === "loading" && roles.length === 0) {
+    return <div className="p-8 text-center">{t("loading")}...</div>;
+  }
+  console.log("Roles Status:", rolesStatus);
+  console.log("Roles Data:", roles);
   return (
     <div
       className={`flex flex-col h-full w-full ${lang === "ar" ? "rtl" : "ltr"}`}
@@ -63,9 +76,9 @@ export default function EditUser({ employeeId, onClose }) {
         <h2 className="text-[32px] font-bold text-on-surface-variant">
           {t("editProfile")}
         </h2>
-        <p className="text-primary font-medium">
+        {/* <p className="text-primary font-medium">
           {employee.firstName} {employee.lastName}
-        </p>
+        </p> */}
       </div>
 
       {/* 2. منطقة المحتوى (سكرول مخفي) */}
@@ -76,7 +89,7 @@ export default function EditUser({ employeeId, onClose }) {
           onSubmit={handleSubmit}
           className="space-y-8 pb-4"
         >
-          <div className="bg-[#fffdf9] border-l-4 border-[#735c00] p-4 rounded shadow-sm">
+          <div className="bg-[#fffdf9] border-l-4 border-primary p-4 rounded shadow-sm">
             <h3 className="font-bold text-primary">{t("note")}</h3>
             <p className="text-sm text-on-surface-variant">
               {t("youAreEditingEmployeeInfo")}
@@ -115,13 +128,13 @@ export default function EditUser({ employeeId, onClose }) {
         <button
           type="button"
           onClick={onClose}
-          className="flex-1 bg-white border border-border text-on-surface-variant font-bold py-4 rounded-2xl hover:bg-gray-50 transition-all"
+          className="flex-1 bg-surface-lowest border border-border text-on-surface-variant font-bold py-4 rounded-2xl hover:bg-gray-50 transition-all"
         >
           {t("cancel")}
         </button>
         <button
           type="button"
-          onClick={handleSubmit}
+          onClick={(e) => handleSubmit(e)}
           disabled={isLoading}
           className={`flex-[2] py-4 rounded-2xl transition-all shadow-md active:scale-[0.98] ${
             isEdit

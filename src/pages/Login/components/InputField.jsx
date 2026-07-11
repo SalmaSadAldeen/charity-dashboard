@@ -34,7 +34,7 @@ const InputField = ({
           placeholder={placeholder}
           autoComplete={autoComplete}
           // استخدام padding ثابت (10 للأيقونة الأساسية، 12 للعين)
-          className="w-full px-12 py-3 bg-white border-2 border-[#e1ded7] rounded-lg text-sm text-[#4a453e] placeholder-[#c4bebc] focus:outline-none focus:border-[#6b6459] transition-colors duration-300 ease-in-out [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
+          className="w-full px-12 py-3 bg-surface-lowest border-2 border-[#e1ded7] rounded-lg text-sm text-[#4a453e] placeholder-[#c4bebc] focus:outline-none focus:border-[#6b6459] transition-colors duration-300 ease-in-out [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
           required
         />
 

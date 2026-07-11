@@ -7,10 +7,14 @@ import EmployeeProfile from "./components/EmployeeProfile";
 import StatsCard from "./components/StatsCard";
 import ConfirmModal from "./components/ConfirmModal";
 import EditUser from "../EditUser/EditUser";
-import { fetchEmployees } from "@/store/index";
-import { useUserActions } from "@/hooks/useUserActions";
 import { useTranslation } from "@/hooks/useTranslation";
-import { setSelectedItem, clearSelected } from "@/store/index";
+import { useGenericDelete } from "@/hooks/useGenericDelete";
+import {
+  setEmployee,
+  clearEmployee,
+  fetchEmployees,
+  fetchEmployeeById,
+} from "@/store/index";
 import { Users, HeartHandshake } from "lucide-react";
 const ITEMS_PER_PAGE = 5;
 
@@ -21,8 +25,7 @@ export default function EmployeesDirectory() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [idToDelete] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
   const [employeeToEdit, setEmployeeToEdit] = useState(null);
 
   // استخدام selectedItem الموحد من الـ Store
@@ -30,29 +33,41 @@ export default function EmployeesDirectory() {
     items: employees = [],
     status,
     pagination,
+
     selectedItem,
   } = useSelector((state) => state.employees);
-
-  const { handleDelete } = useUserActions();
-
+  const { handleDelete, isLoading } = useGenericDelete("employee");
   useEffect(() => {
     dispatch(fetchEmployees({ page: currentPage, limit: ITEMS_PER_PAGE }));
     // dispatch(fetchRoles());
-  }, [dispatch, currentPage]);
-
+  }, [dispatch, currentPage, lang]); // أضفنا lang هنا ليعيد الجلب عند تغير اللغة
   const handleEditClick = (e, emp) => {
     e.stopPropagation();
-    dispatch(clearSelected()); // إغلاق البروفايل الجانبي فوراً عبر الـ Store
+    // dispatch(clearEmployee()); // إغلاق البروفايل الجانبي فوراً عبر الـ Store
     // إغلاق البروفايل عند فتح مودال التعديل
     setEmployeeToEdit(emp);
     setIsEditModalOpen(true);
   };
-
   const confirmDelete = async () => {
-    await handleDelete(idToDelete);
-    setIsDeleteModalOpen(false);
+    // نقوم بتمرير الـ id، ونمرر كول باك لإغلاق المودال بعد نجاح الحذف
+    handleDelete(deleteId, () => {
+      setDeleteId(null);
+      // اختياري: تحديث القائمة بعد الحذف
+      dispatch(fetchEmployees({ page: currentPage, limit: ITEMS_PER_PAGE }));
+    });
+  };
+  const handleSelect = (emp) => {
+    dispatch(setEmployee(emp)); // فقط نحدد الموظف، الـ useEffect ستتولى الباقي
   };
 
+  // 2. أضيفي هذا الـ useEffect في EmployeesDirectory
+  // داخل EmployeesDirectory.jsx
+  useEffect(() => {
+    if (selectedItem?.id) {
+      dispatch(fetchEmployeeById({ id: selectedItem.id }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, selectedItem?.id, lang]); // lang يجب أن تكون داخل المصفوفة // أي تغيير في الموظف المختار سيؤدي لجلب البيانات
   return (
     <div className="p-8 w-full overflow-hidden">
       <div className="grid grid-cols-12 gap-6 items-start w-full">
@@ -78,11 +93,10 @@ export default function EmployeesDirectory() {
             >
               <EmployeeTable
                 data={employees}
+                selectedItem={selectedItem}
+                onSelect={handleSelect}
+                onDeleteRequest={(id) => setDeleteId(id)} // هنا التمرير للجدول
                 onEdit={handleEditClick}
-                // هنا نمرر المتغير الصحيح للعرض
-                selectedEmployee={selectedItem}
-                onSelect={(emp) => dispatch(setSelectedItem(emp))}
-                // استخدام الموحد// نمرر الـ selectedItem من الـ Store
               />
             </div>
 
@@ -154,23 +168,26 @@ export default function EmployeesDirectory() {
               <>
                 <button
                   // التعديل الصحيح
-                  onClick={() => dispatch(clearSelected())}
+                  onClick={() => dispatch(clearEmployee())}
                   className="mb-4 text-xs font-bold text-primary underline"
                 >
                   {t("closeDetails")}
                 </button>
-                <EmployeeProfile employee={selectedItem} />
+                <EmployeeProfile
+                // employee={selectedItem}
+                // key={`${selectedItem.id}-${lang}`}
+                />
               </>
             )}
           </div>
         </div>
+        <ConfirmModal
+          isOpen={!!deleteId}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteId(null)}
+          isLoading={isLoading} // هنا الهوك يعطيكِ حالة التحميل الحقيقية
+        />
       </div>
-
-      <ConfirmModal
-        isOpen={isDeleteModalOpen}
-        onConfirm={confirmDelete}
-        onCancel={() => setIsDeleteModalOpen(false)}
-      />
 
       {isEditModalOpen && (
         <div
@@ -184,8 +201,12 @@ export default function EmployeesDirectory() {
             <EditUser
               employeeId={employeeToEdit?.id}
               onClose={() => {
-                setIsEditModalOpen(false);
+                console.log("إغلاق المودال الآن"); // ضعي هذا الـ log للتأكد
+                setIsEditModalOpen(false); // إغلاق المودال
                 setEmployeeToEdit(null);
+                if (selectedItem?.id === employeeToEdit?.id) {
+                  dispatch(fetchEmployeeById({ id: employeeToEdit.id }));
+                }
               }}
             />
           </div>

@@ -24,7 +24,7 @@ const LoginHeader = ({ error }) => {
       </p>
 
       {error && (
-        <p className="text-xs text-red-500 mt-2 bg-red-50 p-2 rounded w-full border border-red-100">
+        <p className="text-xs text-error mt-2 bg-red-50 p-2 rounded w-full border border-error">
           {error}
         </p>
       )}

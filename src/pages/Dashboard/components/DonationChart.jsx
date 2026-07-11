@@ -4,7 +4,7 @@ export default function DonationChart({ view, setView, currentData, t }) {
   const dataToRender = Array.isArray(currentData) ? currentData : [];
 
   return (
-    <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-border shadow-sm">
+    <div className="lg:col-span-2 bg-surface-lowest p-8 rounded-3xl border border-border shadow-sm">
       <div className="flex justify-between items-center mb-8">
         <h4 className="font-bold text-lg">{t("donationDist")}</h4>
         <div className="bg-surface-container p-1 rounded-lg flex border border-border">

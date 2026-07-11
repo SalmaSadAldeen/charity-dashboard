@@ -4,8 +4,6 @@ import Topbar from "@/pages/Dashboard/components/TopBar";
 import { useSelector } from "react-redux";
 import { Toaster } from "react-hot-toast";
 
-// احذفي السطور المكررة تماماً
-
 export default function DashboardLayout() {
   const lang = useSelector((state) => state.language?.lang || "en");
   // 2. يجب تعريف isRtl لأنك تستخدمينها في الـ dir
@@ -34,6 +32,7 @@ export default function DashboardLayout() {
         {/* اجعلي الـ padding هنا 0 لأن الـ Dashboard يحتوي على p-8 الخاص به */}
         <main className="flex-1 w-full overflow-y-auto overflow-x-hidden">
           {" "}
+          {/* console.log("الـ Routes تعمل الآن!"); */}
           <Outlet />
         </main>
       </div>

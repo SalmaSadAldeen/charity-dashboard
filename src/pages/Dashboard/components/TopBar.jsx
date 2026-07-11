@@ -2,7 +2,6 @@ import { useLayout } from "../../../hooks/useLayout";
 import { useDispatch } from "react-redux";
 import { toggleLanguage } from "../../../store/languageSlice";
 import { useTranslation } from "@/hooks/useTranslation";
-import { fetchEmployees, fetchRoles } from "@/store/index";
 export default function TopBar() {
   const { searchQuery, handleSearch } = useLayout();
   const { t, lang } = useTranslation();
@@ -19,7 +18,7 @@ export default function TopBar() {
       }}
     >
       {/* 1. البحث */}
-      <div className="flex items-center bg-white/10 rounded-2xl px-4 py-2 flex-1 max-w-xl transition-all duration-300 border border-white/5 hover:bg-white/20 focus-within:border-[#fad564]/50 focus-within:bg-white/20">
+      <div className="flex items-center bg-surface-lowest/10 rounded-2xl px-4 py-2 flex-1 max-w-xl transition-all duration-300 border border-white/5 hover:bg-surface-lowest/20 focus-within:border-[#fad564]/50 focus-within:bg-surface-lowest/20">
         <span className="material-symbols-outlined text-white/40 ml-3">
           search
         </span>
@@ -37,7 +36,7 @@ export default function TopBar() {
         {/* زر اللغة */}
         <button
           onClick={handleLangChange} // بدون dispatch() وبدون () => قبلها
-          className="w-12 h-10 rounded-2xl font-bold text-xs transition-all duration-300 flex items-center justify-center border border-white/10 bg-white/5 hover:bg-white/10 active:scale-90"
+          className="w-12 h-10 rounded-2xl font-bold text-xs transition-all duration-300 flex items-center justify-center border border-white/10 bg-surface-lowest/5 hover:bg-surface-lowest/10 active:scale-90"
           style={{ color: "#fad564" }} // اللون الخردلي
         >
           {lang === "ar" ? "EN" : "AR"}

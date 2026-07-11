@@ -16,7 +16,7 @@ const RememberMeToggle = ({ checked, onToggle }) => {
         }`}
       >
         <div
-          className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+          className={`bg-surface-lowest w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
             checked
               ? isRtl
                 ? "-translate-x-5"

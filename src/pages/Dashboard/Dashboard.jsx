@@ -16,9 +16,7 @@ export default function Dashboard() {
 
   const { t, lang } = useTranslation();
 
-  const getDayLabel = (ar, en) => (lang === "ar" ? ar : en);
-
-  const { stats, charts, isLoading } = useSelector((state) => state.dashboard);
+  const { stats, charts } = useSelector((state) => state.dashboard);
   console.log("Dashboard Rendered! Stats:", stats, "Charts:", charts);
 
   useEffect(() => {
@@ -56,7 +54,7 @@ export default function Dashboard() {
                 ? `$${stats.total_donations.toLocaleString()}`
                 : "$0"}{" "}
             </h3>
-            <div className="flex items-center gap-2 font-semibold text-sm bg-white/30 w-fit px-3 py-1 rounded-full text-primary">
+            <div className="flex items-center gap-2 font-semibold text-sm bg-surface-lowest/30 w-fit px-3 py-1 rounded-full text-primary">
               <span>
                 📈 {stats?.donations_growth_percentage || 0}% {t("growth")}
               </span>

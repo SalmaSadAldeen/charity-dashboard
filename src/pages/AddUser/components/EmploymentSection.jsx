@@ -23,7 +23,7 @@ export default function EmploymentSection({
   };
 
   return (
-    <div className="bg-white p-8 rounded-3xl border border-border shadow-md transition-all hover:shadow-lg">
+    <div className="bg-surface-lowest p-8 rounded-3xl border border-border shadow-md transition-all hover:shadow-lg">
       <h3 className="font-bold text-lg mb-6 text-on-surface-variant flex items-center gap-2">
         <Briefcase size={20} className="text-primary" />{" "}
         {t("employmentDetails")}
@@ -43,14 +43,14 @@ export default function EmploymentSection({
             className="w-full p-4 border border-border rounded-2xl shadow-inner focus:border-secondary outline-none transition-all"
           />
           {errors.dateOfBirth && (
-            <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>
+            <p className="text-error text-xs mt-1">{errors.dateOfBirth}</p>
           )}
         </div>
 
         {/* حقل رفع الصورة - بعد التعديل */}
         <div
           onClick={() => fileInputRef.current.click()}
-          className="w-full h-[60px] border-2 border-dashed border-border rounded-2xl flex items-center px-4 cursor-pointer bg-white transition-all hover:border-primary/50 overflow-hidden"
+          className="w-full h-[60px] border-2 border-dashed border-border rounded-2xl flex items-center px-4 cursor-pointer bg-surface-lowest transition-all hover:border-primary/50 overflow-hidden"
         >
           {formData.personalPhoto ? (
             <div className="flex items-center gap-3 w-full">
@@ -94,7 +94,7 @@ export default function EmploymentSection({
           )}
         </div>
         {errors.personalPhoto && (
-          <p className="text-red-500 text-xs mt-1">{errors.personalPhoto}</p>
+          <p className="text-error text-xs mt-1">{errors.personalPhoto}</p>
         )}
 
         <input
@@ -102,6 +102,7 @@ export default function EmploymentSection({
           ref={fileInputRef}
           className="hidden"
           onChange={handleFileChange}
+          accept="image/*"
         />
       </div>
     </div>

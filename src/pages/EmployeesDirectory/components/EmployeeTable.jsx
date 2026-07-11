@@ -1,19 +1,13 @@
-import { useState } from "react";
 import { Edit2, Trash2 } from "lucide-react";
-import { useUserActions } from "@/hooks/useUserActions";
 import { useTranslation } from "@/hooks/useTranslation";
-import ConfirmModal from "./ConfirmModal";
-
 export default function EmployeeTable({
   data,
   onEdit,
   onSelect,
-  selectedEmployee,
+  selectedItem,
+  onDeleteRequest,
 }) {
-  const { handleDelete, isLoading } = useUserActions();
   const { t } = useTranslation();
-  const [deleteId, setDeleteId] = useState(null);
-
   return (
     <div className="bg-surface-lowest rounded-3xl border border-border shadow-sm overflow-hidden">
       <table className="w-full border-collapse table-fixed">
@@ -32,16 +26,17 @@ export default function EmployeeTable({
         </thead>
         <tbody className="divide-y divide-border">
           {data.map((item) => {
-            const isSelected = selectedEmployee?.id === item.id;
+            const isSelected = selectedItem?.id === item.id;
             return (
               // داخل EmployeeTable.jsx
               // داخل EmployeeTable.jsx
               <tr
                 key={item.id}
                 onClick={(e) => {
-                  // هذا السطر هو الحل: إذا كان العنصر الذي ضغطت عليه هو زر أو داخل زر، تجاهل الحدث
+                  // إذا ضغط المستخدم على زر التعديل أو الحذف، لا تفعل شيئاً
                   if (e.target.closest("button")) return;
 
+                  // فقط قم باستدعاء الدالة التي تمرر الموظف للـ Store
                   onSelect(item);
                 }}
                 className={`transition-all duration-200 cursor-pointer ${
@@ -67,7 +62,7 @@ export default function EmployeeTable({
                   <div className="flex flex-wrap gap-2 justify-end">
                     {item.roles?.map((r, idx) => (
                       <span
-                        key={idx}
+                        key={r.role.id}
                         className="px-4 py-1.5 rounded-lg text-[11px] font-bold border border-border bg-surface text-on-surface-variant shadow-sm"
                       >
                         {r.role.label}
@@ -82,16 +77,16 @@ export default function EmployeeTable({
                         e.stopPropagation();
                         onEdit(e, item);
                       }}
-                      className="p-2.5 bg-white border border-border text-primary rounded-xl hover:bg-primary-container transition-all"
+                      className="p-2.5 bg-surface-lowest border border-border text-primary rounded-xl hover:bg-primary-container transition-all"
                     >
                       <Edit2 size={16} />
                     </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setDeleteId(item.id);
+                        onDeleteRequest(item.id);
                       }}
-                      className="p-2.5 bg-white border border-border text-error rounded-xl hover:bg-error/10 transition-all"
+                      className="p-2.5 bg-surface-lowest border border-border text-error rounded-xl hover:bg-error/10 transition-all"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -102,15 +97,6 @@ export default function EmployeeTable({
           })}
         </tbody>
       </table>
-      <ConfirmModal
-        isOpen={!!deleteId}
-        disabled={isLoading} // سيتم التعطيل بناءً على حالة الـ Redux
-        onConfirm={() => {
-          handleDelete(deleteId);
-          setDeleteId(null);
-        }}
-        onCancel={() => setDeleteId(null)}
-      />
     </div>
   );
 }

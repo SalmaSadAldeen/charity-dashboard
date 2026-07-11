@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginSuccess, loginFailure } from "@/store/authSlice";
-import { API } from "@/services/adminService";
+// هذا هو السطر الصحيح!
+import { API } from "@/services/api";
 import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {

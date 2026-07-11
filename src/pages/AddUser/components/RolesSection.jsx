@@ -14,17 +14,22 @@ export default function RolesSection({
   lang, // أضيفي lang هنا
 }) {
   //console.log("Roles from Redux in Edit:", roles);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    // إذا كانت المصفوفة فارغة، نجبر الـ Slice على جلبها مرة أخرى
-    if (!roles || roles.length === 0) {
-      //console.log("Roles are empty, fetching from server...");
-      dispatch(fetchRoles());
-    }
-  }, [dispatch]); // سيعيد الجلب فقط إذا تغيرت الـ roles وكانت فارغة
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   // إذا كانت المصفوفة فارغة، نجبر الـ Slice على جلبها مرة أخرى
+  //   if (!roles || roles.length === 0) {
+  //     //console.log("Roles are empty, fetching from server...");
+  //     dispatch(fetchRoles());
+  //   }
+  // }, [dispatch]); // سيعيد الجلب فقط إذا تغيرت الـ roles وكانت فارغة
   // const roles = useSelector((state) => state.roles.items); // يجب أن يكون 'state.roles'
+
+  if (!roles || roles.length === 0) {
+    return <div className="p-4">{t("loadingRoles")}...</div>;
+  }
+
   return (
-    <div className="bg-white p-8 rounded-3xl border border-border shadow-md transition-all hover:shadow-lg">
+    <div className="bg-surface-lowest p-8 rounded-3xl border border-border shadow-md transition-all hover:shadow-lg">
       <h3 className="font-bold text-lg mb-6 text-on-surface-variant flex items-center gap-2">
         <ShieldCheck size={20} className="text-primary" /> {t("accessLevel")}
       </h3>
@@ -42,8 +47,8 @@ export default function RolesSection({
                 onClick={() => toggleRole(role.id)}
                 className={`p-4 border rounded-2xl transition-all duration-300 text-center flex items-center justify-center min-h-[60px] break-words               ${
                   isSelected
-                    ? "border-[#735c00] bg-amber-50 shadow-inner font-bold text-[#4d4636] scale-[1.02]"
-                    : "border-[#e5e1da] bg-white hover:border-[#735c00]/50"
+                    ? "border-primary bg-amber-50 shadow-inner font-bold text-on-surface-variant scale-[1.02]"
+                    : "border-[#e5e1da] bg-surface-lowest hover:border-primary/50"
                 }`}
               >
                 {lang === "ar" ? role.label : role.name}{" "}
@@ -52,7 +57,7 @@ export default function RolesSection({
           })}
       </div>
       {errors.roleIds && (
-        <p className="text-red-500 text-sm mt-4 font-semibold">
+        <p className="text-error text-sm mt-4 font-semibold">
           {errors.roleIds}
         </p>
       )}

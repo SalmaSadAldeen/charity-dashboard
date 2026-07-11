@@ -28,7 +28,7 @@ const LoginPage = () => {
     >
       <div className="absolute inset-0 bg-[#f4f1eb]/80 backdrop-blur-sm"></div>
 
-      <div className="relative z-10 w-full max-w-[480px] bg-white rounded-xl shadow-2xl overflow-hidden border border-[#eae6df]">
+      <div className="relative z-10 w-full max-w-[480px] bg-surface-lowest rounded-xl shadow-2xl overflow-hidden border border-[#eae6df]">
         <LoginHeader error={error} />
 
         <form onSubmit={handleLoginSubmit} className="px-8 pb-8 space-y-5">

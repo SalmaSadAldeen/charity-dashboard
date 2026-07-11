@@ -1,52 +1,49 @@
-import {
-  Mail,
-  Phone,
-  Calendar,
-  User,
-  Briefcase,
-  Clock,
-  Globe,
-} from "lucide-react";
+import { Mail, Phone, Calendar, User, Clock, Globe } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
-
-export default function EmployeeProfile({ employee }) {
+import { useSelector } from "react-redux";
+export default function EmployeeProfile() {
   const { t, lang } = useTranslation();
-  const employeeDetails = employee.employee || {};
+  const details = useSelector((state) => state.employees.selectedDetails);
+  // نقرأ التفاصيل من الـ State الجديد
+  const detailsStatus = useSelector((state) => state.employees.detailsStatus);
+  if (detailsStatus === "loading") return <div>جاري التحميل...</div>;
+  if (!details) return null; // إذا لم يوجد موظف، لا تظهري شيئاً
+  const { personalPhoto, dateOfBirth } = details.employee || {};
 
   return (
     <div className={`max-w-md mx-auto mt-10 ${lang === "ar" ? "rtl" : "ltr"}`}>
-      <div className="bg-white rounded-[2rem] border border-border shadow-xl overflow-hidden">
+      <div className="bg-surface-lowest rounded-[2rem] border border-border shadow-xl overflow-hidden">
         {/* الهيدر مع الصورة */}
         <div className="h-32 bg-primary relative">
           <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
             <div className="w-28 h-28 rounded-full border-4 border-white bg-surface-container flex items-center justify-center text-primary font-bold text-4xl shadow-lg overflow-hidden">
-              {employeeDetails.personalPhoto ? (
+              {personalPhoto ? ( // هنا كان الخطأ، استخدمي المتغير المستخرج مباشرة
                 <img
-                  src={employeeDetails.personalPhoto}
+                  src={personalPhoto}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
               ) : (
-                employee.firstName?.charAt(0)
+                details.firstName?.charAt(0)
               )}
             </div>
           </div>
         </div>
 
         <div className="pt-16 pb-8 px-8 text-center">
-          <h1 className="text-2xl font-bold text-on-surface-variant">{`${employee.firstName} ${employee.lastName}`}</h1>
+          <h1 className="text-2xl font-bold text-on-surface-variant">{`${details.firstName} ${details.lastName}`}</h1>
 
           {/* هنا نستخدم Grid لضمان استقامة العناوين والقيم */}
           <div className="grid grid-cols-1 gap-y-4 mt-8">
             <DetailRow
               icon={<Mail size={18} />}
               label={t("email")}
-              value={employee.email}
+              value={details.email}
             />
             <DetailRow
               icon={<Phone size={18} />}
               label={t("phoneNumber")}
-              value={employee.number}
+              value={details.number}
             />
             <DetailRow
               icon={<Globe size={18} />}
@@ -57,25 +54,21 @@ export default function EmployeeProfile({ employee }) {
               icon={<Calendar size={18} />}
               label={t("birthDate")}
               value={
-                employeeDetails.dateOfBirth
-                  ? new Date(employeeDetails.dateOfBirth).toLocaleDateString()
+                dateOfBirth // هنا كان الخطأ، استخدمي المتغير المستخرج مباشرة
+                  ? new Date(dateOfBirth).toLocaleDateString()
                   : "-"
               }
             />
             <DetailRow
               icon={<Clock size={18} />}
               label={t("joinedAt")}
-              value={new Date(employee.createdAt).toLocaleDateString()}
+              value={new Date(details.createdAt).toLocaleDateString()}
             />
-            <DetailRow
-              icon={<Briefcase size={18} />}
-              label={t("userType")}
-              value={employee.userType}
-            />
+
             <DetailRow
               icon={<User size={18} />}
               label={t("gender")}
-              value={employee.gender === "MALE" ? t("male") : t("female")}
+              value={details.gender === "MALE" ? t("male") : t("female")}
             />
           </div>
 
@@ -85,7 +78,7 @@ export default function EmployeeProfile({ employee }) {
               {t("grantedRoles:")}
             </p>
             <div className="flex flex-wrap gap-2">
-              {employee.roles?.map((r) => (
+              {details.roles?.map((r) => (
                 <span
                   key={r.role.id}
                   className="px-3 py-1 bg-surface-container text-primary rounded-full text-xs font-bold border border-primary/10"
