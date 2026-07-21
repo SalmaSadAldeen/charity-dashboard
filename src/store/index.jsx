@@ -10,7 +10,8 @@ import { createGenericSlice } from "./genericSlice";
 const employeesSlice = createGenericSlice("employees");
 const orphansSlice = createGenericSlice("orphans");
 const rolesSlice = createGenericSlice("roles");
-
+const beneficiariesData = createGenericSlice("beneficiaries"); // لا تنسي إضافة المستفيدين
+const helpRequestsSlice = createGenericSlice("helpRequests");
 // --- 1. تصدير أctions الموظفين ---
 export const {
   setSelectedItem: setEmployee,
@@ -41,6 +42,31 @@ export const {
   fetchItemById: fetchOrphanById,
 } = orphansSlice.actions;
 
+// --- 3. تصدير أctions المستفيدين (التعديل هنا) ---
+export const {
+  setSelectedItem: setBeneficiary,
+  clearSelected: clearBeneficiary,
+  clearSelectedDetails: clearBeneficiaryDetails, // <--- هذا هو النقص
+} = beneficiariesData.slice.actions;
+
+export const {
+  fetchItems: fetchBeneficiaries,
+  fetchItemById: fetchBeneficiariesById,
+} = beneficiariesData.actions;
+
+export const {
+  setSelectedItem: setHelpRequest,
+  clearSelected: clearHelpRequest,
+  clearSelectedDetails: clearHelpRequestDetails,
+} = helpRequestsSlice.slice.actions;
+
+export const {
+  fetchItems: fetchHelpRequests,
+  fetchItemById: fetchHelpRequestById,
+  updateItemStatus: updateHelpRequestStatus, // <--- نعيد تسميتها هنا أثناء التصدير لتناسب المكون, // <--- أضفها هنا
+  // أضيفي delete أو update إذا كنتِ تحتاجينها مستقبلاً
+} = helpRequestsSlice.actions;
+
 // ... (تصدير الأدوار وبقية الـ Store) // تأكدي من أنكِ أخذتِ الـ actions من orphansSlice
 export const { fetchItems: fetchRoles } = rolesSlice.actions;
 // export const { setSelectedItem, clearSelected } = employeesSlice.slice.actions;
@@ -54,6 +80,8 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     employees: employeesSlice.slice.reducer,
     orphans: orphansSlice.slice.reducer,
+    beneficiaries: beneficiariesData.slice.reducer,
     roles: rolesSlice.slice.reducer, // هذا هو الاسم الذي يجب أن تستخدميه في الـ useSelector
+    helpRequests: helpRequestsSlice.slice.reducer,
   },
 });

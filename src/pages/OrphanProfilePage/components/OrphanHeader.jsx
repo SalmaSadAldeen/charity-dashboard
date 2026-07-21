@@ -38,7 +38,7 @@ export default function OrphanHeader({ orphan, onEdit, onDelete }) {
                 : "bg-gray-100 text-gray-600" // لون محايد لغير المكفول
             }`}
           >
-            {orphan.isSupported ? t("supported") : t("notSupported")}
+            {orphan.isSupported ? t("isSupported") : t("notSupported")}
           </span>
         </div>
       </div>

@@ -1,27 +1,49 @@
+import { useTranslation } from "@/hooks/useTranslation";
+
 export default function ImageModal({ isOpen, onClose, imageUrl }) {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in"
-      onClick={onClose}
-    >
+    <>
+      {/* الـ Overlay */}
       <div
-        className="relative max-w-4xl w-full"
+        className="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-[2px] transition-opacity"
+        onClick={onClose}
+      />
+
+      {/* اللوحة الجانبية مع دعم RTL */}
+      <div
+        dir="rtl"
+        className="fixed top-0 right-0 h-full w-full max-w-md bg-white border-s border-gray-200 shadow-[0_0_50px_-12px_rgba(0,0,0,0.2)] z-[9999] p-6 flex flex-col animate-in slide-in-from-right duration-300 rounded-s-3xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          className="absolute -top-12 right-0 text-white font-black text-lg hover:text-gray-300"
-        >
-           (X)
-        </button>
-        <img
-          src={imageUrl}
-          alt="Family Statement"
-          className="w-full h-auto max-h-[80vh] object-contain rounded-3xl shadow-2xl"
-        />
+        {/* الهيدر */}
+        <div className="flex justify-between items-center mb-6">
+          <h4 className="font-black text-lg text-gray-800">
+            {t("previewImage")}
+          </h4>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500 hover:text-black"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* منطقة الصورة */}
+        <div className="flex-grow flex items-center justify-center bg-gray-50 border border-dashed border-gray-200 rounded-3xl overflow-hidden p-2">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              className="max-w-full max-h-full object-contain rounded-2xl"
+              alt="Document"
+            />
+          ) : (
+            <p className="text-gray-400 font-bold">{t("loading")}</p>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

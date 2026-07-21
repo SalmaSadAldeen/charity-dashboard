@@ -1,0 +1,137 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBeneficiaries } from "@/store/index";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
+import BeneficiaryTable from "./components/BeneficiaryTable";
+import FilterBar from "@/pages/Dashboard/components/FilterBar";
+import { fetchBeneficiaryStats } from "@/store/dashboardSlice"; // تأكدي من هذا المسار
+import StatsOverview from "@/pages/BeneficiaryGallery/StatsOverview";
+import { Clock, CheckCircle, XCircle } from "lucide-react";
+export default function BeneficiariesPage() {
+  const { t, lang } = useTranslation();
+  const dispatch = useDispatch();
+
+  // جلب البيانات من الـ Redux
+  const { beneficiariesStats } = useSelector((state) => state.dashboard);
+  const {
+    items: beneficiaries,
+    status,
+    pagination,
+  } = useSelector((state) => state.beneficiaries);
+
+  const [currentStatus, setCurrentStatus] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
+
+  // 1. جلب الإحصائيات عند تحميل الصفحة لأول مرة
+  useEffect(() => {
+    dispatch(fetchBeneficiaryStats());
+  }, [dispatch]);
+
+  // 2. جلب قائمة المستفيدين عند تغير الفلتر أو الصفحة
+  useEffect(() => {
+    dispatch(
+      fetchBeneficiaries({
+        status: currentStatus || "",
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+      }),
+    );
+  }, [currentStatus, currentPage, lang, dispatch]);
+
+  const filters = [
+    { label: t("all"), value: null },
+    { label: t("pending"), value: "PENDING", icon: <Clock size={16} /> },
+    {
+      label: t("accepted"),
+      value: "ACCEPTED",
+      icon: <CheckCircle size={16} />,
+    },
+    { label: t("rejected"), value: "REJECTED", icon: <XCircle size={16} /> },
+  ];
+
+  return (
+    <div className="p-8 w-full min-h-screen">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* 1. Header Area: العنوان والوصف مع مساحة تنفس */}
+        <header className="flex justify-between items-end border-b border-border pb-6">
+          <div className="flex flex-col">
+            <h2 className="text-3xl font-black text-on-surface-variant tracking-tight">
+              {t("beneficiariesList")}
+            </h2>
+            <p className="text-sm text-gray-500 mt-2 font-medium">
+              {t("manageAndReviewBeneficiaries")}
+            </p>
+          </div>
+        </header>
+
+        {/* 2. Stats Area: الإحصائيات (توزيع أفقي متوازن) */}
+        {beneficiariesStats && (
+          <section>
+            <StatsOverview stats={beneficiariesStats} />
+          </section>
+        )}
+
+        {/* 3. Main Content Area: دمج الفلتر مع الجدول في "منطقة واحدة" */}
+        <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border">
+          {/* الفلتر في الأعلى مباشرة */}
+          <div className="mb-8">
+            <FilterBar
+              filters={filters}
+              active={currentStatus}
+              onFilterChange={(val) => {
+                setCurrentStatus(val);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+
+          {/* الجدول مع مؤشر تحميل أنيق */}
+          <div
+            className={`transition-opacity duration-300 ${status === "loading" ? "opacity-30" : "opacity-100"}`}
+          >
+            <BeneficiaryTable data={beneficiaries} />
+          </div>
+
+          {/* 4. Pagination (في أسفل الجدول) */}
+          {pagination?.lastPage > 1 && (
+            <footer className="flex justify-between items-center mt-8 pt-6 border-t border-border">
+              <span className="text-xs font-bold text-on-surface-variant opacity-60">
+                {t("showing")} {currentPage} {t("from")} {pagination.lastPage}
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  disabled={currentPage === 1 || status === "loading"}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className="p-2.5 rounded-xl border border-border bg-surface-lowest text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30"
+                >
+                  {lang === "ar" ? (
+                    <ChevronRight size={18} />
+                  ) : (
+                    <ChevronLeft size={18} />
+                  )}
+                </button>
+
+                <button
+                  disabled={
+                    currentPage >= pagination.lastPage || status === "loading"
+                  }
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className="p-2.5 rounded-xl border border-border bg-surface-lowest text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30"
+                >
+                  {lang === "ar" ? (
+                    <ChevronLeft size={18} />
+                  ) : (
+                    <ChevronRight size={18} />
+                  )}
+                </button>
+              </div>
+            </footer>
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}

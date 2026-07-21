@@ -16,6 +16,7 @@ import {
   fetchEmployeeById,
 } from "@/store/index";
 import { Users, HeartHandshake } from "lucide-react";
+
 const ITEMS_PER_PAGE = 5;
 
 export default function EmployeesDirectory() {
@@ -28,61 +29,77 @@ export default function EmployeesDirectory() {
   const [deleteId, setDeleteId] = useState(null);
   const [employeeToEdit, setEmployeeToEdit] = useState(null);
 
-  // استخدام selectedItem الموحد من الـ Store
   const {
     items: employees = [],
     status,
     pagination,
-
     selectedItem,
   } = useSelector((state) => state.employees);
+
   const { handleDelete, isLoading } = useGenericDelete("employee");
+
   useEffect(() => {
     dispatch(fetchEmployees({ page: currentPage, limit: ITEMS_PER_PAGE }));
-    // dispatch(fetchRoles());
-  }, [dispatch, currentPage, lang]); // أضفنا lang هنا ليعيد الجلب عند تغير اللغة
-  const handleEditClick = (e, emp) => {
-    e.stopPropagation();
-    // dispatch(clearEmployee()); // إغلاق البروفايل الجانبي فوراً عبر الـ Store
-    // إغلاق البروفايل عند فتح مودال التعديل
-    setEmployeeToEdit(emp);
-    setIsEditModalOpen(true);
-  };
-  const confirmDelete = async () => {
-    // نقوم بتمرير الـ id، ونمرر كول باك لإغلاق المودال بعد نجاح الحذف
-    handleDelete(deleteId, () => {
-      setDeleteId(null);
-      // اختياري: تحديث القائمة بعد الحذف
-      dispatch(fetchEmployees({ page: currentPage, limit: ITEMS_PER_PAGE }));
-    });
-  };
-  const handleSelect = (emp) => {
-    dispatch(setEmployee(emp)); // فقط نحدد الموظف، الـ useEffect ستتولى الباقي
-  };
+  }, [dispatch, currentPage, lang]);
 
-  // 2. أضيفي هذا الـ useEffect في EmployeesDirectory
-  // داخل EmployeesDirectory.jsx
   useEffect(() => {
     if (selectedItem?.id) {
       dispatch(fetchEmployeeById({ id: selectedItem.id }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, selectedItem?.id, lang]); // lang يجب أن تكون داخل المصفوفة // أي تغيير في الموظف المختار سيؤدي لجلب البيانات
+  }, [dispatch, selectedItem?.id, lang]);
+
+  const handleEditClick = (e, emp) => {
+    e.stopPropagation();
+    setEmployeeToEdit(emp);
+    setIsEditModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    handleDelete(deleteId, () => {
+      setDeleteId(null);
+      dispatch(fetchEmployees({ page: currentPage, limit: ITEMS_PER_PAGE }));
+    });
+  };
+
+  const handleSelect = (emp) => {
+    dispatch(setEmployee(emp));
+  };
+
   return (
-    <div className="p-8 w-full overflow-hidden">
+    <div className="p-8 w-full max-w-7xl mx-auto space-y-6">
+      {/* القسم الأول: الإحصائيات في الأعلى */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <StatsCard
+          title={t("totalDonors")}
+          count="1,284"
+          icon={HeartHandshake}
+          bgColor="bg-primary-container"
+          textColor="text-on-surface-variant"
+          iconBg="bg-on-surface-variant/10"
+        />
+        <StatsCard
+          title={t("totalBeneficiaries")}
+          count="3,450"
+          icon={Users}
+          bgColor="bg-primary"
+          textColor="text-white"
+          iconBg="bg-white/20"
+        />
+      </div>
+
+      {/* القسم الثاني: الجدول والبروفايل */}
       <div className="grid grid-cols-12 gap-6 items-start w-full">
-        {/* الجدول والإحصائيات */}
         <div
           className={`${selectedItem ? "col-span-12 lg:col-span-8" : "col-span-12"} transition-all duration-500`}
         >
-          <div className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border mb-6 flex flex-col h-auto">
+          <div className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border flex flex-col">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-on-surface-variant">
                 {t("employeesRecord")}
               </h2>
               <button
                 onClick={() => navigate("/dashboard/add-user")}
-                className="flex items-center gap-2 bg-primary-container  opacity-150 text-on-surface-variant px-6 py-2.5 rounded-xl hover:bg-secondary transition-all"
+                className="flex items-center gap-2 bg-primary-container text-on-surface-variant px-6 py-2.5 rounded-xl hover:bg-secondary transition-all"
               >
                 <Plus size={20} /> {t("addEmployee")}
               </button>
@@ -95,7 +112,7 @@ export default function EmployeesDirectory() {
                 data={employees}
                 selectedItem={selectedItem}
                 onSelect={handleSelect}
-                onDeleteRequest={(id) => setDeleteId(id)} // هنا التمرير للجدول
+                onDeleteRequest={(id) => setDeleteId(id)}
                 onEdit={handleEditClick}
               />
             </div>
@@ -111,14 +128,12 @@ export default function EmployeesDirectory() {
                   onClick={() => setCurrentPage((prev) => prev - 1)}
                   className="p-2 rounded-lg hover:bg-primary-container text-primary disabled:opacity-30"
                 >
-                  {/* في حالة العربي، الـ ChevronLeft يجب أن يصبح أيقونة يمين */}
                   {lang === "ar" ? (
                     <ChevronRight size={18} />
                   ) : (
                     <ChevronLeft size={18} />
                   )}
                 </button>
-
                 <button
                   disabled={
                     currentPage >= (pagination?.lastPage || 1) ||
@@ -136,58 +151,34 @@ export default function EmployeesDirectory() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <StatsCard
-              title={t("totalDonors")}
-              count="1,284"
-              icon={HeartHandshake}
-              bgColor="bg-primary-container"
-              textColor="text-on-surface-variant"
-            />
-            <StatsCard
-              title={t("totalBeneficiaries")}
-              count="3,450"
-              icon={Users}
-              bgColor="bg-primary"
-              textColor="text-white"
-            />
-          </div>
         </div>
 
-        {/* البطاقة الجانبية - تم تحديثها لاستخدام selectedItem */}
+        {/* البطاقة الجانبية */}
         <div
-          className={`col-span-12 lg:col-span-4 transition-all duration-500 ease-in-out ${
-            selectedItem
-              ? "opacity-100 translate-x-0 w-full"
-              : "opacity-0 translate-x-10 w-0 overflow-hidden pointer-events-none"
-          }`}
+          className={`col-span-12 lg:col-span-4 transition-all duration-500 ease-in-out ${selectedItem ? "opacity-100 translate-x-0 w-full" : "opacity-0 w-0 overflow-hidden pointer-events-none"}`}
         >
           <div className="pr-2">
-            {/* ملاحظة: بما أننا نعتمد على الـ Store الآن، يفضل أن يكون لديك Action لإلغاء التحديد */}
             {selectedItem && (
               <>
                 <button
-                  // التعديل الصحيح
                   onClick={() => dispatch(clearEmployee())}
                   className="mb-4 text-xs font-bold text-primary underline"
                 >
                   {t("closeDetails")}
                 </button>
-                <EmployeeProfile
-                // employee={selectedItem}
-                // key={`${selectedItem.id}-${lang}`}
-                />
+                <EmployeeProfile />
               </>
             )}
           </div>
         </div>
-        <ConfirmModal
-          isOpen={!!deleteId}
-          onConfirm={confirmDelete}
-          onCancel={() => setDeleteId(null)}
-          isLoading={isLoading} // هنا الهوك يعطيكِ حالة التحميل الحقيقية
-        />
       </div>
+
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+        isLoading={isLoading}
+      />
 
       {isEditModalOpen && (
         <div
@@ -201,8 +192,7 @@ export default function EmployeesDirectory() {
             <EditUser
               employeeId={employeeToEdit?.id}
               onClose={() => {
-                console.log("إغلاق المودال الآن"); // ضعي هذا الـ log للتأكد
-                setIsEditModalOpen(false); // إغلاق المودال
+                setIsEditModalOpen(false);
                 setEmployeeToEdit(null);
                 if (selectedItem?.id === employeeToEdit?.id) {
                   dispatch(fetchEmployeeById({ id: employeeToEdit.id }));

@@ -10,6 +10,9 @@ import AddOrphan from "@/pages/AddOrphan/AddOrphan";
 import OrphansGallery from "@/pages/OrphansGallery/OrphansGallery";
 import OrphanProfilePage from "@/pages/OrphanProfilePage/OrphanProfilePage";
 import EditOrphanPage from "@/pages/EditOrphan/EditOrphanPage";
+import BeneficiariesPage from "@/pages/BeneficiaryGallery/BeneficiariesPages";
+import BeneficiaryDetails from "@/pages/BeneficiaryDetails/BeneficiaryDetails";
+import HelpRequestsPage from "@/pages/HelpRequestsGallery.jsx/HelpRequestsPage";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -32,9 +35,14 @@ export default function AppRoutes() {
         <Route path="orphans" element={<OrphansGallery />} />
         <Route index element={<Dashboard />} />
         <Route path="employees" element={<EmployeesDirectory />} />
+        <Route path="beneficiaries" element={<BeneficiariesPage />} />
         <Route path="add-user" element={<AddUser />} />
+
+        <Route path="requests" element={<HelpRequestsPage />} />
+
         <Route path="orphan/details/:id" element={<OrphanProfilePage />} />
-        <Route path="employee-profile/:id" element={<EmployeeProfile />} />{" "}
+        <Route path="employee-profile/:id" element={<EmployeeProfile />} />
+        <Route path="beneficiaries/:id" element={<BeneficiaryDetails />} />
       </Route>
       {/* 4. معالجة أي مسار غير معروف */}
       {/* <Route path="*" element={<Navigate to="/login" replace />} /> */}

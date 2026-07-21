@@ -10,6 +10,7 @@ API.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+
 // التعامل مع الخطأ 401 (Unauthorized) تلقائياً
 API.interceptors.response.use(
   (response) => response,

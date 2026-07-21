@@ -60,7 +60,7 @@ export default function EmployeeTable({
                 </td>
                 <td className="p-6 text-right">
                   <div className="flex flex-wrap gap-2 justify-end">
-                    {item.roles?.map((r, idx) => (
+                    {item.roles?.map((r) => (
                       <span
                         key={r.role.id}
                         className="px-4 py-1.5 rounded-lg text-[11px] font-bold border border-border bg-surface text-on-surface-variant shadow-sm"

@@ -1,6 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { adminService } from "@/services/adminService";
-import { orphanService } from "@/services/orphanService"; // استيراد الخدمة الجديدة
+import { orphanService } from "@/services/orphanService";
+import { beneficiaryService } from "@/services/beneficiaryService";
+import { requestsService } from "@/services/requestsService";
+// استيراد الخدمة الجديدة
 export const createGenericActions = (resource) => ({
   fetchItems: createAsyncThunk(
     `${resource}/fetchAll`,
@@ -14,9 +17,31 @@ export const createGenericActions = (resource) => ({
               params.limit || 10,
             )
           ).data;
+        // داخل createGenericActions
         if (resource === "orphans")
           return (
-            await orphanService.getOrphans(params.page || 1, params.limit || 10)
+            await orphanService.getOrphans(
+              params.page || 1,
+              params.limit || 10,
+              params.supported, // تمرير قيمة الفلتر
+            )
+          ).data;
+        if (resource === "beneficiaries") {
+          return (
+            await beneficiaryService.getBeneficiaries(
+              params.page || 1,
+              params.limit || 10,
+              params.status, // نمرر الـ status مباشرة
+            )
+          ).data;
+        }
+        if (resource === "helpRequests")
+          return (
+            await requestsService.fetchHelpRequests(
+              params.page || 1,
+              params.limit || 10,
+              params.status,
+            )
           ).data;
         throw new Error(`Fetch action not defined for ${resource}`);
       } catch (err) {
@@ -38,6 +63,13 @@ export const createGenericActions = (resource) => ({
         if (resource === "orphans") {
           return (await orphanService.fetchOrphanById(id)).data;
         }
+        if (resource === "beneficiaries") {
+          return (await beneficiaryService.fetchBeneficiaryById(id)).data;
+        }
+        if (resource === "helpRequests") {
+          return (await requestsService.fetchHelpRequestById(id)).data; // تأكدي من وجود هذه الدالة في requestsService
+        }
+
         throw new Error(`Fetch single action not defined for ${resource}`);
       } catch (err) {
         return rejectWithValue(err.response?.data?.message || err.message);
@@ -98,14 +130,49 @@ export const createGenericActions = (resource) => ({
       }
     },
   ),
+
+  // أضف هذا داخل createGenericActions أو كـ Thunk مستقل:
+  // داخل createGenericActions:
+  updateItemStatus: createAsyncThunk(
+    `${resource}/updateStatus`,
+    async ({ id, data }, { rejectWithValue }) => {
+      try {
+        let response;
+        if (resource === "helpRequests") {
+          response = await requestsService.updateRequestStatus(id, data);
+        } else if (resource === "beneficiaries") {
+          // يمكنك لاحقاً إضافة خدمة المستفيدين هنا بكل سهولة
+          // response = await beneficiaryService.updateBeneficiaryStatus(id, data);
+        } else {
+          throw new Error(`Update status action not defined for ${resource}`);
+        }
+        return response.data;
+      } catch (err) {
+        return rejectWithValue(err.response?.data?.message || err.message);
+      }
+    },
+  ),
 });
 
 export const createGenericSlice = (resource) => {
-  const { fetchItems, deleteItem, updateItem, addItem, fetchItemById } =
-    createGenericActions(resource);
+  const {
+    fetchItems,
+    deleteItem,
+    updateItem,
+    addItem,
+    fetchItemById,
+    updateItemStatus,
+  } = createGenericActions(resource);
 
   return {
-    actions: { fetchItems, deleteItem, updateItem, addItem, fetchItemById },
+    actions: {
+      fetchItems,
+      deleteItem,
+      updateItem,
+      addItem,
+      fetchItemById,
+      updateItemStatus,
+    },
     slice: createSlice({
       name: resource,
       initialState: {
@@ -229,6 +296,25 @@ export const createGenericSlice = (resource) => {
           })
           .addCase(fetchItemById.rejected, (state, action) => {
             state.detailsStatus = "failed";
+            state.error = action.payload;
+          })
+          .addCase(updateItemStatus.pending, (state) => {
+            state.status = "loading";
+          })
+          .addCase(updateItemStatus.fulfilled, (state, action) => {
+            const updated = action.payload?.data || action.payload;
+            // تحديث العنصر في القائمة إن وجد
+            state.items = state.items.map((item) =>
+              item.id === updated.id ? updated : item,
+            );
+            // تحديث التفاصيل المحددة إذا كانت مفتوحة
+            if (state.selectedDetails?.id === updated.id) {
+              state.selectedDetails = updated;
+            }
+            state.status = "succeeded";
+          })
+          .addCase(updateItemStatus.rejected, (state, action) => {
+            state.status = "failed";
             state.error = action.payload;
           });
       },

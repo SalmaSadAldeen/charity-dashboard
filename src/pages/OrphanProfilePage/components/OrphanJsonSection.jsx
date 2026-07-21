@@ -1,6 +1,8 @@
 import { useTranslation } from "@/hooks/useTranslation";
+
 export default function OrphanJsonSection({ orphan }) {
   const { t, lang } = useTranslation();
+
   const jsonFields = [
     "class",
     "Diseases",
@@ -15,19 +17,23 @@ export default function OrphanJsonSection({ orphan }) {
         {t("additionalInfo")}
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {jsonFields.map((f) => (
-          <div
-            key={f}
-            className="p-5 bg-gray-50 rounded-2xl border border-gray-100"
-          >
-            <p className="text-[10px] uppercase font-black tracking-widest text-primary/70 mb-1">
-              {t(f)}
-            </p>
-            <p className="font-bold text-gray-800">
-              {orphan[f]?.[lang] || orphan[f]?.["ar"]}
-            </p>
-          </div>
-        ))}
+        {jsonFields.map((f) => {
+          // هنا التعديل: نصل للحقل بناءً على اللغة الحالية
+          // إذا كان orphan[f] موجوداً، نعرض القيمة بناءً على lang (مثلاً ar أو en)
+          const valueToDisplay = orphan[f] ? orphan[f][lang] : "-";
+
+          return (
+            <div
+              key={f}
+              className="p-5 bg-gray-50 rounded-2xl border border-gray-100"
+            >
+              <p className="text-[10px] uppercase font-black tracking-widest text-primary/70 mb-1">
+                {t(f)}
+              </p>
+              <p className="font-bold text-gray-800">{valueToDisplay || "-"}</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

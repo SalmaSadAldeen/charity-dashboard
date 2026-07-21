@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { adminService } from "@/services/adminService"; // تأكدي من مسار ملف الـ service
-
+import { beneficiaryService } from "@/services/beneficiaryService"; // استيراد الخدمة
 // 1. تعريف الـ Thunks لجلب البيانات من الـ API
 export const fetchDashboardStats = createAsyncThunk(
   "dashboard/fetchStats",
@@ -24,11 +24,20 @@ export const fetchRequestsCharts = createAsyncThunk(
     return response.data;
   },
 );
+
+export const fetchBeneficiaryStats = createAsyncThunk(
+  "dashboard/fetchBeneficiaryStats",
+  async () => {
+    const response = await beneficiaryService.getHelpRequestStats();
+    return response.data;
+  },
+);
 const initialState = {
   stats: null, // الأرقام الرئيسية
   charts: [], // المخططات البيانية
   isLoading: false,
   error: null,
+  beneficiariesStats: null, // <--- أضيفي هذا هنا
   requestsCharts: [],
 };
 
@@ -58,6 +67,14 @@ const dashboardSlice = createSlice({
       // التعامل مع المخططات
       .addCase(fetchCharts.fulfilled, (state, action) => {
         state.charts = action.payload;
+      })
+      .addCase(fetchBeneficiaryStats.fulfilled, (state, action) => {
+        state.beneficiariesStats = action.payload; // هنا نخزن إحصائيات المستفيدين
+      })
+      .addCase(fetchBeneficiaryStats.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+        console.error("خطأ في السيرفر:", action.error);
       });
   },
 });

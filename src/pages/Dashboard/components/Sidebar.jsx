@@ -1,13 +1,25 @@
 import { useTranslation } from "@/hooks/useTranslation";
-import { NavLink, useLocation } from "react-router-dom"; // تم التصحيح هنا
+import { NavLink, useLocation } from "react-router-dom";
 
 export default function Sidebar() {
   const { t, lang } = useTranslation();
   const isRtl = lang === "ar";
-  const { pathname } = useLocation(); // الآن ستعمل بشكل صحيح
+  const { pathname } = useLocation();
 
   // منطق: إذا كنا في صفحة التعديل، لا نعتبر زر الأيتام "نشطاً"
   const isEditing = pathname.includes("/edit");
+
+  // تعريف المجموعات خارج الـ map لتحسين الأداء
+  const pathGroups = {
+    orphans: [
+      "/dashboard/orphans",
+      "/dashboard/orphan/details",
+      "/dashboard/add-orphan",
+      "/dashboard/orphans/edit",
+    ],
+    beneficiaries: ["/dashboard/beneficiaries"],
+    requests: ["/dashboard/requests"],
+  };
 
   const menuItems = {
     operational: [
@@ -81,31 +93,31 @@ export default function Sidebar() {
                   ? t("sysControl")
                   : t("account")}
             </p>
+
             {items.map((item) => {
-              // منطق تحديد هل الزر نشط فعلياً أم لا
-              // إذا كنا في التعديل والزر هو "orphans"، نجبره أن يكون false
               const isOrphansLink = item.id === "orphans";
+
+              // المنطق: هل الرابط الحالي جزء من مجموعة هذا العنصر؟
+              let isActive = false;
+              if (item.id === "dashboard") {
+                isActive = pathname === "/dashboard";
+              } else {
+                const group = pathGroups[item.id] || [item.path];
+                isActive = group.some((p) => pathname.startsWith(p));
+              }
+
+              const active = isOrphansLink && isEditing ? false : isActive;
 
               return (
                 <NavLink
                   key={item.id}
                   to={item.path}
                   end={item.id === "dashboard"}
-                  className={({ isActive }) => {
-                    const active =
-                      isOrphansLink && isEditing ? false : isActive;
-                    return `w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 mb-1 
-                    ${active ? "bg-surface-lowest/10 shadow-lg text-white" : "hover:bg-surface-lowest/5 text-[#e9ebef]"}`;
-                  }}
-                  style={({ isActive }) => {
-                    const active =
-                      isOrphansLink && isEditing ? false : isActive;
-                    return {
-                      borderRight:
-                        active && isRtl ? `4px solid #fad564` : "none",
-                      borderLeft:
-                        active && !isRtl ? `4px solid #fad564` : "none",
-                    };
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 mb-1 
+                  ${active ? "bg-surface-lowest/10 shadow-lg text-white" : "hover:bg-surface-lowest/5 text-[#e9ebef]"}`}
+                  style={{
+                    borderRight: active && isRtl ? `4px solid #fad564` : "none",
+                    borderLeft: active && !isRtl ? `4px solid #fad564` : "none",
                   }}
                 >
                   <span className="material-symbols-outlined text-xl">

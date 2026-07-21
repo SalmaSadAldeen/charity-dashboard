@@ -1,3 +1,204 @@
+// import { useState, useEffect } from "react";
+// import { useDispatch } from "react-redux";
+// import { useForm } from "@/hooks/useForm";
+// import toast from "react-hot-toast";
+// import { addOrphan, updateOrphan } from "@/store/index";
+
+// export const useOrphanFormLogic = (t, initialData = null, onClose = null) => {
+//   const dispatch = useDispatch();
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const isEdit = !!initialData;
+
+//   const getToastStyle = () => ({
+//     direction: document.dir === "rtl" ? "rtl" : "ltr",
+//     textAlign: document.dir === "rtl" ? "right" : "left",
+//   });
+
+//   const {
+//     formData,
+//     setFormData,
+//     handleInputChange,
+//     errors,
+//     validateForm,
+//     clearError,
+//   } = useForm({
+//     firstName: "",
+//     lastName: "",
+//     fatherName: "",
+//     motherName: "",
+//     guardianName: "",
+//     birthOfDate: "",
+//     gender: "MALE",
+//     brotherAndSisterNumber: "",
+//     bodySize: "",
+//     shoesSize: "",
+//     guaranteedPhone: "",
+//     isSupported: false,
+//     class: { ar: "", en: "" },
+//     Diseases: { ar: "", en: "" },
+//     currentAddress: { ar: "", en: "" },
+//     previousAddress: { ar: "", en: "" },
+//     talent: { ar: "", en: "" },
+//     FamilyStatement: null,
+//   });
+
+//   useEffect(() => {
+//     if (initialData) {
+//       // دالة مساعدة لتحويل البيانات إلى object دائماً
+//       const parseField = (field) => {
+//         if (typeof field === "string") {
+//           try {
+//             return JSON.parse(field);
+//           } catch (e) {
+//             return { ar: "", en: "" };
+//           }
+//         }
+//         return field || { ar: "", en: "" };
+//       };
+//       setFormData({
+//         ...initialData,
+//         birthOfDate: initialData.birthOfDate?.substring(0, 10) || "",
+//         class: parseField(initialData.class),
+//         Diseases: parseField(initialData.Diseases),
+//         currentAddress: parseField(initialData.currentAddress),
+//         previousAddress: parseField(initialData.previousAddress),
+//       });
+//     }
+//   }, [initialData]);
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     if (!validateForm()) {
+//       toast.error(t("pleaseFixErrors"), { style: getToastStyle() });
+//       return;
+//     }
+
+//     if (isEdit) {
+//       const cleanedInitialData = {
+//         firstName: initialData.firstName || "",
+//         lastName: initialData.lastName || "",
+//         fatherName: initialData.fatherName || "",
+//         motherName: initialData.motherName || "",
+//         guardianName: initialData.guardianName || "",
+//         birthOfDate: initialData.birthOfDate?.substring(0, 10) || "",
+//         gender: initialData.gender || "MALE",
+//         brotherAndSisterNumber: initialData.brotherAndSisterNumber || "",
+//         bodySize: initialData.bodySize || "",
+//         shoesSize: initialData.shoesSize || "",
+//         guaranteedPhone: initialData.guaranteedPhone || "",
+//         isSupported: initialData.isSupported || false,
+//         class:
+//           typeof initialData.class === "string"
+//             ? JSON.parse(initialData.class)
+//             : initialData.class || { ar: "", en: "" },
+//         Diseases:
+//           typeof initialData.Diseases === "string"
+//             ? JSON.parse(initialData.Diseases)
+//             : initialData.Diseases || { ar: "", en: "" },
+//         currentAddress:
+//           typeof initialData.currentAddress === "string"
+//             ? JSON.parse(initialData.currentAddress)
+//             : initialData.currentAddress || { ar: "", en: "" },
+//         previousAddress:
+//           typeof initialData.previousAddress === "string"
+//             ? JSON.parse(initialData.previousAddress)
+//             : initialData.previousAddress || { ar: "", en: "" },
+//         talent:
+//           typeof initialData.talent === "string"
+//             ? JSON.parse(initialData.talent)
+//             : initialData.talent || { ar: "", en: "" },
+//       };
+
+//       const currentFormData = {
+//         firstName: formData.firstName,
+//         lastName: formData.lastName,
+//         fatherName: formData.fatherName,
+//         motherName: formData.motherName,
+//         guardianName: formData.guardianName,
+//         birthOfDate: formData.birthOfDate,
+//         gender: formData.gender,
+//         brotherAndSisterNumber: formData.brotherAndSisterNumber,
+//         bodySize: formData.bodySize,
+//         shoesSize: formData.shoesSize,
+//         guaranteedPhone: formData.guaranteedPhone,
+//         isSupported: formData.isSupported,
+//         class: formData.class,
+//         Diseases: formData.Diseases,
+//         currentAddress: formData.currentAddress,
+//         previousAddress: formData.previousAddress,
+//         talent: formData.talent,
+//       };
+
+//       const isDataChanged =
+//         JSON.stringify(currentFormData) !== JSON.stringify(cleanedInitialData);
+//       const isFileChanged = formData.FamilyStatement instanceof File;
+
+//       if (!isDataChanged && !isFileChanged) {
+//         toast(t("noChangesDetected"), {
+//           icon: "🟡",
+//           style: {
+//             ...getToastStyle(),
+//             borderRadius: "10px",
+//             background: "#333",
+//             color: "#fff",
+//           },
+//         });
+//         return;
+//       }
+//     }
+
+//     setIsSubmitting(true);
+//     const dataToSend = new FormData();
+
+//     Object.keys(formData).forEach((key) => {
+//       if (key === "FamilyStatement") {
+//         if (formData.FamilyStatement instanceof File) {
+//           dataToSend.append("FamilyStatement", formData.FamilyStatement);
+//         }
+//       } else if (
+//         [
+//           "class",
+//           "Diseases",
+//           "currentAddress",
+//           "previousAddress",
+//           "talent",
+//         ].includes(key)
+//       ) {
+//         dataToSend.append(key, JSON.stringify(formData[key]));
+//       } else if (formData[key] !== null && formData[key] !== undefined) {
+//         dataToSend.append(key, formData[key]);
+//       }
+//     });
+
+//     try {
+//       const action = isEdit
+//         ? updateOrphan({ id: initialData.id, data: dataToSend })
+//         : addOrphan(dataToSend);
+
+//       const result = await dispatch(action).unwrap();
+//       toast.success(result?.message || t("successOperation"), {
+//         style: getToastStyle(),
+//       });
+//       if (onClose) onClose();
+//     } catch (error) {
+//       toast.error(error?.response?.data?.message || t("errorOccurred"), {
+//         style: getToastStyle(),
+//       });
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
+
+//   return {
+//     formData,
+//     handleInputChange,
+//     errors,
+//     handleSubmit,
+//     isLoading: isSubmitting,
+//     isEdit,
+//     clearError,
+//   };
+// };
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useForm } from "@/hooks/useForm";
