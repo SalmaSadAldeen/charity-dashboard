@@ -19,6 +19,15 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
     return obj[lang] || obj["ar"] || obj["en"] || "";
   };
 
+  const rawAidImage = selectedDetails.aidDetails?.donorImageUrl;
+  let aidImageUrl = "";
+  if (rawAidImage) {
+    let cleanPath = rawAidImage.replace(/\\/g, "/").replace(/^uploads\//, "");
+    aidImageUrl = `http://localhost:3000/uploads/${cleanPath}`;
+  }
+
+  const showAidImage = selectedDetails.status === "ACCEPTED" && aidImageUrl;
+
   return (
     <div
       className={`space-y-5 ${isRTL ? "text-right" : "text-left"}`}
@@ -44,26 +53,48 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
 
       {/* البيانات العامة */}
       <div className="bg-surface-lowest p-6 rounded-3xl border border-border/60 shadow-sm space-y-5">
-        <div className="flex flex-wrap items-center gap-2">
-          {selectedDetails.category?.name && (
-            <span className="text-[11px] font-extrabold uppercase text-primary px-3 py-1 bg-primary/10 rounded-xl border border-primary/20">
-              {getLocalized(selectedDetails.category.name)}
-            </span>
-          )}
-          {selectedDetails.subCategory?.name && (
-            <span className="text-[11px] font-bold uppercase text-on-surface-variant px-3 py-1 bg-surface/50 rounded-xl border border-border/60">
-              {getLocalized(selectedDetails.subCategory.name)}
-            </span>
-          )}
-        </div>
+        
+        {/* الجزء العلوي مقسوم مع ضبط قياسات البوردر والصورة بدقة بدون فراغات */}
+        <div className="flex items-center justify-between gap-4">
+          
+          <div className="space-y-3 flex-1 min-w-0">
+            {/* الفئة والفئة الفرعية جنباً إلى جنب */}
+            <div className="flex flex-wrap items-center gap-2">
+              {selectedDetails.category?.name && (
+                <span className="text-[11px] font-extrabold uppercase text-primary px-3 py-1 mb-2 bg-primary/10 rounded-xl border border-primary/20">
+                  {getLocalized(selectedDetails.category.name)}
+                </span>
+              )}
+              {selectedDetails.subCategory?.name && (
+                <span className="text-[11px] font-bold uppercase text-on-surface-variant px-3 py-1 bg-surface/50 rounded-xl border border-border/60">
+                  {getLocalized(selectedDetails.subCategory.name)}
+                </span>
+              )}
+            </div>
 
-        <div className="space-y-1">
-          <p className="text-[10px] font-extrabold text-on-surface-variant/70 uppercase tracking-wider">
-            {t?.("title") || "عنوان الطلب"}
-          </p>
-          <h3 className="font-black text-on-surface text-base leading-snug">
-            {getLocalized(selectedDetails.title) || "-"}
-          </h3>
+            {/* عنوان الطلب */}
+            <div className="space-y-1">
+              <p className="text-[10px] font-extrabold text-on-surface-variant/70 uppercase tracking-wider">
+                {t?.("title") || "عنوان الطلب"}
+              </p>
+              <h3 className="font-black text-on-surface text-base leading-snug truncate">
+                {getLocalized(selectedDetails.title) || "-"}
+              </h3>
+            </div>
+          </div>
+
+          {/* الصورة بملء البوردر تماماً بدون أي فراغات داخلية */}
+          {showAidImage && (
+            <div className="shrink-0">
+              <div className="w-45 h-32 rounded-2xl overflow-hidden border border-border/80 bg-surface/50 shadow-sm">
+                <img
+                  src={aidImageUrl}
+                  alt=""
+                  className="w-full h-full object-cover block"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {selectedDetails.details && (
@@ -83,7 +114,6 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
             <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
               {t?.("description") || "الوصف الإضافي"}
             </p>
-            {/* أضفنا break-words و whitespace-pre-wrap لضمان نزول النص للأسفل وعدم خروجه للخارج */}
             <p className="font-normal text-on-surface-variant text-xs leading-relaxed break-words whitespace-pre-wrap">
               {getLocalized(selectedDetails.description)}
             </p>

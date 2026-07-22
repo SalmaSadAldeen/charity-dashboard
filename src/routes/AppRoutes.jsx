@@ -13,6 +13,8 @@ import EditOrphanPage from "@/pages/EditOrphan/EditOrphanPage";
 import BeneficiariesPage from "@/pages/BeneficiaryGallery/BeneficiariesPages";
 import BeneficiaryDetails from "@/pages/BeneficiaryDetails/BeneficiaryDetails";
 import HelpRequestsPage from "@/pages/HelpRequestsGallery.jsx/HelpRequestsPage";
+import HelpRequestDetailsPage from "@/pages/AidDetails/HelpRequestDetailsPage";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -39,7 +41,7 @@ export default function AppRoutes() {
         <Route path="add-user" element={<AddUser />} />
 
         <Route path="requests" element={<HelpRequestsPage />} />
-
+        <Route path="help-requests/:id" element={<HelpRequestDetailsPage />} />
         <Route path="orphan/details/:id" element={<OrphanProfilePage />} />
         <Route path="employee-profile/:id" element={<EmployeeProfile />} />
         <Route path="beneficiaries/:id" element={<BeneficiaryDetails />} />

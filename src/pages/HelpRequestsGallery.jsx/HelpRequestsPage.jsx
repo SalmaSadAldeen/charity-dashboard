@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   Clock,
@@ -11,35 +12,51 @@ import {
 } from "lucide-react";
 import { fetchHelpRequests } from "@/store/index";
 
-import HelpRequestSidePanel from "./components/HelpRequestSidePanel";
 import HelpRequestsTable from "./components/HelpRequestsTable";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
+
+const ITEMS_PER_PAGE = 5;
 
 export default function HelpRequestsPage() {
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // الحالة للفلترة والـ Pagination
-  const [statusFilter, setStatusFilter] = useState(null); // null يعني "الكل"
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedReq, setSelectedReq] = useState(null);
-
-  const ITEMS_PER_PAGE = 5;
+  // الفلتر والصفحة بيصيروا محفوظين بالـ URL بدل useState محلي
+  const [searchParams, setSearchParams] = useSearchParams();
+  const statusFilter = searchParams.get("status") || null;
+  const currentPage = Number(searchParams.get("page")) || 1;
 
   const { items, status, pagination } = useSelector(
     (state) => state.helpRequests,
   );
 
-  // جلب البيانات عند تغير الفلتر أو الصفحة
   useEffect(() => {
     dispatch(
       fetchHelpRequests({
-        status: statusFilter || "", // إرسال فارغ للكل
+        status: statusFilter || "",
         page: currentPage,
         limit: ITEMS_PER_PAGE,
       }),
     );
   }, [statusFilter, currentPage, lang, dispatch]);
+
+  const handleFilterChange = (val) => {
+    const params = new URLSearchParams(searchParams);
+    if (val) {
+      params.set("status", val);
+    } else {
+      params.delete("status");
+    }
+    params.set("page", "1");
+    setSearchParams(params);
+  };
+
+  const handlePageChange = (newPage) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(newPage));
+    setSearchParams(params);
+  };
 
   const filters = [
     { label: t("all"), value: null },
@@ -49,7 +66,6 @@ export default function HelpRequestsPage() {
       icon: <CheckCircle size={16} />,
     },
     { label: t("PENDING"), value: "PENDING", icon: <Clock size={16} /> },
-
     { label: t("REJECTED"), value: "REJECTED", icon: <XCircle size={16} /> },
     { label: t("cancel"), value: "CANCELLED", icon: <XCircle size={16} /> },
   ];
@@ -74,21 +90,24 @@ export default function HelpRequestsPage() {
           <FilterBar
             filters={filters}
             active={statusFilter}
-            onFilterChange={(val) => {
-              setStatusFilter(val);
-              setCurrentPage(1);
-              setSelectedReq(null);
-            }}
+            onFilterChange={handleFilterChange}
           />
         </div>
 
         <div
-          className={`transition-opacity duration-300 ${
-            status === "loading" ? "opacity-30" : "opacity-100"
+          className={`transition-opacity duration-300 ease-in-out ${
+            status === "loading" ? "opacity-60" : "opacity-100"
           }`}
         >
           {items.length > 0 ? (
-            <HelpRequestsTable data={items} onRowClick={setSelectedReq} />
+            <HelpRequestsTable
+              data={items}
+              onRowClick={(req) =>
+                navigate(
+                  `/dashboard/help-requests/${req.id}?${searchParams.toString()}`,
+                )
+              }
+            />
           ) : (
             <div className="py-20 text-center text-gray-400 font-bold border-2 border-dashed border-border rounded-[2rem]">
               <AlertCircle size={48} className="mx-auto mb-4 opacity-50" />
@@ -106,7 +125,7 @@ export default function HelpRequestsPage() {
             <div className="flex items-center gap-2">
               <button
                 disabled={currentPage === 1 || status === "loading"}
-                onClick={() => setCurrentPage((p) => p - 1)}
+                onClick={() => handlePageChange(currentPage - 1)}
                 className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary"
               >
                 {lang === "ar" ? (
@@ -119,7 +138,7 @@ export default function HelpRequestsPage() {
                 disabled={
                   currentPage >= pagination.lastPage || status === "loading"
                 }
-                onClick={() => setCurrentPage((p) => p + 1)}
+                onClick={() => handlePageChange(currentPage + 1)}
                 className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary"
               >
                 {lang === "ar" ? (
@@ -132,25 +151,6 @@ export default function HelpRequestsPage() {
           </footer>
         )}
       </section>
-
-      {/* 3. Side Panel مع التأكد من إتاحة خيار الإغلاق بالنقر بالخارج */}
-      {selectedReq && (
-        <HelpRequestSidePanel
-          request={selectedReq}
-          onClose={() => setSelectedReq(null)}
-          t={t}
-          lang={lang}
-          onStatusUpdated={() => {
-            dispatch(
-              fetchHelpRequests({
-                status: statusFilter || "",
-                page: currentPage,
-                limit: ITEMS_PER_PAGE,
-              }),
-            );
-          }}
-        />
-      )}
     </div>
   );
 }

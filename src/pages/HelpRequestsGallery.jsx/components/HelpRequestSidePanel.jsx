@@ -16,8 +16,8 @@ import {
 import BeneficiaryPersonalInfo from "@/pages/AidDetails/components/BeneficiaryPersonalInfo";
 import AidTabContent from "@/pages/AidDetails/components/AidTabContent";
 import RequestAttachmentsCard from "@/pages/AidDetails/components/RequestAttachmentsCard";
-import { RequestActionModal } from "./RequestActionModal";
-import { RequestActionFooter } from "./RequestActionFooter";
+import { RequestActionModal } from "../../AidDetails/components/RequestActionModal";
+import { RequestActionFooter } from "../../AidDetails/components/RequestActionFooter";
 
 import { fetchHelpRequestById, updateHelpRequestStatus } from "@/store/index";
 

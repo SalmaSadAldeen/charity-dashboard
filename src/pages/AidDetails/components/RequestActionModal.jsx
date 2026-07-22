@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { X, CheckCircle2, XCircle } from "lucide-react";
+import {
+  X,
+  CheckCircle2,
+  XCircle,
+  Upload,
+  Image as ImageIcon,
+} from "lucide-react";
 
 export function RequestActionModal({
   isOpen,
@@ -15,6 +21,7 @@ export function RequestActionModal({
     title: { ar: "", en: "" },
     description: { ar: "", en: "" },
     isUrgent: false,
+    media: null, // حقل الصورة الجديد
   });
 
   const [rejectData, setRejectData] = useState({
@@ -34,6 +41,7 @@ export function RequestActionModal({
             en: currentData?.description?.en || "",
           },
           isUrgent: currentData?.isUrgent || false,
+          media: null,
         });
       } else {
         setRejectData({
@@ -71,11 +79,11 @@ export function RequestActionModal({
           description: acceptData.description,
           isUrgent: acceptData.isUrgent,
           rejectionReason: { ar: "", en: "" },
+          media: acceptData.media, // تمرير ملف الصورة هنا
         };
 
     try {
       await onSubmit(payload);
-      // تم إزالة onClose المتكررة من هنا، لأن الـ Parent (HelpRequestSidePanel) يتكفل بإغلاق المودال والـ Panel معاً
     } catch (error) {
       console.error("Action submission error:", error);
     } finally {
@@ -84,6 +92,7 @@ export function RequestActionModal({
         title: { ar: "", en: "" },
         description: { ar: "", en: "" },
         isUrgent: false,
+        media: null,
       });
       setRejectData({ rejectionReason: { ar: "", en: "" } });
     }
@@ -122,7 +131,7 @@ export function RequestActionModal({
                   ? t?.("reject_subtitle") ||
                     "يرجى تعبئة سبب الرفض باللغتين العربية والإنجليزية بدقة."
                   : t?.("accept_subtitle") ||
-                    "يرجى مراجعة وتعديل العنوان والوصف باللغتين وتحديد حالة الاستعجال."}
+                    "يرجى مراجعة وتعديل العنوان والوصف وتحديد حالة الاستعجال وإرفاق الصورة."}
               </p>
             </div>
           </div>
@@ -232,27 +241,57 @@ export function RequestActionModal({
                 </div>
               </div>
 
-              {/* isUrgent Checkbox Card */}
-              <div className="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-colors cursor-pointer">
-                <input
-                  type="checkbox"
-                  id="isUrgentCheckbox"
-                  checked={acceptData.isUrgent}
-                  onChange={(e) =>
-                    setAcceptData((prev) => ({
-                      ...prev,
-                      isUrgent: e.target.checked,
-                    }))
-                  }
-                  className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary cursor-pointer"
-                />
-                <label
-                  htmlFor="isUrgentCheckbox"
-                  className="text-xs font-bold text-slate-700 cursor-pointer select-none flex-1"
-                >
-                  {t?.("is_urgent_question") ||
-                    "هل هذا الطلب عاجل ويحتاج أولوية قصوى؟"}
-                </label>
+              {/* صف واحد يضم حقل رفع الصورة + خيار الاستعجال لتوفير مساحة وتصغير الحجم */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                {/* Image Upload Input */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-700">
+                    {t?.("acceptance_image") || "صورة القبول (اختياري)"}
+                  </label>
+                  <label className="flex items-center gap-2.5 w-full rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-3 text-xs text-slate-600 hover:bg-slate-50 hover:border-primary cursor-pointer transition-all truncate">
+                    <Upload className="w-4 h-4 text-primary shrink-0" />
+                    <span className="truncate flex-1">
+                      {acceptData.media
+                        ? acceptData.media.name
+                        : t?.("upload_image_placeholder") || "اختر صورة..."}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setAcceptData((prev) => ({
+                            ...prev,
+                            media: e.target.files[0],
+                          }));
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+
+                {/* isUrgent Checkbox Card */}
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-colors cursor-pointer self-end">
+                  <input
+                    type="checkbox"
+                    id="isUrgentCheckbox"
+                    checked={acceptData.isUrgent}
+                    onChange={(e) =>
+                      setAcceptData((prev) => ({
+                        ...prev,
+                        isUrgent: e.target.checked,
+                      }))
+                    }
+                    className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary cursor-pointer"
+                  />
+                  <label
+                    htmlFor="isUrgentCheckbox"
+                    className="text-xs font-bold text-slate-700 cursor-pointer select-none flex-1"
+                  >
+                    {t?.("is_urgent_question") || "هل الطلب عاجل؟"}
+                  </label>
+                </div>
               </div>
             </div>
           ) : (

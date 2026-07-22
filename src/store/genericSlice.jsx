@@ -288,7 +288,9 @@ export const createGenericSlice = (resource) => {
           // --- حالات الجلب المفرد ---
           // داخل الـ extraReducers:
           .addCase(fetchItemById.pending, (state) => {
-            state.detailsStatus = "loading"; // استخدمنا حالة التفاصيل
+            state.detailsStatus = "loading";
+            state.selectedDetails = null;
+            // استخدمنا حالة التفاصيل
           })
           .addCase(fetchItemById.fulfilled, (state, action) => {
             state.selectedDetails = action.payload?.data || action.payload; // خزنّا في الـ Details
