@@ -14,7 +14,7 @@ import BeneficiariesPage from "@/pages/BeneficiaryGallery/BeneficiariesPages";
 import BeneficiaryDetails from "@/pages/BeneficiaryDetails/BeneficiaryDetails";
 import HelpRequestsPage from "@/pages/HelpRequestsGallery.jsx/HelpRequestsPage";
 import HelpRequestDetailsPage from "@/pages/AidDetails/HelpRequestDetailsPage";
-
+import { ProfilePage } from "@/pages/ProfilePage/ProfilePage";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -35,6 +35,8 @@ export default function AppRoutes() {
         <Route path="orphans/edit/:id" element={<EditOrphanPage />} />
         <Route path="add-orphan" element={<AddOrphan />} />
         <Route path="orphans" element={<OrphansGallery />} />
+        <Route path="profile" element={<ProfilePage />} />
+
         <Route index element={<Dashboard />} />
         <Route path="employees" element={<EmployeesDirectory />} />
         <Route path="beneficiaries" element={<BeneficiariesPage />} />

@@ -37,7 +37,7 @@ export default function AddUser() {
     if (rolesStatus === "idle") {
       dispatch(fetchRoles());
     }
-  }, [dispatch, rolesStatus]); // الاعتماد هنا ثابت ولا يسبب حلقة
+  }, [dispatch, rolesStatus],lang); // الاعتماد هنا ثابت ولا يسبب حلقة
   return (
     <div
       className={`p-8 bg-surface-container min-h-screen ${lang === "ar" ? "rtl" : "ltr"}`}

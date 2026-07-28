@@ -35,38 +35,40 @@ export default function BeneficiaryPersonalInfo({
     return obj[lang] || obj["ar"] || obj["en"] || "-";
   };
 
-  // دالة ذكية لمعالجة الحالة الاجتماعية حسب الجنس
+  // دالة ذكية لمعالجة الترجمة حسب الحالة الاجتماعية والجنس معاً
   const getSocialStatusValue = () => {
     if (!data.socialStatus) return "-";
 
-    const status = data.socialStatus.trim();
-    const statusLower = status.toLowerCase();
-    const gender = data.gender ? data.gender.toLowerCase() : "";
+    const status = data.socialStatus.trim().toUpperCase();
+    const gender = data.gender ? data.gender.trim().toUpperCase() : "";
 
-    if (gender === "female" || gender === "أنثى" || gender === "f") {
-      const femaleKeys = [
-        `${statusLower}_female`,
-        `${status.toUpperCase()}_FEMALE`,
-      ];
-      for (const k of femaleKeys) {
-        const translated = t?.(k);
-        if (translated && translated !== k) return translated;
-      }
-    } else if (gender === "male" || gender === "ذكر" || gender === "m") {
-      const maleKeys = [`${statusLower}_male`, `${status.toUpperCase()}_MALE`];
-      for (const k of maleKeys) {
-        const translated = t?.(k);
-        if (translated && translated !== k) return translated;
+    // تحديد ما إذا كانت أنثى أم ذكر بناءً على القيم المحتملة من الـ Backend
+    const isFemale = gender === "FEMALE" || gender === "أنثى" || gender === "F";
+    const isMale = gender === "MALE" || gender === "ذكر" || gender === "M";
+
+    let possibleKeys = [];
+
+    if (isFemale) {
+      // مفاتيح خاصة بالإناث (مثل: DIVORCED_FEMALE أو divorced_female)
+      possibleKeys = [`${status}_FEMALE`, `${status.toLowerCase()}_female`];
+    } else if (isMale) {
+      // مفاتيح خاصة بالذكور (مثل: DIVORCED_MALE أو divorced_male)
+      possibleKeys = [`${status}_MALE`, `${status.toLowerCase()}_male`];
+    }
+
+    // إضافة المفتاح العام كخيار أخير إذا لم يوجد مخصص للجنس
+    possibleKeys.push(status, status.toLowerCase());
+
+    // التجربة والبحث عن أول مفتاح ترجمة صالح وموجود في ملفات الترجمة
+    for (const key of possibleKeys) {
+      const translated = t?.(key);
+      if (translated && translated !== key) {
+        return translated;
       }
     }
 
-    const generalTranslated = t?.(statusLower);
-    if (generalTranslated && generalTranslated !== statusLower)
-      return generalTranslated;
-
     return data.socialStatus;
   };
-
   const fields = [
     {
       label: t?.("fatherName") || "اسم الأب",
@@ -138,7 +140,7 @@ export default function BeneficiaryPersonalInfo({
         </div>
       </div>
 
-      {/* شبكة البيانات بالاعتماد الكلي على متغيرات الثيم بدون بياض */}
+      {/* شبكة البيانات */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
         {fields.map((f, i) => (
           <div

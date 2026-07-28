@@ -46,4 +46,6 @@ export const adminService = {
     API.get(`/admin/dashboard/charts/distributions?view=${view}`),
   getRequestsCharts: () => API.get(`/admin/dashboard/charts/requests`),
   getRoles: () => API.get("role").then((res) => res.data.data),
+
+  getProfile: () => API.get("/api/profile"),
 };

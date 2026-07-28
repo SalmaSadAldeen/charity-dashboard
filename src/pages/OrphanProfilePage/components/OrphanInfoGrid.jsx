@@ -17,13 +17,18 @@ export default function OrphanInfoGrid({ orphan }) {
   // دالة ذكية لتنسيق التاريخ حسب اللغة (تنسيق اليوم/الشهر/السنة أو العكس تلقائياً)
   const formatDate = (dateString) => {
     if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString(isRTL ? "ar-EG" : "en-US", {
-      year:"numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-  };
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
 
+    // استخدام ar-EG للعربية (يعرض أرقام عربية مصرية/مشرقية واضحة) و en-GB للإنجليزية
+    const locale = isRTL ? "ar-EG" : "en-GB";
+
+    return new Intl.DateTimeFormat(locale, {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(date);
+  };
   const fields = [
     {
       label: t("fatherName"),
@@ -101,20 +106,20 @@ export default function OrphanInfoGrid({ orphan }) {
       </div>
 
       {/* قسم التواريخ في الأسفل */}
-   {/* قسم التواريخ في الأسفل */}
-<div className="flex flex-wrap justify-center items-center gap-6 pt-6 border-t border-gray-200">
-  <div className="flex items-center gap-1">
-    {/* الأيقونة والنص سيترتبان تلقائياً حسب dir="rtl" أو dir="ltr" في الحاوية الأب */}
-    <Clock size={20} className="text-primary" />
-    <p className="text-sm font-black text-gray-500 uppercase flex items-center gap-1">
-      {t("updatedAt")}:
-      {/* زيادة حجم الخط font-medium أو text-base وتنسيق الأرقام */}
-      <span className="text-primary font-mono text-base font-bold m-1">
-        {formatDate(orphan.updatedAt)}
-      </span>
-    </p>
-  </div>
-</div>
+      {/* قسم التواريخ في الأسفل */}
+      <div className="flex flex-wrap justify-center items-center gap-6 pt-6 border-t border-gray-200">
+        <div className="flex items-center gap-1">
+          {/* الأيقونة والنص سيترتبان تلقائياً حسب dir="rtl" أو dir="ltr" في الحاوية الأب */}
+          <Clock size={20} className="text-primary" />
+          <p className="text-sm font-black text-gray-500 uppercase flex items-center gap-1">
+            {t("updatedAt")}:
+            {/* زيادة حجم الخط font-medium أو text-base وتنسيق الأرقام */}
+            <span className="text-primary font-mono text-base font-bold m-1">
+              {formatDate(orphan.updatedAt)}
+            </span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

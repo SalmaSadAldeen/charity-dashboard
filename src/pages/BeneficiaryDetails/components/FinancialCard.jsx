@@ -1,8 +1,42 @@
 import { DetailRow } from "./DetailRow";
 import { useTranslation } from "@/hooks/useTranslation";
 
-export default function FinancialCard({ data }) {
+export default function FinancialCard({ data, parentData }) {
   const { t } = useTranslation();
+
+  // دالة ذكية لمعالجة الترجمة للحالة الاجتماعية بناءً على الجنس
+  const getSocialStatusValue = () => {
+    if (!data?.socialStatus) return t("N/A");
+
+    const status = data.socialStatus.trim().toUpperCase();
+
+    // البحث عن الـ gender سواء كان في الـ data أو في الـ parentData الممرر من الخارج
+    const rawGender = data?.gender || parentData?.gender || "";
+    const gender = rawGender.trim().toUpperCase();
+
+    const isFemale = gender === "FEMALE" || gender === "أنثى" || gender === "F";
+    const isMale = gender === "MALE" || gender === "ذكر" || gender === "M";
+
+    let possibleKeys = [];
+
+    if (isFemale) {
+      possibleKeys = [`${status}_FEMALE`, `${status.toLowerCase()}_female`];
+    } else if (isMale) {
+      possibleKeys = [`${status}_MALE`, `${status.toLowerCase()}_male`];
+    }
+
+    // المفتاح العام كخيار احتياطي
+    possibleKeys.push(status, status.toLowerCase());
+
+    for (const key of possibleKeys) {
+      const translated = t?.(key);
+      if (translated && translated !== key) {
+        return translated;
+      }
+    }
+
+    return data.socialStatus;
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -17,10 +51,7 @@ export default function FinancialCard({ data }) {
 
         {/* توزيع الصفوف بالتساوي لملء الفراغ */}
         <div className="flex flex-col flex-grow justify-around">
-          <DetailRow
-            label={t("socialStatus")}
-            value={t(data?.socialStatus || "N/A")}
-          />
+          <DetailRow label={t("socialStatus")} value={getSocialStatusValue()} />
           <DetailRow
             label={t("siblingsCount")}
             value={data?.numberOfChildren ?? 0}

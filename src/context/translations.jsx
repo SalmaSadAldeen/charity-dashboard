@@ -3,6 +3,8 @@ export const translations = {
   // 🇬🇧 ENGLISH TRANSLATIONS
   // ==========================================
   en: {
+    rolesCount: "Custom Roles ",
+    securityStatussecured: "Account is fully secured",
     // --- 1. General & Navigation ---
     logoSubtitle: "Charity Management System",
     coreOps: "Core Operations",
@@ -79,6 +81,7 @@ export const translations = {
     employees: "Employees Management",
     employee: "Employee",
     jobRole: "Job Role",
+    Profile: " Profile",
 
     // --- 6. Beneficiaries & Help Requests ---
     beneficiaries: "Beneficiaries Management",
@@ -210,7 +213,7 @@ export const translations = {
     currentPlaceOfResidence: "Current Residence Place",
     housingSpecifications: "Housing Specifications",
     reasonForLock: "Reason for Lock/Closure",
-
+    permissionsAndRoles: "Roles",
     // --- 12. General UI & Actions ---
     search: "Search...",
     actions: "Actions",
@@ -275,6 +278,7 @@ export const translations = {
     rejection_reason_en: "Rejection Reason (English)",
     sending: "Sending...",
     confirm_and_send: "Confirm & Send",
+    accountInfo: "accountInfo",
   },
 
   // ==========================================
@@ -288,7 +292,7 @@ export const translations = {
     account: "الحساب",
     logout: "تسجيل الخروج الآمن",
     close: "إغلاق",
-
+    accountInfo: "معلومات الحساب الشخصية",
     // --- 2. Dashboard & Analytics ---
     dashboard: "لوحة الإحصائيات العامة",
     dashboardTitle: "تحليلات الجمعية العالمية",
@@ -303,7 +307,7 @@ export const translations = {
     weekly: "أسبوعي",
     yearly: "سنوي",
     incomingRequests: "الطلبات الواردة",
-
+    permissionsAndRoles: "الادوار",
     // --- 3. Categories & Types ---
     total: "إجمالي",
     edu: "تعليمية",
@@ -350,6 +354,8 @@ export const translations = {
     saving: "جاري الحفظ...",
     saveChanges: "حفظ التعديلات",
     editProfile: "تعديل الملف",
+    Profile: " البروفايل",
+
     youAreEditingEmployeeInfo: "أنت تعدل معلومات الموظف",
     employeesRecord: "سجل الموظفين",
     addEmployee: "إضافة موظف",
@@ -412,7 +418,8 @@ export const translations = {
     campaigns: "إدارة الحملات والمشاريع",
     totalDonors: "إجمالي المتبرعين",
     totalBeneficiaries: "إجمالي المستفيدين",
-
+    rolesCount: " أدوار مخصصة  ",
+    securityStatussecured: "الحساب محمي وآمن بالكامل",
     // --- 9. Fields, Labels & Common Props ---
     fatherName: "اسم الأب",
     motherName: "اسم الأم",
@@ -464,10 +471,15 @@ export const translations = {
     MEDICAL_DEVICES: "أجهزة طبية",
     SMALL_PROJECTS: "مشاريع صغيرة",
 
-    SINGLE: "أعزب",
-    MARRIED: "متزوج",
-    WIDOWED: "أرمل",
-    DIVORCED: "مطلق",
+    SINGLE_MALE: "أعزب",
+    MARRIED_MALE: "متزوج",
+    WIDOWED_MALE: "أرمل",
+    DIVORCED_MALE: "مطلق",
+
+    SINGLE_FEMALE: "عزباء",
+    MARRIED_FEMALE: "متزوجة",
+    WIDOWED_FEMALE: "أرملة",
+    DIVORCED_FEMALE: "مطلقة",
 
     employmentStatus: "حالة العمل",
     unemployed: "عاطل عن العمل",

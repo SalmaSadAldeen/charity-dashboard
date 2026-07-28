@@ -27,7 +27,7 @@ export default function EditUser({ employeeId, onClose }) {
     if (rolesStatus === "idle") {
       dispatch(fetchRoles());
     }
-  }, [dispatch, rolesStatus]); // الاعتماد هنا ثابت ولا يسبب حلقة
+  }, [dispatch, rolesStatus],lang); // الاعتماد هنا ثابت ولا يسبب حلقة
   const initialData = useMemo(() => {
     //console.log("Employee:", employee);
     if (!employee) return null;

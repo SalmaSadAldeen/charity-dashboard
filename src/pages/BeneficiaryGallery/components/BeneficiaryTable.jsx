@@ -1,10 +1,11 @@
 import { Eye } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Link } from "react-router-dom";
+
 export default function BeneficiaryTable({ data }) {
   const { t } = useTranslation();
 
-  // دالة الألوان الأصلية التي طلبتِ الحفاظ عليها
+  // دالة الألوان الأصلية
   const getAvatarColor = (id) => {
     const palette = [
       "bg-[#735c00]/15 text-[#735c00]",
@@ -14,7 +15,38 @@ export default function BeneficiaryTable({ data }) {
     return palette[(id || 0) % palette.length];
   };
 
-  // ألوان هادئة (Muted) وتناسق في الـ Radius
+  // دالة الترجمة الذكية مع تعريف possibleKeys بشكل صحيح
+  const getSocialStatusValue = (item) => {
+    if (!item?.socialStatus) return "-";
+
+    const status = item.socialStatus.trim().toUpperCase();
+    const gender = item.gender ? item.gender.trim().toUpperCase() : "";
+
+    const isFemale = gender === "FEMALE" || gender === "أنثى" || gender === "F";
+    const isMale = gender === "MALE" || gender === "ذكر" || gender === "M";
+
+    let possibleKeys = []; // <--- تم تعريف المتغير هنا بشكل صحيح
+
+    if (isFemale) {
+      possibleKeys = [`${status}_FEMALE`, `${status.toLowerCase()}_female`];
+    } else if (isMale) {
+      possibleKeys = [`${status}_MALE`, `${status.toLowerCase()}_male`];
+    }
+
+    // إضافة المفاتيح العامة (تعتبر المذكر أو القيمة الافتراضية عند غياب الجنس)
+    possibleKeys.push(status, status.toLowerCase());
+
+    for (const key of possibleKeys) {
+      const translated = t?.(key);
+      if (translated && translated !== key) {
+        return translated;
+      }
+    }
+
+    return item.socialStatus;
+  };
+
+  // ألوان الحالة
   const getStatusStyle = (status) => {
     switch (status) {
       case "ACCEPTED":
@@ -48,7 +80,7 @@ export default function BeneficiaryTable({ data }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-border bg-white">
-          {data.map((item) => (
+          {data?.map((item) => (
             <tr
               key={item.id}
               className="group hover:bg-primary-container/5 transition-all"
@@ -56,30 +88,34 @@ export default function BeneficiaryTable({ data }) {
               <td className="p-4 truncate">
                 <div className="flex items-center gap-4">
                   <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs border ${getAvatarColor(item.id)}`}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs border ${getAvatarColor(
+                      item.id
+                    )}`}
                   >
                     {item.firstName?.charAt(0)}
                   </div>
-                  <span className="font-bold text-sm text-on-surface-variant">{`${item.firstName} ${item.lastName}`}</span>
+                  <span className="font-bold text-sm text-on-surface-variant">{`${
+                    item.firstName || ""
+                  } ${item.lastName || ""}`}</span>
                 </div>
               </td>
               <td className="p-4 text-center">
-                {/* تم توحيد الـ Radius هنا */}
                 <span className="text-[11px] font-bold text-[#5e5846] bg-[#fdfaf0] px-4 py-1.5 rounded-xl border border-[#f2e9d0]">
-                  {t(item.socialStatus)}
+                  {getSocialStatusValue(item)}
                 </span>
               </td>
               <td className="p-4 text-center">
-                {/* تم توحيد الـ Radius هنا أيضاً */}
                 <span
-                  className={`inline-block px-4 py-1.5 rounded-xl text-[10px] font-black border uppercase ${getStatusStyle(item.status)}`}
+                  className={`inline-block px-4 py-1.5 rounded-xl text-[10px] font-black border uppercase ${getStatusStyle(
+                    item.status
+                  )}`}
                 >
                   {t(item.status)}
                 </span>
               </td>
               <td className="p-4 text-center">
                 <Link
-                  to={`/dashboard/beneficiaries/${item.id}`} // المسار الذي يؤدي لصفحة التفاصيل
+                  to={`/dashboard/beneficiaries/${item.id}`}
                   className="inline-block p-2 bg-white border border-border rounded-xl text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
                 >
                   <Eye size={16} />

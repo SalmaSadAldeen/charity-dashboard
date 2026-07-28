@@ -4,6 +4,7 @@ import { fetchBeneficiaries } from "@/store/index";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import BeneficiaryTable from "./components/BeneficiaryTable";
+import { useNavigate, useSearchParams } from "react-router-dom"; // تم جلب الأدوات للتحكم بالـ URL
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
 import { fetchBeneficiaryStats } from "@/store/dashboardSlice"; // تأكدي من هذا المسار
 import StatsOverview from "@/pages/BeneficiaryGallery/StatsOverview";
@@ -19,11 +20,11 @@ export default function BeneficiariesPage() {
     status,
     pagination,
   } = useSelector((state) => state.beneficiaries);
-
-  const [currentStatus, setCurrentStatus] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentStatus = searchParams.get("status") || null;
+  const currentPage = Number(searchParams.get("page")) || 1;
   const ITEMS_PER_PAGE = 5;
-
+  const navigate = useNavigate();
   // 1. جلب الإحصائيات عند تحميل الصفحة لأول مرة
   useEffect(() => {
     dispatch(fetchBeneficiaryStats());
@@ -40,6 +41,23 @@ export default function BeneficiariesPage() {
     );
   }, [currentStatus, currentPage, lang, dispatch]);
 
+  
+  const handleFilterChange = (val) => {
+    const params = new URLSearchParams(searchParams);
+    if (val) {
+      params.set("status", val);
+    } else {
+      params.delete("status");
+    }
+    params.set("page", "1");
+    setSearchParams(params);
+  };
+
+  const handlePageChange = (newPage) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(newPage));
+    setSearchParams(params);
+  };
   const filters = [
     { label: t("all"), value: null },
     { label: t("pending"), value: "PENDING", icon: <Clock size={16} /> },
@@ -80,10 +98,7 @@ export default function BeneficiariesPage() {
             <FilterBar
               filters={filters}
               active={currentStatus}
-              onFilterChange={(val) => {
-                setCurrentStatus(val);
-                setCurrentPage(1);
-              }}
+              onFilterChange={handleFilterChange}
             />
           </div>
 
@@ -91,7 +106,14 @@ export default function BeneficiariesPage() {
           <div
             className={`transition-opacity duration-300 ${status === "loading" ? "opacity-30" : "opacity-100"}`}
           >
-            <BeneficiaryTable data={beneficiaries} />
+            <BeneficiaryTable
+              data={beneficiaries}
+              onRowClick={(item) =>
+                navigate(
+                  `/dashboard/beneficiaries/${item.id}?${searchParams.toString()}`,
+                )
+              }
+            />{" "}
           </div>
 
           {/* 4. Pagination (في أسفل الجدول) */}
@@ -104,7 +126,7 @@ export default function BeneficiariesPage() {
               <div className="flex items-center gap-2">
                 <button
                   disabled={currentPage === 1 || status === "loading"}
-                  onClick={() => setCurrentPage((p) => p - 1)}
+                  onClick={() => handlePageChange(currentPage - 1)}
                   className="p-2.5 rounded-xl border border-border bg-surface-lowest text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30"
                 >
                   {lang === "ar" ? (
@@ -118,7 +140,7 @@ export default function BeneficiariesPage() {
                   disabled={
                     currentPage >= pagination.lastPage || status === "loading"
                   }
-                  onClick={() => setCurrentPage((p) => p + 1)}
+                  onClick={() => handlePageChange(currentPage + 1)}
                   className="p-2.5 rounded-xl border border-border bg-surface-lowest text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30"
                 >
                   {lang === "ar" ? (

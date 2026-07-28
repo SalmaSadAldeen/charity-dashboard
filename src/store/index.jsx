@@ -12,6 +12,7 @@ const orphansSlice = createGenericSlice("orphans");
 const rolesSlice = createGenericSlice("roles");
 const beneficiariesData = createGenericSlice("beneficiaries"); // لا تنسي إضافة المستفيدين
 const helpRequestsSlice = createGenericSlice("helpRequests");
+const profileSlice = createGenericSlice("profile");
 // --- 1. تصدير أctions الموظفين ---
 export const {
   setSelectedItem: setEmployee,
@@ -52,6 +53,7 @@ export const {
 export const {
   fetchItems: fetchBeneficiaries,
   fetchItemById: fetchBeneficiariesById,
+  updateItemStatus: updateBeneficiaryStatus
 } = beneficiariesData.actions;
 
 export const {
@@ -67,6 +69,9 @@ export const {
   // أضيفي delete أو update إذا كنتِ تحتاجينها مستقبلاً
 } = helpRequestsSlice.actions;
 
+export const {
+  fetchItems: getProfile, // إعادة تسمية fetchItems إلى getProfile لتناسب طلبك
+} = profileSlice.actions;
 // ... (تصدير الأدوار وبقية الـ Store) // تأكدي من أنكِ أخذتِ الـ actions من orphansSlice
 export const { fetchItems: fetchRoles } = rolesSlice.actions;
 // export const { setSelectedItem, clearSelected } = employeesSlice.slice.actions;
@@ -83,5 +88,6 @@ export const store = configureStore({
     beneficiaries: beneficiariesData.slice.reducer,
     roles: rolesSlice.slice.reducer, // هذا هو الاسم الذي يجب أن تستخدميه في الـ useSelector
     helpRequests: helpRequestsSlice.slice.reducer,
+    profile: profileSlice.slice.reducer,
   },
 });

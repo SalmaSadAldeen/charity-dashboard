@@ -65,7 +65,7 @@ export default function Sidebar() {
     account: [
       {
         id: "profile",
-        name: t("profile"),
+        name: t("Profile"),
         icon: "account_circle",
         path: "/dashboard/profile",
       },

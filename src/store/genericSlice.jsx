@@ -43,6 +43,9 @@ export const createGenericActions = (resource) => ({
               params.status,
             )
           ).data;
+        if (resource === "profile") {
+          return (await adminService.getProfile()).data;
+        }
         throw new Error(`Fetch action not defined for ${resource}`);
       } catch (err) {
         return rejectWithValue(err.response?.data?.message || err.message);
@@ -138,16 +141,23 @@ export const createGenericActions = (resource) => ({
     async ({ id, data }, { rejectWithValue }) => {
       try {
         let response;
+        console.log(
+          `🟢 [Thunk Start] Current Resource is: "${resource}", ID:`,
+          id,
+        );
+
         if (resource === "helpRequests") {
           response = await requestsService.updateRequestStatus(id, data);
-        } else if (resource === "beneficiaries") {
-          // يمكنك لاحقاً إضافة خدمة المستفيدين هنا بكل سهولة
-          // response = await beneficiaryService.updateBeneficiaryStatus(id, data);
+        } else if (resource === "beneficiaries" || resource === "beneficiary") {
+          response = await beneficiaryService.updateBeneficiaryStatus(id, data);
         } else {
           throw new Error(`Update status action not defined for ${resource}`);
         }
+
+        console.log(`✅ [Thunk Success] Response:`, response.data);
         return response.data;
       } catch (err) {
+        console.error(`❌ [Thunk Error Catch]:`, err);
         return rejectWithValue(err.response?.data?.message || err.message);
       }
     },
@@ -168,6 +178,7 @@ export const createGenericSlice = (resource) => {
     actions: {
       fetchItems,
       deleteItem,
+
       updateItem,
       addItem,
       fetchItemById,
@@ -206,6 +217,12 @@ export const createGenericSlice = (resource) => {
           })
           .addCase(fetchItems.fulfilled, (state, action) => {
             const payload = action.payload;
+            if (resource === "profile") {
+              state.selectedDetails = payload?.data || payload;
+              state.detailsStatus = "succeeded";
+              state.status = "succeeded";
+              return;
+            }
 
             // 1. تحديد البيانات الخام (المصفوفة):
             // إذا كان الـ payload نفسه مصفوفة نأخذه، وإلا نبحث عن مفتاح 'data'
