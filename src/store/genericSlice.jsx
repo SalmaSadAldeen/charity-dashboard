@@ -48,11 +48,18 @@ export const createGenericActions = (resource) => ({
           ).data;
         if (resource === "donors") {
           return (
-            await donorService.getDonors(params.page || 1, params.limit || 10)
+            await donorService.getDonors(
+              params.page || 1,
+              params.limit || 10,
+              params.isSponsor, // التصحيح هنا ليمرر قيمة الفلتر الصحيحة
+            )
           ).data;
         }
         if (resource === "profile") {
           return (await adminService.getProfile()).data;
+        }
+        if (resource === "permissions") {
+          return (await adminService.getPermissions()).data;
         }
         throw new Error(`Fetch action not defined for ${resource}`);
       } catch (err) {
@@ -137,20 +144,34 @@ export const createGenericActions = (resource) => ({
       }
     },
   ),
-
   updateItem: createAsyncThunk(
     `${resource}/update`,
-    async ({ id, data }, { rejectWithValue }) => {
+    async (arg, { rejectWithValue }) => {
       try {
+        // استخراج الـ id والـ data بدقة تامة بغض النظر عن طريقة إرسالهما
+        const id =
+          arg?.id !== undefined
+            ? arg.id
+            : arg?._id !== undefined
+              ? arg?._id
+              : arg;
+        const data = arg?.data !== undefined ? arg.data : arg;
+
+        console.log(`🛠️ [Generic Update - ${resource}] ID:`, id, "Data:", data);
+
         let response;
-        if (resource === "employees")
+        if (resource === "employees") {
           response = await adminService.updateEmployee(id, data);
-        else if (resource === "orphans")
+        } else if (resource === "orphans") {
           response = await orphanService.updateOrphan(id, data);
-        else if (resource === "roles")
-          // <--- أضيفي هذه
-          response = await adminService.updateRole(id, data);
-        else throw new Error(`Update action not defined for ${resource}`);
+        } else if (resource === "roles") {
+          response = await adminService.updateRole(id, data); // 👈 هنا سيصل الـ id الصحيح تماماً ولن يكون undefined أبدًا
+        } else if (resource === "beneficiaries") {
+          response = await beneficiaryService.updateBeneficiary(id, data);
+        } else {
+          throw new Error(`Update action not defined for ${resource}`);
+        }
+
         return response.data;
       } catch (err) {
         return rejectWithValue(err.response?.data?.message || err.message);
@@ -202,7 +223,6 @@ export const createGenericSlice = (resource) => {
     actions: {
       fetchItems,
       deleteItem,
-
       updateItem,
       addItem,
       fetchItemById,
@@ -313,12 +333,19 @@ export const createGenericSlice = (resource) => {
             state.status = "loading";
           })
           .addCase(updateItem.fulfilled, (state, action) => {
-            const updatedItem = action.payload.data;
-            state.items = state.items.map((item) =>
-              item.id === updatedItem.id ? updatedItem : item,
-            );
-            if (state.selectedItem?.id === updatedItem.id)
-              state.selectedItem = updatedItem;
+            // دعم الاحتمالين: سواء كان الرد مغلفاً بـ data أو مراجعاً للكائن مباشرة
+            const updatedItem = action.payload?.data || action.payload;
+
+            if (updatedItem && updatedItem.id) {
+              state.items = state.items.map((item) =>
+                item.id === Number(updatedItem.id)
+                  ? { ...item, ...updatedItem, id: Number(updatedItem.id) }
+                  : item,
+              );
+              if (state.selectedItem?.id === Number(updatedItem.id)) {
+                state.selectedItem = updatedItem;
+              }
+            }
             state.status = "succeeded";
           })
           .addCase(updateItem.rejected, (state, action) => {

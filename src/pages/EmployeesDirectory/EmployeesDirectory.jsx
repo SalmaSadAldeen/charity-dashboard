@@ -1,4 +1,4 @@
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -36,8 +36,12 @@ export default function EmployeesDirectory() {
     pagination,
     selectedItem,
   } = useSelector((state) => state.employees);
+
   const isReallyLoading = useDelayedLoading(status === "loading", 300);
   const { handleDelete, isLoading } = useGenericDelete("employee");
+
+  const totalPages = pagination?.lastPage || 1;
+  const showPagination = totalPages > 1;
 
   useEffect(() => {
     dispatch(fetchEmployees({ page: currentPage, limit: ITEMS_PER_PAGE }));
@@ -67,7 +71,7 @@ export default function EmployeesDirectory() {
   };
 
   return (
-    <div className="p-8 w-full max-w-7xl mx-auto space-y-6">
+    <div className="p-8 w-full max-w-7xl mx-auto space-y-6 relative">
       {/* القسم الأول: الإحصائيات في الأعلى */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StatsCard
@@ -87,57 +91,56 @@ export default function EmployeesDirectory() {
           iconBg="bg-white/20"
         />
       </div>
-      <div className="grid grid-cols-12 gap-6 items-start w-full">
-        <div
-          className={`${selectedItem ? "col-span-12 lg:col-span-8" : "col-span-12"} transition-all duration-500`}
-        >
-          <div className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-on-surface-variant">
-                  {t("employeesRecord")}
-                </h2>
-                <button
-                  onClick={() => navigate("/dashboard/add-user")}
-                  className="flex items-center gap-2 bg-primary-container text-on-surface-variant px-6 py-2.5 rounded-xl hover:bg-secondary transition-all"
-                >
-                  <Plus size={20} /> {t("addEmployee")}
-                </button>
-              </div>
 
-              {/* منطقة الجدول مع الأفرلاي الخاص بالتحميل المؤجل لمنع الرجة */}
-              <div className="relative min-h-[300px] flex flex-col">
-                {isReallyLoading && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-2xl z-20">
-                    <div className="flex items-center gap-2 text-on-surface-variant/80 text-base font-medium">
-                      <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
-                      <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
-                      <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
-                      <span className="ms-2">
-                        {lang === "ar" ? "جاري التحميل..." : "Loading..."}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                <EmployeeTable
-                  data={employees}
-                  status={status}
-                  isReallyLoading={isReallyLoading}
-                  selectedItem={selectedItem}
-                  onSelect={handleSelect}
-                  onDeleteRequest={(id) => setDeleteId(id)}
-                  onEdit={handleEditClick}
-                  lang={lang}
-                  t={t}
-                />
-              </div>
+      {/* الجدول يأخذ العرض كاملاً */}
+      <div className="w-full">
+        <div className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-on-surface-variant">
+                {t("employeesRecord")}
+              </h2>
+              <button
+                onClick={() => navigate("/dashboard/add-user")}
+                className="flex items-center gap-2 bg-primary-container text-on-surface-variant px-6 py-2.5 rounded-xl hover:bg-secondary transition-all"
+              >
+                <Plus size={20} /> {t("addEmployee")}
+              </button>
             </div>
 
+            <div className="relative min-h-[300px] flex flex-col">
+              {isReallyLoading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-2xl z-20">
+                  <div className="flex items-center gap-2 text-on-surface-variant/80 text-base font-medium">
+                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
+                    <span className="ms-2">
+                      {lang === "ar" ? "جاري التحميل..." : "Loading..."}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <EmployeeTable
+                data={employees}
+                status={status}
+                isReallyLoading={isReallyLoading}
+                selectedItem={selectedItem}
+                onSelect={handleSelect}
+                onDeleteRequest={(id) => setDeleteId(id)}
+                onEdit={handleEditClick}
+                lang={lang}
+                t={t}
+              />
+            </div>
+          </div>
+
+          {showPagination && (
             <div className="flex justify-between items-center mt-6 px-6 py-4 bg-surface rounded-2xl border border-border">
               <span className="text-xs font-medium text-on-surface-variant">
                 {t("showing")} {pagination?.currentPage || 1} {t("from")}{" "}
-                {pagination?.lastPage || 1}
+                {totalPages}
               </span>
               <div className="flex items-center gap-1">
                 <button
@@ -152,10 +155,7 @@ export default function EmployeesDirectory() {
                   )}
                 </button>
                 <button
-                  disabled={
-                    currentPage >= (pagination?.lastPage || 1) ||
-                    status === "loading"
-                  }
+                  disabled={currentPage >= totalPages || status === "loading"}
                   onClick={() => setCurrentPage((prev) => prev + 1)}
                   className="p-2 rounded-lg hover:bg-primary-container text-primary disabled:opacity-30"
                 >
@@ -167,28 +167,40 @@ export default function EmployeesDirectory() {
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* البطاقة الجانبية */}
-        <div
-          className={`col-span-12 lg:col-span-4 transition-all duration-500 ease-in-out ${selectedItem ? "opacity-100 translate-x-0 w-full" : "opacity-0 w-0 overflow-hidden pointer-events-none"}`}
-        >
-          <div className="pr-2">
-            {selectedItem && (
-              <>
-                <button
-                  onClick={() => dispatch(clearEmployee())}
-                  className="mb-4 text-xs font-bold text-primary underline"
-                >
-                  {t("closeDetails")}
-                </button>
-                <EmployeeProfile />
-              </>
-            )}
-          </div>
+          )}
         </div>
       </div>
+
+      {/* نافذة البروفايل الجانبية مع لمسة جمالية وتدرج لوني فخم */}
+      {selectedItem && (
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs transition-all">
+          <div className="w-full max-w-md bg-[#fdfcfa] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 border-s border-[#d0c6b0]/40">
+            
+            {/* رأس النافذة مع تدرج لوني جمالي وزر إغلاق ثابت */}
+            <div className="sticky top-0 z-20 bg-gradient-to-r from-[#f5ede0] to-[#fdfcfa] px-6 py-4 border-b border-[#d0c6b0]/50 flex justify-between items-center shadow-2xs">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#735c00]"></div>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#4d4636]">
+                  {lang === "ar" ? "ملف الموظف التعريفي" : "Employee Profile"}
+                </span>
+              </div>
+              <button
+                onClick={() => dispatch(clearEmployee())}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#d0c6b0] text-xs font-bold text-[#735c00] hover:bg-[#735c00] hover:text-white transition-all shadow-2xs cursor-pointer"
+              >
+                <X size={15} />
+                <span>{t("closeDetails")}</span>
+              </button>
+            </div>
+
+            {/* محتوى البروفايل */}
+            <div className="p-6 overflow-y-auto flex-1">
+              <EmployeeProfile />
+            </div>
+
+          </div>
+        </div>
+      )}
 
       <ConfirmModal
         isOpen={!!deleteId}

@@ -60,8 +60,7 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
             (data || []).map((item) => (
               <tr
                 key={item.donorId || item.id}
-                onClick={() => onRowClick && onRowClick(item)}
-                className="group hover:bg-primary-container/5 transition-all cursor-pointer"
+                className="group hover:bg-primary-container/5 transition-all"
               >
                 {/* الاسم والبريد الإلكتروني */}
                 <td className="p-4 truncate">
@@ -79,7 +78,9 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
                       </span>
                       <span className="text-[11px] text-gray-400 flex items-center gap-1 truncate">
                         <Mail size={12} className="text-primary shrink-0" />
-                        <span className="truncate text-primary/90">{item.email}</span>
+                        <span className="truncate text-primary/90">
+                          {item.email}
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -144,17 +145,16 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
                   </span>
                 </td>
 
-                {/* الإجراءات */}
+                {/* الإجراءات (زر العين فقط) */}
                 <td className="p-4 text-center">
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onRowClick && onRowClick(item);
-                    }}
-                    className="inline-block p-2 bg-white border border-border rounded-xl text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
+                  <button
+                    type="button"
+                    onClick={() => onRowClick && onRowClick(item)}
+                    className="inline-block p-2 bg-white border border-border rounded-xl text-primary hover:bg-primary hover:text-white transition-all shadow-sm cursor-pointer"
+                    title={t("view") || "عرض التفاصيل"}
                   >
                     <Eye size={16} />
-                  </div>
+                  </button>
                 </td>
               </tr>
             ))

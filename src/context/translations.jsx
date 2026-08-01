@@ -31,6 +31,7 @@ export const translations = {
     rolesManagementSubtitle:
       "Manage system roles and assign permissions to employees",
     addNewRole: "Add New Role",
+    editRoleAndPermissions: "Edit Role & Permissions",
 
     // --- 3. Categories & Types ---
     total: "Total",
@@ -99,6 +100,16 @@ export const translations = {
     confirmDeleteSubtitle:
       "Are you sure you want to delete this role? This action cannot be undone.",
     cancel: "Cancel",
+
+    // --- Role Modal Fields & Actions ---
+    roleNameAr: "Role Name (Arabic)",
+    roleNameEn: "Role Name (English)",
+    roleNameArPlaceholder: "e.g. System Supervisor",
+    roleNameEnPlaceholder: "e.g. System Supervisor",
+    availablePermissions: "Available Permissions",
+    updateRole: "Update Role",
+    saveRole: "Save Role",
+
     // --- 6. Beneficiaries & Help Requests ---
     beneficiaries: "Beneficiaries Management",
     beneficiariesList: "Beneficiaries List",
@@ -402,6 +413,16 @@ export const translations = {
     employees: "إدارة شؤون الموظفين",
     employee: "الموظف",
     jobRole: "الدور الوظيفي",
+
+    // --- Role Modal Fields & Actions ---
+    roleNameAr: "اسم الدور (عربي)",
+    roleNameEn: "اسم الدور (إنجليزي)",
+    roleNameArPlaceholder: "مثال: مشرف النظام",
+    roleNameEnPlaceholder: "e.g. System Supervisor",
+    availablePermissions: "صلاحيات الدور المتاحة",
+    updateRole: "تحديث الدور",
+    saveRole: "حفظ الدور",
+    editRoleAndPermissions: "تعديل الدور والصلاحيات",
 
     // --- 6. Beneficiaries & Help Requests ---
     beneficiaries: "إدارة شؤون المستفيدين",

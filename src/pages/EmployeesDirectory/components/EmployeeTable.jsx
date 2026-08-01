@@ -13,29 +13,37 @@ export default function EmployeeTable({
   const isLoading = status === "loading";
   const isEmpty = !data || data.length === 0;
 
+  const getAvatarColor = (id) => {
+    const palette = [
+      "bg-[#f5ede0] text-[#735c00] border-[#d0c6b0]",
+      "bg-[#5c630e]/10 text-[#5c630e] border-[#5c630e]/20",
+      "bg-[#3b674c]/10 text-[#3b674c] border-[#3b674c]/20",
+    ];
+    return palette[(id || 0) % palette.length];
+  };
+
   return (
-    <div className="bg-surface-lowest rounded-3xl border border-border shadow-sm overflow-hidden relative min-h-[300px]">
-      <table className="w-full border-collapse table-fixed">
-        <thead className="bg-[#f9f7f4] border-b border-border">
-          <tr className="text-on-surface-variant">
-            <th className="p-6 text-right font-bold uppercase text-[11px] tracking-widest w-1/6">
+    <div className="bg-[#ffffff] rounded-[2rem] border border-[#d0c6b0] shadow-sm overflow-hidden transition-all duration-300">
+      <table className="w-full border-collapse">
+        <thead className="bg-[#f9f7f4] border-b border-[#d0c6b0]">
+          <tr className="text-[#4d4636] font-bold text-xs">
+            <th className="py-4 px-6 text-right uppercase tracking-wider w-[30%]">
               {t("employee")}
             </th>
-            <th className="p-6 text-right font-bold uppercase text-[11px] tracking-widest w-1/2">
+            <th className="py-4 px-6 text-right uppercase tracking-wider w-[50%]">
               {t("jobRole")}
             </th>
-            <th className="p-6 text-center font-bold uppercase text-[11px] tracking-widest w-1/6">
+            <th className="py-4 px-6 text-center uppercase tracking-wider w-[20%]">
               {t("actions")}
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border relative">
-          {/* لا تظهر رسالة "لا توجد بيانات" إلا بعد انتهاء التحميل وتأكدنا أن القائمة فارغة */}
+        <tbody className="divide-y divide-[#e6e0d5]">
           {!isLoading && isEmpty ? (
             <tr>
               <td
                 colSpan="3"
-                className="text-center py-16 text-gray-400 font-medium"
+                className="text-center py-16 text-[#4d4636]/60 font-medium text-sm"
               >
                 {lang === "ar" ? "لا توجد بيانات متاحة" : "No data available"}
               </td>
@@ -50,56 +58,75 @@ export default function EmployeeTable({
                     if (e.target.closest("button")) return;
                     onSelect(item);
                   }}
-                  className={`transition-all duration-200 cursor-pointer ${
+                  className={`transition-colors duration-150 cursor-pointer ${
                     isSelected
-                      ? "bg-blue-50/50 hover:bg-blue-50/70"
-                      : "hover:bg-gray-50"
+                      ? "bg-[#f5ede0]/30 border-r-4 border-r-[#735c00]"
+                      : "hover:bg-[#f9f7f4]/60"
                   }`}
                 >
-                  <td className="p-6 truncate">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg bg-primary-container text-primary border border-primary/20">
+                  {/* عمود الموظف */}
+                  <td className="py-4 px-6 align-middle">
+                    <div className="flex items-center gap-3.5">
+                      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-base border shrink-0 shadow-2xs ${getAvatarColor(item.id)}`}>
                         {item.firstName?.charAt(0)}
                       </div>
-                      <div className="flex flex-col truncate">
-                        <span className="font-bold text-sm text-on-surface-variant">{`${item.firstName} ${item.lastName}`}</span>
-                        <span className="text-[10px] font-medium uppercase tracking-wider text-secondary">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-sm text-[#4d4636] tracking-tight">
+                          {`${item.firstName} ${item.lastName}`}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#735c00] mt-1">
                           {t("view_profile")}
                         </span>
                       </div>
                     </div>
                   </td>
-                  <td className="p-6 text-right">
-                    <div className="flex flex-wrap gap-2 justify-end">
-                      {item.roles?.map((r) => (
-                        <span
-                          key={r.role.id}
-                          className="px-4 py-1.5 rounded-lg text-[11px] font-bold border border-border bg-surface text-on-surface-variant shadow-sm"
-                        >
-                          {r.role.label}
-                        </span>
-                      ))}
+
+                  {/* عمود الأدوار الوظيفية (مرتب ومنسق بشكل ممتاز داخل مساحته بدون تداخل) */}
+                  <td className="py-4 px-6 align-middle">
+                    <div className="flex flex-wrap items-center gap-2 justify-start">
+                      {item.roles?.map((r) => {
+                        const roleLabel = r.role?.label;
+                        const displayRoleName =
+                          typeof roleLabel === "object" && roleLabel !== null
+                            ? lang === "ar"
+                              ? roleLabel.ar || roleLabel.en
+                              : roleLabel.en || roleLabel.ar
+                            : roleLabel || "-";
+
+                        return (
+                          <span
+                            key={r.role?.id || Math.random()}
+                            className="px-3 py-1 rounded-lg text-xs font-medium border border-[#d0c6b0]/70 bg-[#f5ede0]/40 text-[#4d4636] shadow-2xs"
+                          >
+                            {displayRoleName}
+                          </span>
+                        );
+                      })}
                     </div>
                   </td>
-                  <td className="p-6">
-                    <div className="flex justify-center gap-3">
+
+                  {/* عمود الأزرار */}
+                  <td className="py-4 px-6 align-middle">
+                    <div className="flex justify-center items-center gap-2">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           onEdit(e, item);
                         }}
-                        className="p-2.5 bg-surface-lowest border border-border text-primary rounded-xl hover:bg-primary-container transition-all"
+                        className="p-2.5 bg-[#f9f7f4] border border-[#d0c6b0] text-[#735c00] rounded-xl hover:bg-[#735c00] hover:text-[#ffffff] transition-colors shadow-2xs"
+                        title={t("edit") || "تعديل"}
                       >
-                        <Edit2 size={16} />
+                        <Edit2 size={15} />
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           onDeleteRequest(item.id);
                         }}
-                        className="p-2.5 bg-surface-lowest border border-border text-error rounded-xl hover:bg-error/10 transition-all"
+                        className="p-2.5 bg-[#d93025]/10 border border-[#d93025]/30 text-[#d93025] rounded-xl hover:bg-[#d93025] hover:text-[#ffffff] transition-colors shadow-2xs"
+                        title={t("delete") || "حذف"}
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </td>

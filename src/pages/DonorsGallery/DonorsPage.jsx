@@ -33,22 +33,28 @@ export default function DonorsPage() {
   } = useSelector((state) => state.donors);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentSponsorFilter = searchParams.get("isSponsor") || null;
+  const currentSponsorFilter = searchParams.get("isSponsor");
   const currentPage = Number(searchParams.get("page")) || 1;
   const ITEMS_PER_PAGE = 4;
 
   const isReallyLoading = useDelayedLoading(status === "loading", 300);
-
   useEffect(() => {
+    // إرسال القيمة كنص صريح تماماً كما يتوقعها الـ Service القديم
+    let sponsorValue = "";
+    if (currentSponsorFilter === "true") {
+      sponsorValue = "true";
+    } else if (currentSponsorFilter === "false") {
+      sponsorValue = "false";
+    }
+
     dispatch(
       fetchDonors({
         page: currentPage,
         limit: ITEMS_PER_PAGE,
-        isSponsor: currentSponsorFilter,
+        isSponsor: sponsorValue, // يرسل "true", "false", أو ""
       }),
     );
-  }, [currentPage, currentSponsorFilter, lang]); // تم إزالة dispatch و lang لمنع اللوب اللانهائي
-
+  }, [currentPage, currentSponsorFilter, lang, dispatch]);
   const handleFilterChange = (val) => {
     const params = new URLSearchParams(searchParams);
     if (val !== null) {
@@ -75,6 +81,9 @@ export default function DonorsPage() {
     },
     { label: t("generalDonor"), value: "false", icon: <Heart size={16} /> },
   ];
+
+  // استخراج إجمالي الصفحات بشكل صحيح مطابقة للـ meta القادمة من الـ API
+  const totalPages = pagination?.totalPages || pagination?.lastPage || 1;
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative">
@@ -127,7 +136,6 @@ export default function DonorsPage() {
               onRowClick={(donor) => {
                 const donorId = donor.donorId || donor.id;
                 setSelectedDonorId(donorId);
-                // نقوم بطلب البيانات فوراً عند الضغط من الأب
                 dispatch(fetchDonorHistory({ id: donorId }));
               }}
             />
@@ -135,17 +143,17 @@ export default function DonorsPage() {
         </div>
 
         {/* 3. Pagination */}
-        {pagination?.lastPage > 1 && (
+        {totalPages > 1 && (
           <footer className="flex justify-between items-center mt-8 pt-6 border-t border-border">
             <span className="text-xs font-bold text-on-surface-variant opacity-60">
-              {t("showing")} {currentPage} {t("from")} {pagination.lastPage}
+              {t("showing")} {currentPage} {t("from")} {totalPages}
             </span>
 
             <div className="flex items-center gap-2">
               <button
                 disabled={currentPage === 1 || status === "loading"}
                 onClick={() => handlePageChange(currentPage - 1)}
-                className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary"
+                className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary cursor-pointer"
               >
                 {lang === "ar" ? (
                   <ChevronRight size={18} />
@@ -155,11 +163,9 @@ export default function DonorsPage() {
               </button>
 
               <button
-                disabled={
-                  currentPage >= pagination.lastPage || status === "loading"
-                }
+                disabled={currentPage >= totalPages || status === "loading"}
                 onClick={() => handlePageChange(currentPage + 1)}
-                className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary"
+                className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary cursor-pointer"
               >
                 {lang === "ar" ? (
                   <ChevronLeft size={18} />
@@ -172,12 +178,11 @@ export default function DonorsPage() {
         )}
       </section>
 
-      {/* Modal يفتح فقط عندما يتم اختيار متبرع وتصبح حالة جلب تفاصيله succeeded */}
-      {/* المودال يفتح فور اختيار المتبرع، وحالة التحميل تُدار داخله */}
+      {/* Modal */}
       {selectedDonorId && (
         <DonorHistoryModal
           donorId={selectedDonorId}
-          status={detailsStatus} // <-- تمرير حالة جلب التفاصيل هنا
+          status={detailsStatus}
           onClose={() => {
             setSelectedDonorId(null);
             dispatch(clearDonorDetails());
@@ -186,9 +191,6 @@ export default function DonorsPage() {
           lang={lang}
         />
       )}
-
-      {/* تم إزالة مؤشر التحميل الخارجي لأنه أصبح داخل المودال */}
-      {/* (اختياري اختياري): مؤشر تحميل صغير يظهر على الشاشة ريثما تأتي الداتا إذا أردت إعلام المستخدم أن هناك عملية جلب تحدث */}
     </div>
   );
 }

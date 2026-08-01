@@ -51,6 +51,14 @@ export const adminService = {
   getRoles: () => API.get("/roles").then((res) => res.data.data),
   getRoleById: (id) => API.get(`/roles/${id}`),
   addRole: (data) => API.post("/roles", data),
-  updateRole: (id, data) => API.patch(`/roles/${id}`, data),
+  updateRole: (idOrObj, data) => {
+    const id = typeof idOrObj === "object" ? idOrObj.id : idOrObj;
+    const payload = typeof idOrObj === "object" ? idOrObj.data : data;
+    return API.patch(`/roles/${id}`, payload);
+  },
   deleteRole: (id) => API.delete(`/roles/${id}`),
+  // داخل adminService.js
+  getPermissions: () => {
+    return API.get("/roles/permissions"); // أو المسار الصحيح لديكِ
+  },
 };

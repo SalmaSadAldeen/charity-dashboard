@@ -13,8 +13,9 @@ export default function RolesTable({
   const isEmpty = !roles || roles.length === 0;
 
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-border shadow-sm relative bg-surface-lowest backdrop-blur-md">
-      <table className="w-full border-collapse">
+    <div className="w-full overflow-hidden rounded-2xl border border-border shadow-sm relative bg-surface-lowest backdrop-blur-md flex flex-col">
+      <table className="w-full border-collapse table-fixed">
+        {/* Header ثابت دائماً لا يتأثر بأي حالة */}
         <thead className="bg-[#f9f7f4] border-b border-border">
           <tr className="text-on-surface-variant/90 text-sm">
             <th className="py-4 px-6 font-semibold w-20 text-start">
@@ -31,8 +32,29 @@ export default function RolesTable({
             </th>
           </tr>
         </thead>
+
         <tbody className="divide-y divide-border/40 bg-white">
-          {!isLoading && isEmpty ? (
+          {isLoading ? (
+            /* 1. أولاً: إذا كان جاري التحميل، اعرض الـ Skeleton */
+            [...Array(5)].map((_, index) => (
+              <tr key={`skeleton-${index}`} className="animate-pulse">
+                <td className="py-4 px-6">
+                  <div className="h-4 bg-gray-200 rounded-md w-8"></div>
+                </td>
+                <td className="py-4 px-6">
+                  <div className="h-4 bg-gray-200 rounded-md w-36"></div>
+                </td>
+                <td className="py-4 px-6">
+                  <div className="h-4 bg-gray-200 rounded-md w-28"></div>
+                </td>
+                <td className="py-4 px-6 flex justify-center items-center gap-2.5">
+                  <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
+                  <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
+                </td>
+              </tr>
+            ))
+          ) : isEmpty ? (
+            /* 2. ثانياً: إذا انتهى التحميل ولم يتم العثور على بيانات، اعرض رسالة الفراغ */
             <tr>
               <td
                 colSpan="4"
@@ -43,8 +65,9 @@ export default function RolesTable({
               </td>
             </tr>
           ) : (
-            (roles || []).map((role) => {
-              const isProtected = role.id <= 6;
+            /* 3. ثالثاً: إذا توفرت الداتا، اعرض الجدول بشكل طبيعي */
+            roles.map((role) => {
+              const isProtected = role.id <= 7;
 
               const displayLabel =
                 typeof role.label === "object"
@@ -83,20 +106,35 @@ export default function RolesTable({
                     className="py-4 px-6 flex justify-center items-center gap-2.5"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <button
-                      onClick={() => onEdit(role)}
-                      className="p-2 bg-primary/10 text-primary rounded-xl hover:bg-primary hover:text-white hover:scale-105 transition-all shadow-sm"
-                      title={t("edit") || "تعديل"}
-                    >
-                      <span className="material-symbols-outlined text-lg leading-none">
-                        edit
-                      </span>
-                    </button>
                     {isProtected ? (
                       <span
                         className="p-2 bg-surface-container text-on-surface-variant/40 rounded-xl cursor-not-allowed shadow-sm border border-border/40"
                         title={
-                          t("protectedRoleTooltip") ||
+                          t("protectedRoleEditTooltip") ||
+                          "دور محمي من النظام لا يمكن تعديله"
+                        }
+                      >
+                        <span className="material-symbols-outlined text-lg leading-none">
+                          lock
+                        </span>
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => onEdit(role)}
+                        className="p-2 bg-primary/10 text-primary rounded-xl hover:bg-primary hover:text-white hover:scale-105 transition-all shadow-sm cursor-pointer"
+                        title={t("edit") || "تعديل"}
+                      >
+                        <span className="material-symbols-outlined text-lg leading-none">
+                          edit
+                        </span>
+                      </button>
+                    )}
+
+                    {isProtected ? (
+                      <span
+                        className="p-2 bg-surface-container text-on-surface-variant/40 rounded-xl cursor-not-allowed shadow-sm border border-border/40"
+                        title={
+                          t("protectedRoleDeleteTooltip") ||
                           "دور محمي من النظام لا يمكن حذفه"
                         }
                       >
@@ -107,7 +145,7 @@ export default function RolesTable({
                     ) : (
                       <button
                         onClick={() => onDelete(role.id)}
-                        className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white hover:scale-105 transition-all shadow-sm"
+                        className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white hover:scale-105 transition-all shadow-sm cursor-pointer"
                         title={t("delete") || "حذف"}
                       >
                         <span className="material-symbols-outlined text-lg leading-none">

@@ -1,116 +1,171 @@
-import AppButton from "@/pages/Dashboard/components/AppButton";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPermissions } from "@/store/index";
+import { useRoleForm } from "@/hooks/useRoleForm";
+import { X, Shield, Check, Loader2 } from "lucide-react";
 
 export default function RoleModal({
   isOpen,
-  isEditMode,
-  currentRoleId,
-  formData,
-  setFormData,
-  detailsStatus,
-  selectedDetails,
   onClose,
-  onSubmit,
-  loading, // أضيفي حالة التحميل هنا إذا كانت موجودة بالـ store أو الـ state
+  onSuccess,
+  roleToEdit,
+  lang,
+  t,
 }) {
+  const dispatch = useDispatch();
+  // 👈 التعديل هنا: جلب الصلاحيات وحالتها من state.permissions (وليس roles)
+  const { items: permissions, status: permStatus } = useSelector(
+    (state) => state.permissions,
+  );
+
+  // جلب الصلاحيات عند فتح المودال
+  useEffect(() => {
+    if (isOpen) {
+      dispatch(fetchPermissions());
+    }
+  }, [isOpen, dispatch, lang]);
+
+  const {
+    labelAr,
+    setLabelAr,
+    labelEn,
+    setLabelEn,
+    selectedPermissions,
+    handleTogglePermission,
+    handleSubmit,
+    loading,
+    isEditMode,
+  } = useRoleForm({ roleToEdit, onClose, onSuccess });
+
   if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-      <div className="bg-surface-lowest w-full max-w-lg p-6 rounded-3xl shadow-xl border border-border">
-        <h3 className="text-xl font-bold mb-4">
-          {isEditMode ? "تعديل الدور والصلاحيات" : "إضافة دور جديد"}
-        </h3>
-
-        <form onSubmit={onSubmit} className="space-y-4">
-          {/* حقول المدخلات (Name, Label Ar, Label En) نفس ما كانت */}
-          <div>
-            <label className="block text-xs font-bold mb-1">
-              اسم الدور البرمجي (Name - English بدون فراغات)
-            </label>
-            <input
-              type="text"
-              required
-              disabled={isEditMode && currentRoleId <= 6}
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full p-3 rounded-xl border border-border bg-surface-container/30 focus:outline-primary text-sm"
-              placeholder="e.g. branch_manager"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+      dir={lang === "ar" ? "rtl" : "ltr"}
+    >
+      <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+              <Shield size={22} />
+            </div>
             <div>
-              <label className="block text-xs font-bold mb-1">
-                التسمية بالعربي (Label AR)
+              <h3 className="text-lg font-bold text-gray-900">
+                {isEditMode ? t("editRoleAndPermissions") : t("addNewRole")}
+              </h3>
+              <p className="text-xs text-gray-500">
+                {t("rolesManagementSubtitle")}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-9 h-9 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors shadow-sm border border-gray-100"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Form Body */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto p-6 space-y-6"
+        >
+          {/* اسم الدور باللغات */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-2">
+                {t("roleNameAr")}
               </label>
               <input
                 type="text"
                 required
-                value={formData.labelAr}
-                onChange={(e) =>
-                  setFormData({ ...formData, labelAr: e.target.value })
-                }
-                className="w-full p-3 rounded-xl border border-border bg-surface-container/30 focus:outline-primary text-sm"
-                placeholder="إدارة الفرع"
+                value={labelAr}
+                onChange={(e) => setLabelAr(e.target.value)}
+                placeholder={t("roleNameArPlaceholder")}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold mb-1">
-                التسمية بالإنجليزي (Label EN)
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-2">
+                {t("roleNameEn")}
               </label>
               <input
                 type="text"
-                value={formData.labelEn}
-                onChange={(e) =>
-                  setFormData({ ...formData, labelEn: e.target.value })
-                }
-                className="w-full p-3 rounded-xl border border-border bg-surface-container/30 focus:outline-primary text-sm"
-                placeholder="Branch Management"
+                required
+                value={labelEn}
+                onChange={(e) => setLabelEn(e.target.value)}
+                placeholder={t("roleNameEnPlaceholder")}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
               />
             </div>
           </div>
 
-          {/* قسم الموظفين الحاصلين على الدور */}
-          {isEditMode &&
-            detailsStatus === "succeeded" &&
-            selectedDetails?.employees?.length > 0 && (
-              <div className="bg-primary/5 p-3 rounded-2xl border border-primary/20">
-                <span className="text-xs font-bold text-primary block mb-1">
-                  الموظفون الحاصلون على هذا الدور:
-                </span>
-                <div className="flex flex-wrap gap-1">
-                  {selectedDetails.employees.map((emp) => (
-                    <span
-                      key={emp.userId}
-                      className="text-xs bg-surface-lowest px-2.5 py-1 rounded-lg border border-border font-medium"
+          {/* قائمة الصلاحيات (Checkboxes) */}
+          <div>
+            <label className="block text-xs font-bold text-gray-700 uppercase mb-3">
+              {t("availablePermissions")}
+            </label>
+
+            {permStatus === "loading" ? (
+              <div className="flex justify-center py-10">
+                <Loader2 className="animate-spin text-primary" size={28} />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-64 overflow-y-auto p-1 border border-gray-100 rounded-2xl bg-gray-50/50">
+                {permissions?.map((permission) => {
+                  const isSelected = selectedPermissions.includes(
+                    permission.id,
+                  );
+                  return (
+                    <div
+                      key={permission.id}
+                      onClick={() => handleTogglePermission(permission.id)}
+                      className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
+                        isSelected
+                          ? "bg-primary/5 border-primary text-primary font-medium"
+                          : "bg-white border-gray-200 hover:border-gray-300 text-gray-700"
+                      }`}
                     >
-                      {emp.firstName} {emp.lastName}
-                    </span>
-                  ))}
-                </div>
+                      <div className="flex items-center gap-2.5 truncate">
+                        <div
+                          className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
+                            isSelected
+                              ? "bg-primary border-primary text-white"
+                              : "border-gray-300 bg-white"
+                          }`}
+                        >
+                          {isSelected && <Check size={14} strokeWidth={3} />}
+                        </div>
+                        <span className="text-xs truncate">
+                          {permission.translatedName}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
+          </div>
 
-          {/* أزرار الإغلاق وAppButton الحماسي */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-3 rounded-2xl border border-border font-semibold text-sm hover:bg-surface-container transition"
+              className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition-colors"
             >
-              إلغاء
+              {t("cancel")}
             </button>
-
-            <div className="w-1/2">
-              <AppButton
-                isLoading={loading}
-                text={isEditMode ? "حفظ التعديلات" : "إضافة الدور"}
-                loadingText="جاري الحفظ..."
-                type="submit"
-              />
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50"
+            >
+              {loading && <Loader2 size={16} className="animate-spin" />}
+              {isEditMode ? t("updateRole") : t("saveRole")}
+            </button>
           </div>
         </form>
       </div>

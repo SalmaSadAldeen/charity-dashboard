@@ -14,6 +14,7 @@ const beneficiariesData = createGenericSlice("beneficiaries"); // لا تنسي 
 const helpRequestsSlice = createGenericSlice("helpRequests");
 const profileSlice = createGenericSlice("profile");
 const donorsSlice = createGenericSlice("donors");
+const permissionsSlice = createGenericSlice("permissions");
 // <--- 2. تعريف slice المتبرعين
 // --- 1. تصدير أctions الموظفين ---
 export const {
@@ -88,6 +89,11 @@ export const {
   updateItem: updateRole,
   deleteItem: deleteRole,
 } = rolesSlice.actions;
+
+export const {
+  fetchItems: fetchPermissions, // <--- تصدير جلب الصلاحيات
+} = permissionsSlice.actions;
+
 export const { fetchItems: fetchDonors, fetchItemById: fetchDonorHistory } =
   donorsSlice.actions;
 export const {
@@ -110,5 +116,6 @@ export const store = configureStore({
     helpRequests: helpRequestsSlice.slice.reducer,
     profile: profileSlice.slice.reducer,
     donors: donorsSlice.slice.reducer,
+    permissions: permissionsSlice.slice.reducer, // <--- أضيفي هذه هنا
   },
 });
