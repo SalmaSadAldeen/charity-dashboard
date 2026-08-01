@@ -24,23 +24,17 @@ export const useLogin = () => {
     dispatch(loginStart());
 
     try {
-      // 1. استدعاء السيرفر
       const response = await API.post("/auth/login", { email, password });
       const { accessToken, user } = response.data;
 
-      // 2. تخزين الـ token (أمان: لا تخزني كلمة المرور أبداً)
       localStorage.setItem("token", accessToken);
 
-      // 3. تخزين الإيميل فقط لتسهيل الدخول القادم
       localStorage.setItem("rememberedEmail", email);
 
-      // 4. تحديث الـ Redux
       dispatch(loginSuccess(user));
 
-      // 5. التوجيه للوحة التحكم
       navigate("/dashboard/employees");
     } catch (err) {
-      // التعامل مع الأخطاء
       const errorMessage = err.response?.data?.message || "Login Failed";
       dispatch(loginFailure(errorMessage));
     }

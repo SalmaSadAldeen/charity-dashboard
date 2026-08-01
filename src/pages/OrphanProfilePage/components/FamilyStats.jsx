@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useTranslation } from "@/hooks/useTranslation";
 import { Eye } from "lucide-react";
 import ImageModal from "./ImageModal"; // استيراد المودال
-export default function FamilyStats({ orphan }) {
-  const { t } = useTranslation();
+export default function FamilyStats({ orphan ,t}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeUrl, setActiveUrl] = useState("");
 

@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-// عدلي المسار هنا ليتطابق مع مكان الملف الفعلي
 import { THEME_COLORS } from "./src/config/themeConstants";
 
 export default {

@@ -3,6 +3,7 @@ import { adminService } from "@/services/adminService";
 import { orphanService } from "@/services/orphanService";
 import { beneficiaryService } from "@/services/beneficiaryService";
 import { requestsService } from "@/services/requestsService";
+import { donorService } from "@/services/donorService"; // <--- 1. استيراد خدمة المتبرعين
 // استيراد الخدمة الجديدة
 export const createGenericActions = (resource) => ({
   fetchItems: createAsyncThunk(
@@ -15,8 +16,10 @@ export const createGenericActions = (resource) => ({
             await adminService.fetchEmployees(
               params.page || 1,
               params.limit || 10,
+              params.isSponsor,
             )
           ).data;
+
         // داخل createGenericActions
         if (resource === "orphans")
           return (
@@ -43,6 +46,11 @@ export const createGenericActions = (resource) => ({
               params.status,
             )
           ).data;
+        if (resource === "donors") {
+          return (
+            await donorService.getDonors(params.page || 1, params.limit || 10)
+          ).data;
+        }
         if (resource === "profile") {
           return (await adminService.getProfile()).data;
         }
@@ -72,6 +80,13 @@ export const createGenericActions = (resource) => ({
         if (resource === "helpRequests") {
           return (await requestsService.fetchHelpRequestById(id)).data; // تأكدي من وجود هذه الدالة في requestsService
         }
+        if (resource === "donors") {
+          return (await donorService.fetchDonorById(id)).data;
+        }
+        if (resource === "roles") {
+          // <--- أضيفي هذه
+          return (await adminService.getRoleById(id)).data;
+        }
 
         throw new Error(`Fetch single action not defined for ${resource}`);
       } catch (err) {
@@ -89,6 +104,9 @@ export const createGenericActions = (resource) => ({
           response = await adminService.addEmployee(data);
         else if (resource === "orphans")
           response = await orphanService.addOrphan(data);
+        else if (resource === "roles")
+          // <--- أضيفي هذه
+          response = await adminService.addRole(data);
         else throw new Error(`Add action not defined for ${resource}`);
         return response.data;
       } catch (err) {
@@ -107,6 +125,9 @@ export const createGenericActions = (resource) => ({
           response = await adminService.deleteEmployee(id);
         else if (resource === "orphans")
           response = await orphanService.deleteOrphan(id);
+        else if (resource === "roles")
+          // <--- أضيفي هذه
+          response = await adminService.deleteRole(id);
         else throw new Error(`Delete action not defined for ${resource}`);
 
         // هنا التعديل: نرجع الاستجابة كاملة (response.data) بدلاً من id فقط
@@ -126,6 +147,9 @@ export const createGenericActions = (resource) => ({
           response = await adminService.updateEmployee(id, data);
         else if (resource === "orphans")
           response = await orphanService.updateOrphan(id, data);
+        else if (resource === "roles")
+          // <--- أضيفي هذه
+          response = await adminService.updateRole(id, data);
         else throw new Error(`Update action not defined for ${resource}`);
         return response.data;
       } catch (err) {
@@ -212,7 +236,7 @@ export const createGenericSlice = (resource) => {
         builder
           // --- حالات الجلب ---
           .addCase(fetchItems.pending, (state) => {
-            state.status = "loading";
+            state.status = state.items.length > 0 ? "succeeded" : "loading";
             state.error = null;
           })
           .addCase(fetchItems.fulfilled, (state, action) => {
@@ -233,7 +257,7 @@ export const createGenericSlice = (resource) => {
             // 2. تحويل البيانات (تحويل الـ id إلى رقم):
             state.items = itemsData.map((item) => ({
               ...item,
-              id: Number(item.id),
+              id: Number(item.id || item.donorId),
             }));
 
             // 3. تحديث الـ pagination (فقط إذا وجد meta في الـ payload):

@@ -6,7 +6,6 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -22,7 +21,6 @@ export default function HelpRequestsPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // الفلتر والصفحة بيصيروا محفوظين بالـ URL بدل useState محلي
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get("status") || null;
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -69,7 +67,6 @@ export default function HelpRequestsPage() {
     { label: t("REJECTED"), value: "REJECTED", icon: <XCircle size={16} /> },
     { label: t("cancel"), value: "CANCELLED", icon: <XCircle size={16} /> },
   ];
-
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative">
       {/* 1. Header */}
@@ -84,36 +81,33 @@ export default function HelpRequestsPage() {
         </div>
       </header>
 
-      {/* 2. Main Section */}
-      <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border">
-        <div className="mb-8">
-          <FilterBar
-            filters={filters}
-            active={statusFilter}
-            onFilterChange={handleFilterChange}
-          />
-        </div>
+      {/* 2. Main Section - تم إضافة min-h-[500px] لتثبيت ارتفاع الحاوية ومنع الرجة تماماً */}
+      <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
+        <div>
+          <div className="mb-8">
+            <FilterBar
+              filters={filters}
+              active={statusFilter}
+              onFilterChange={handleFilterChange}
+            />
+          </div>
 
-        <div
-          className={`transition-opacity duration-300 ease-in-out ${
-            status === "loading" ? "opacity-60" : "opacity-100"
-          }`}
-        >
-          {items.length > 0 ? (
+          {/* تمرير البيانات وحالة التحميل مباشرة للجدول ليقوم بإدارتها بالكامل */}
+          <div
+            className={`transition-opacity duration-300 ease-in-out ${
+              status === "loading" ? "opacity-60" : "opacity-100"
+            }`}
+          >
             <HelpRequestsTable
               data={items}
+              status={status}
               onRowClick={(req) =>
                 navigate(
                   `/dashboard/help-requests/${req.id}?${searchParams.toString()}`,
                 )
               }
             />
-          ) : (
-            <div className="py-20 text-center text-gray-400 font-bold border-2 border-dashed border-border rounded-[2rem]">
-              <AlertCircle size={48} className="mx-auto mb-4 opacity-50" />
-              {t("noData")}
-            </div>
-          )}
+          </div>
         </div>
 
         {/* Pagination */}

@@ -35,11 +35,13 @@ export default function AidCategoryDetails({
     const fields = [];
 
     if (aidDetails.academicAchievement) {
+      const achievementKey = aidDetails.academicAchievement.trim().toUpperCase();
       fields.push({
         label: t?.("academicAchievement") || "المستوى التعليمي",
         val:
-          t?.(aidDetails.academicAchievement.toLowerCase()) ||
-          aidDetails.academicAchievement,
+          t?.(achievementKey) !== achievementKey
+            ? t?.(achievementKey)
+            : aidDetails.academicAchievement,
         icon: <GraduationCap className="w-4 h-4 text-primary" />,
       });
     }

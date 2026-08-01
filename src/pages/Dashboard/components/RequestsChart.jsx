@@ -15,7 +15,7 @@ export default function RequestsChart({ t, dataFromBackend }) {
   console.log("Data from backend:", dataFromBackend);
   return (
     <div className="bg-surface-lowest p-8 rounded-3xl border border-border shadow-sm flex flex-col items-center">
-      <h4 className="font-bold text-lg mb-6 w-full text-center">
+      <h4 className="font-bold text-lg mb-3 w-full text-center">
         {t("incomingRequests")}
       </h4>
 

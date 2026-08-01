@@ -105,15 +105,16 @@ export default function EmployeesDirectory() {
               </button>
             </div>
 
-            <div
-              className={`transition-opacity duration-300 ${status === "loading" ? "opacity-30" : "opacity-100"}`}
-            >
+            <div className="transition-all duration-300">
               <EmployeeTable
                 data={employees}
+                status={status}
                 selectedItem={selectedItem}
                 onSelect={handleSelect}
                 onDeleteRequest={(id) => setDeleteId(id)}
                 onEdit={handleEditClick}
+                lang={lang}
+                t={t}
               />
             </div>
 

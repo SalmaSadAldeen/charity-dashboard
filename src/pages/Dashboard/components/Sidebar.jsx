@@ -19,6 +19,7 @@ export default function Sidebar() {
     ],
     beneficiaries: ["/dashboard/beneficiaries"],
     requests: ["/dashboard/requests"],
+    roles: ["/dashboard/roles"],
   };
 
   const menuItems = {
@@ -60,6 +61,12 @@ export default function Sidebar() {
         name: t("employees"),
         icon: "badge",
         path: "/dashboard/employees",
+      },
+      {
+        id: "roles",
+        name: t("rolesAndPermissions") || "الأدوار والصلاحيات",
+        icon: "admin_panel_settings",
+        path: "/dashboard/roles",
       },
     ],
     account: [

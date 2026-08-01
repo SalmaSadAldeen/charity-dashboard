@@ -1,8 +1,4 @@
-import { useTranslation } from "@/hooks/useTranslation";
-
-export default function OrphanJsonSection({ orphan }) {
-  const { t, lang } = useTranslation();
-
+export default function OrphanJsonSection({ orphan, t, lang }) {
   const jsonFields = [
     "class",
     "Diseases",

@@ -22,9 +22,10 @@ export default function OrphansGallery() {
   const [supportedFilter, setSupportedFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const ITEMS_PER_PAGE = 8;
+  const ITEMS_PER_PAGE = 2; // تم تعديلها لتقسيمها على 3 أعمدة (صفين × 3 كاردات)
   const { items, pagination, status } = useSelector((state) => state.orphans);
 
+  // 1. طلب البيانات عند تحميل الواجهة أول مرة أو عند تغيير اللغة فقط
   useEffect(() => {
     dispatch(
       fetchOrphans({
@@ -33,14 +34,34 @@ export default function OrphansGallery() {
         supported: supportedFilter,
       }),
     );
-  }, [dispatch, currentPage, lang, supportedFilter]);
+  }, [dispatch, lang]);
 
+  // 2. عند تغيير الفلتر: dispatch مباشر لـ Redux ليدخل في حالة loading فوراً دون رمشة
   const handleFilterChange = (val) => {
     setSupportedFilter(val);
     setCurrentPage(1);
+    dispatch(
+      fetchOrphans({
+        page: 1,
+        limit: ITEMS_PER_PAGE,
+        supported: val,
+      }),
+    );
   };
 
-  // مصفوفة الفلاتر بشكل احترافي
+  // 3. عند تغيير الصفحة: dispatch مباشر لضمان بقاء الـ Overlay متزامناً مع الضغطة
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    dispatch(
+      fetchOrphans({
+        page: newPage,
+        limit: ITEMS_PER_PAGE,
+        supported: supportedFilter,
+      }),
+    );
+  };
+
+  // مصفوفة الفلاتر
   const filters = [
     { label: t("all"), value: null, icon: <LayoutGrid size={16} /> },
     { label: t("isSupported"), value: true, icon: <CheckCircle size={16} /> },
@@ -48,7 +69,7 @@ export default function OrphansGallery() {
   ];
 
   return (
-    <main className="p-8  min-h-screen flex flex-col transition-all duration-300">
+    <main className="p-8 min-h-screen flex flex-col transition-all duration-300">
       {/* العنوان وزر الإضافة */}
       <div className="flex justify-between items-end mb-8">
         <div>
@@ -68,34 +89,42 @@ export default function OrphansGallery() {
         </button>
       </div>
 
-      {/* شريط الفلترة الاحترافي (Segmented Control) */}
-      <FilterBar
-        filters={filters}
-        active={supportedFilter}
-        onFilterChange={handleFilterChange}
-      />
+      {/* شريط الفلترة */}
+      <div className="mb-8">
+        <FilterBar
+          filters={filters}
+          active={supportedFilter}
+          onFilterChange={handleFilterChange}
+        />
+      </div>
 
-      {/* منطقة عرض الكاردات مع حل مشكلة الرفّة */}
-      {/* منطقة عرض الكاردات */}
-      <div className="flex-grow">
-        {/* حاوية الـ Grid ثابتة، لا تتغير حتى أثناء التحميل */}
-        <div
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 transition-opacity duration-300 ${
-            status === "loading"
-              ? "opacity-40 pointer-events-none"
-              : "opacity-100"
-          }`}
-        >
-          {items.length > 0
-            ? items.map((orphan) => (
-                <OrphanCard key={orphan.id} orphan={orphan} />
-              ))
-            : // نضع هذا هنا فقط إذا كانت القائمة فارغة فعلياً
-              status !== "loading" && (
-                <div className="col-span-full text-center py-20 text-gray-400 bg-white rounded-3xl border border-dashed border-gray-200">
-                  {t("noData")}
-                </div>
-              )}
+      {/* منطقة عرض الكاردات مع الـ Overlay المباشر والارتفاع المضبوط */}
+      <div className="relative min-h-[300px] flex flex-col">
+        {status === "loading" && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-3xl z-10">
+            <div className="flex items-center gap-2 text-on-surface-variant/70 text-base font-medium">
+              <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
+              <span className="ms-2">
+                {lang === "ar" ? "جاري التحميل..." : "Loading..."}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* حاوية الـ Grid (تم التعديل لتكون 3 أعمدة: lg:grid-cols-3) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {items && items.length > 0 ? (
+            items.map((orphan) => (
+              <OrphanCard key={orphan.id} orphan={orphan} />
+            ))
+          ) : status !== "loading" ? (
+            <div className="col-span-full flex items-center justify-center text-center py-20 text-gray-400 bg-white rounded-3xl border border-dashed border-gray-200">
+              {t("noData") ||
+                (lang === "ar" ? "لا توجد بيانات متاحة" : "No data available")}
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -103,8 +132,8 @@ export default function OrphansGallery() {
       {pagination?.lastPage > 1 && (
         <div className="flex justify-center items-center gap-4 mt-10">
           <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
+            disabled={currentPage === 1 || status === "loading"}
+            onClick={() => handlePageChange(currentPage - 1)}
             className="p-3 rounded-xl bg-white border border-gray-200 hover:border-primary disabled:opacity-30 transition-all shadow-sm"
           >
             {lang === "ar" ? (
@@ -119,8 +148,10 @@ export default function OrphansGallery() {
           </span>
 
           <button
-            disabled={currentPage === pagination.lastPage}
-            onClick={() => setCurrentPage((p) => p + 1)}
+            disabled={
+              currentPage === pagination.lastPage || status === "loading"
+            }
+            onClick={() => handlePageChange(currentPage + 1)}
             className="p-3 rounded-xl bg-white border border-gray-200 hover:border-primary disabled:opacity-30 transition-all shadow-sm"
           >
             {lang === "ar" ? (

@@ -1,4 +1,3 @@
-import { useTranslation } from "@/hooks/useTranslation";
 import {
   User,
   Users,
@@ -10,8 +9,7 @@ import {
   Clock,
 } from "lucide-react";
 
-export default function OrphanInfoGrid({ orphan }) {
-  const { t, lang } = useTranslation();
+export default function OrphanInfoGrid({ orphan,t,lang }) {
   const isRTL = lang === "ar";
 
   // دالة ذكية لتنسيق التاريخ حسب اللغة (تنسيق اليوم/الشهر/السنة أو العكس تلقائياً)

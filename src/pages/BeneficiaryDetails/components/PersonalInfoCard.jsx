@@ -1,10 +1,32 @@
 import { DetailRow } from "./DetailRow";
 import { useTranslation } from "@/hooks/useTranslation";
+
 export default function PersonalInfoCard({ data }) {
   const { t, lang } = useTranslation();
+
   const address =
     data?.beneficiary?.address?.[lang] || data?.beneficiary?.address?.["ar"];
 
+  const dateOfBirth = data?.beneficiary?.dateOfBirth;
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+
+      return new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(date);
+    } catch {
+      return dateString;
+    }
+  };
+  
+
+   
   return (
     <div
       className="bg-white p-8 rounded-[2rem] border border-border/30 shadow-[0_8px_30px_rgb(0,0,0,0.04)] 
@@ -25,6 +47,7 @@ export default function PersonalInfoCard({ data }) {
         <DetailRow label={t("countryName")} value={t("syria")} />
         <DetailRow label={t("gender")} value={t(data?.gender?.toLowerCase())} />
         <DetailRow label={t("address")} value={address} />
+        <DetailRow label={t("dateOfBirth")} value={formatDate(dateOfBirth)} />
       </div>
     </div>
   );

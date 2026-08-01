@@ -18,12 +18,12 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
     if (typeof obj === "string") return obj;
     return obj[lang] || obj["ar"] || obj["en"] || "";
   };
+
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "";
 
-    // استخدام ar-EG للعربية (يعرض أرقام عربية مصرية/مشرقية واضحة) و en-GB للإنجليزية
     const locale = isRTL ? "ar-EG" : "en-GB";
 
     return new Intl.DateTimeFormat(locale, {
@@ -32,6 +32,7 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
       year: "numeric",
     }).format(date);
   };
+
   const rawAidImage = selectedDetails.aidDetails?.donorImageUrl;
   let aidImageUrl = "";
   if (rawAidImage) {
@@ -40,6 +41,10 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
   }
 
   const showAidImage = selectedDetails.status === "ACCEPTED" && aidImageUrl;
+
+  const localizedTitle = getLocalized(selectedDetails.title);
+  const localizedDetails = getLocalized(selectedDetails.details);
+  const localizedDescription = getLocalized(selectedDetails.description);
 
   return (
     <div
@@ -65,7 +70,7 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
         )}
 
       {/* البيانات العامة */}
-      <div className="bg-surface-lowest p-6 rounded-3xl border border-border/60 shadow-sm space-y-5">
+      <div className="bg-surface-lowest p-6 rounded-3xl border border-border/60 shadow-sm flex flex-col justify-between gap-5">
         {/* الجزء العلوي مقسوم مع ضبط قياسات البوردر والصورة بدقة بدون فراغات */}
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-3 flex-1 min-w-0">
@@ -83,15 +88,17 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
               )}
             </div>
 
-            {/* عنوان الطلب */}
-            <div className="space-y-1">
-              <p className="text-[10px] font-extrabold text-on-surface-variant/70 uppercase tracking-wider">
-                {t?.("title") || "عنوان الطلب"}
-              </p>
-              <h3 className="font-black text-on-surface text-base leading-snug truncate">
-                {getLocalized(selectedDetails.title) || "-"}
-              </h3>
-            </div>
+            {/* عنوان الطلب (يختفي بالكامل إذا لم يكن موجوداً) */}
+            {localizedTitle && (
+              <div className="space-y-1">
+                <p className="text-[10px] font-extrabold text-on-surface-variant/70 uppercase tracking-wider">
+                  {t?.("title") || "عنوان الطلب"}
+                </p>
+                <h3 className="font-black text-on-surface text-base leading-snug truncate">
+                  {localizedTitle}
+                </h3>
+              </div>
+            )}
           </div>
 
           {/* الصورة بملء البوردر تماماً بدون أي فراغات داخلية */}
@@ -108,25 +115,27 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
           )}
         </div>
 
-        {selectedDetails.details && (
+        {/* تفاصيل الطلب (تختفي تماماً إذا لم تكن موجودة) */}
+        {localizedDetails && (
           <div className="space-y-1.5 bg-surface/50 p-4 rounded-2xl border border-border/60">
             <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider flex items-center gap-1.5">
               <Info className="w-3.5 h-3.5 text-primary" />
               {t?.("details") || "التفاصيل"}
             </p>
             <p className="font-medium text-on-surface text-xs leading-relaxed">
-              {getLocalized(selectedDetails.details)}
+              {localizedDetails}
             </p>
           </div>
         )}
 
-        {selectedDetails.description && (
-          <div className="space-y-1 w-full overflow-hidden">
+        {/* الوصف الإضافي (يختفي تماماً إذا لم يكن موجوداً) */}
+        {localizedDescription && (
+          <div className="space-y-1 w-full overflow-hidden bg-surface/30 p-4 rounded-2xl border border-border/60">
             <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
               {t?.("description") || "الوصف الإضافي"}
             </p>
             <p className="font-normal text-on-surface-variant text-xs leading-relaxed break-words whitespace-pre-wrap">
-              {getLocalized(selectedDetails.description)}
+              {localizedDescription}
             </p>
           </div>
         )}
@@ -163,7 +172,7 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
       />
 
       {/* نسبة المطابقة والتواريخ */}
-      <div className="bg-surface-lowest p-6 rounded-3xl border border-border/60 shadow-sm space-y-4">
+      <div className="bg-surface-lowest p-6 rounded-3xl border border-border/60 shadow-sm space-y-4 flex flex-col justify-between">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs font-extrabold text-on-surface flex items-center gap-1.5">
@@ -183,31 +192,29 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
           </div>
         </div>
 
-        <div className="pt-3 border-t border-border/60 space-y-2 text-[11px] font-medium text-on-surface-variant">
-          <div className="pt-3 border-t border-border/60 space-y-2 text-[14px] font-medium text-on-surface-variant">
-            {selectedDetails.createdAt && (
-              <div className="flex justify-between items-center">
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-primary" />
-                  {t?.("createdAt") || "تاريخ إنشاء الطلب:"}
-                </span>
-                <span className="font-bold text-on-surface" dir="ltr">
-                  {formatDate(selectedDetails.createdAt)}
-                </span>
-              </div>
-            )}
-            {selectedDetails.reviewedAt && (
-              <div className="flex justify-between items-center">
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-primary" />
-                  {t?.("reviewedAt") || "تاريخ آخر مراجعة:"}
-                </span>
-                <span className="font-bold text-on-surface" dir="ltr">
-                  {formatDate(selectedDetails.reviewedAt)}
-                </span>
-              </div>
-            )}
-          </div>
+        <div className="pt-3 border-t border-border/60 space-y-3 text-[14px] font-medium text-on-surface-variant">
+          {selectedDetails.createdAt && (
+            <div className="flex justify-between items-center">
+              <span className="flex items-center gap-1 text-xs">
+                <Calendar className="w-3.5 h-3.5 text-primary" />
+                {t?.("createdAt") || "تاريخ إنشاء الطلب:"}
+              </span>
+              <span className="font-bold text-on-surface text-xs" dir="ltr">
+                {formatDate(selectedDetails.createdAt)}
+              </span>
+            </div>
+          )}
+          {selectedDetails.reviewedAt && (
+            <div className="flex justify-between items-center">
+              <span className="flex items-center gap-1 text-xs">
+                <Calendar className="w-3.5 h-3.5 text-primary" />
+                {t?.("reviewedAt") || "تاريخ آخر مراجعة:"}
+              </span>
+              <span className="font-bold text-on-surface text-xs" dir="ltr">
+                {formatDate(selectedDetails.reviewedAt)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>

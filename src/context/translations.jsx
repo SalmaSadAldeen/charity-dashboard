@@ -18,7 +18,7 @@ export const translations = {
     dashboardTitle: "Global Association Analytics",
     dashboardSubtitle: "Performance overview and resource allocation metrics.",
     totalDonations: "Total Donations",
-    growth: "+12.4% from last quarter",
+    growth: " from last quarter",
     completedCases: "Completed Cases",
     casesVal: "1,248",
     assistanceTypes: "Assistance Types",
@@ -27,6 +27,10 @@ export const translations = {
     weekly: "Weekly",
     yearly: "Yearly",
     incomingRequests: "Incoming Requests",
+    rolesManagementTitle: "Roles & Permissions Management",
+    rolesManagementSubtitle:
+      "Manage system roles and assign permissions to employees",
+    addNewRole: "Add New Role",
 
     // --- 3. Categories & Types ---
     total: "Total",
@@ -82,7 +86,10 @@ export const translations = {
     employee: "Employee",
     jobRole: "Job Role",
     Profile: " Profile",
-
+    confirmDeleteTitle: "Confirm Deletion",
+    confirmDeleteSubtitle:
+      "Are you sure you want to delete this role? This action cannot be undone.",
+    cancel: "Cancel",
     // --- 6. Beneficiaries & Help Requests ---
     beneficiaries: "Beneficiaries Management",
     beneficiariesList: "Beneficiaries List",
@@ -110,7 +117,11 @@ export const translations = {
     urgentCases: "Urgent Cases",
     avgReviewTime: "Avg Review Time",
     categorySpecificDetails: "Category Specific Details",
-
+    systemName: "System Name",
+    assignedEmployees: "Assigned Employees",
+    noEmployeesAssigned: "No employees assigned to this role currently",
+    noPermissions: "No associated permissions",
+    permissions: "Associated Permissions",
     // Panel & Tabs
     requestDetails: "Request Details",
     request_details_panel: "Request Details Panel",
@@ -189,6 +200,10 @@ export const translations = {
     SURGERY: "Surgery",
     MEDICAL_DEVICES: "Medical Devices",
     SMALL_PROJECTS: "Small Projects",
+    HIGH_SCHOOL: "HIGH_SCHOOL",
+    DIPLOMA: "DIPLOMA",
+    BACHELOR: "BACHELOR",
+    MASTER: "MASTER",
 
     SINGLE: "Single",
     MARRIED: "Married",
@@ -199,6 +214,15 @@ export const translations = {
     unemployed: "Unemployed",
     employed: "Employed",
     isUnemployed: "Is Unemployed",
+
+    donorsList: "Donors List",
+    manageAndReviewDonors: "Manage and review system donors and sponsorships",
+    activeSponsor: "Active Sponsor",
+    generalDonor: "General Donor",
+    donorName: "Donor Name",
+    contactInfo: "Contact Info",
+    sponsorStatus: "Sponsor Status",
+    joinDate: "Join Date",
 
     // --- 11. Category Specific Fields ---
     academicAchievement: "Academic Level",
@@ -214,14 +238,17 @@ export const translations = {
     housingSpecifications: "Housing Specifications",
     reasonForLock: "Reason for Lock/Closure",
     permissionsAndRoles: "Roles",
-    // --- 12. General UI & Actions ---
-    search: "Search...",
+    noRolesFound: "No roles found",
+    roleLabel: "Label",
     actions: "Actions",
-    view_profile: "View Profile",
-    view_details: "View details",
     edit: "Edit",
     delete: "Delete",
-    cancel: "Cancel",
+    back: "back",
+    protectedRoleTooltip: "Protected system role cannot be deleted",
+    // --- 12. General UI & Actions ---
+    search: "Search...",
+    view_profile: "View Profile",
+    view_details: "View details",
     confirm: "Confirm",
     loading: "Loading data...",
     noData: "No data available",
@@ -263,6 +290,8 @@ export const translations = {
     pleaseFixErrors: "Please fix all errors before saving",
     successAdded: "Added successfully",
 
+  "roleLinkedError": "Cannot delete this role because it is linked to employees",
+  "roleDeleteSuccess": "Role deleted successfully",
     reject_title: "Reject Request with Reasons",
     reject_subtitle:
       "Please fill in the rejection reason in both Arabic and English accurately.",
@@ -279,6 +308,7 @@ export const translations = {
     sending: "Sending...",
     confirm_and_send: "Confirm & Send",
     accountInfo: "accountInfo",
+    rolesAndPermissions: "Roles & Permissions",
   },
 
   // ==========================================
@@ -298,7 +328,7 @@ export const translations = {
     dashboardTitle: "تحليلات الجمعية العالمية",
     dashboardSubtitle: "نظرة عامة على الأداء ومقاييس تخصيص الموارد.",
     totalDonations: "إجمالي التبرعات",
-    growth: "+12.4% عن الربع السابق",
+    growth: " عن الربع السابق",
     completedCases: "الحالات المكتملة",
     casesVal: "1,248",
     assistanceTypes: "أنواع المساعدات",
@@ -390,7 +420,12 @@ export const translations = {
     urgentCases: "حالات عاجلة",
     avgReviewTime: "متوسط وقت المراجعة",
     categorySpecificDetails: "تفاصيل فئة الإعانة",
-
+    confirmDeleteTitle: "تأكيد الحذف",
+    confirmDeleteSubtitle:
+      "هل أنت متأكد من رغبتك في حذف هذا الدور؟ لا يمكن التراجع عن هذا الإجراء.",
+    cancel: "إلغاء",
+    roleLinkedError: "لا يمكن حذف هذا الدور لأنه مرتبط بموظفين حالياً",
+    roleDeleteSuccess: "تم حذف الدور بنجاح",
     // Panel & Tabs
     requestDetails: "تفاصيل الطلب",
     request_details_panel: "لوحة تفاصيل الطلب",
@@ -401,6 +436,16 @@ export const translations = {
     loading_data: "جاري تحميل البيانات...",
     error_loading_data: "حدث خطأ أثناء تحميل البيانات",
 
+    donorsList: "قائمة المتبرعين",
+    manageAndReviewDonors: "إدارة ومتابعة المتبرعين وكفالاتهم في النظام",
+    activeSponsor: "كافل نشط",
+    generalDonor: "متبرع عام",
+    donorName: "اسم المتبرع",
+    contactInfo: "معلومات الاتصال",
+    sponsorStatus: "حالة الكفالة",
+    joinDate: "تاريخ الانضمام",
+    back: "السابق",
+    
     // --- 7. Orphans & Sponsorships ---
     orphans: "شؤون الأيتام والكفالات",
     orphansList: "سجل الأيتام",
@@ -412,8 +457,11 @@ export const translations = {
     uploadFamilyStatement: "رفع بيان العائلة",
     viewFamilyStatement: "عرض بيان العائلة",
     guaranteedPhone: "رقم هاتف الكفيل",
-
+    rolesManagementTitle: "إدارة الأدوار والصلاحيات",
+    rolesManagementSubtitle: "إدارة أدوار النظام وتخصيص الصلاحيات للموظفين",
+    addNewRole: "إضافة دور جديد",
     // --- 8. Donors & Campaigns ---
+
     donors: "إدارة شؤون المتبرعين",
     campaigns: "إدارة الحملات والمشاريع",
     totalDonors: "إجمالي المتبرعين",
@@ -454,6 +502,18 @@ export const translations = {
     currentPhoto: "الصورة الحالية",
     joinedAt: "تاريخ الانضمام",
 
+    systemName: "اسم النظام",
+    assignedEmployees: "الموظفون الذين يحملون هذا الدور",
+    noEmployeesAssigned: "لا يوجد موظفون مرتبطون بهذا الدور حالياً",
+    noPermissions: "لا توجد صلاحيات مرتبطة",
+    permissions: "الصلاحيات المرتبطة",
+    loading: "جاري التحميل...",
+    noRolesFound: "لا توجد أدوار مضافة",
+    roleLabel: "التسمية (Label)",
+    actions: "الإجراءات",
+    edit: "تعديل",
+    delete: "حذف",
+    protectedRoleTooltip: "دور محمي من النظام لا يمكن حذفه",
     // --- 10. Statuses & Enums ---
     PENDING: "قيد الانتظار",
     ACCEPTED: "مقبول",
@@ -470,7 +530,10 @@ export const translations = {
     SURGERY: "عملية جراحية",
     MEDICAL_DEVICES: "أجهزة طبية",
     SMALL_PROJECTS: "مشاريع صغيرة",
-
+    HIGH_SCHOOL: "شهادة الثانوية العامة",
+    DIPLOMA: "دبلوم",
+    BACHELOR: "بكالوريوس",
+    MASTER: "ماجستير",
     SINGLE_MALE: "أعزب",
     MARRIED_MALE: "متزوج",
     WIDOWED_MALE: "أرمل",
@@ -480,6 +543,7 @@ export const translations = {
     MARRIED_FEMALE: "متزوجة",
     WIDOWED_FEMALE: "أرملة",
     DIVORCED_FEMALE: "مطلقة",
+    rolesAndPermissions: "الأدوار والصلاحيات",
 
     employmentStatus: "حالة العمل",
     unemployed: "عاطل عن العمل",
@@ -502,14 +566,11 @@ export const translations = {
 
     // --- 12. General UI & Actions ---
     search: "بحث...",
-    actions: "الإجراءات",
     view_profile: "عرض التفاصيل",
     view_details: "عرض التفاصيل",
-    edit: "تعديل",
-    delete: "حذف",
+
     cancel: "إلغاء",
     confirm: "تأكيد",
-    loading: "جاري تحميل البيانات...",
     noData: "لا توجد بيانات لعرضها",
     showing: "عرض",
     from: "من",

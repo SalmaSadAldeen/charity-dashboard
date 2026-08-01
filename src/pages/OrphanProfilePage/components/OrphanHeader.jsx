@@ -1,8 +1,6 @@
-import { useTranslation } from "@/hooks/useTranslation";
 import { Edit2, Trash2 } from "lucide-react";
 
-export default function OrphanHeader({ orphan, onEdit, onDelete }) {
-  const { t } = useTranslation();
+export default function OrphanHeader({ orphan, onEdit, onDelete ,t}) {
 
   const calculateAge = (birthDate) => {
     const birth = new Date(birthDate);

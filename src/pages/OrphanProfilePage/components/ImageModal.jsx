@@ -1,7 +1,5 @@
-import { useTranslation } from "@/hooks/useTranslation";
 
-export default function ImageModal({ isOpen, onClose, imageUrl }) {
-  const { t } = useTranslation();
+export default function ImageModal({ isOpen, onClose, imageUrl ,t}) {
   if (!isOpen) return null;
 
   return (

@@ -62,10 +62,19 @@ export default function BeneficiaryDetails() {
   };
   if (status === "loading")
     return (
-      <div className="p-20 text-center text-primary font-bold">
-        {lang === "ar" ? "جاري التحميل..." : "Loading..."}
+      <div className="flex flex-col items-center justify-center min-h-[85vh]">
+        <div className="flex items-center gap-2 text-on-surface-variant/70 text-base font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
+          <span className="ms-2">
+            {lang === "ar" ? "جاري التحميل..." : "Loading..."}
+          </span>
+        </div>
       </div>
     );
+
+  // أو عرض رسالة "لا توجد بيانات" بحال لم يتم العثور على المستفيد
   if (!beneficiary)
     return (
       <div className="p-20 text-center">

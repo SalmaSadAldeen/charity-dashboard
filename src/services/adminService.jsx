@@ -45,7 +45,12 @@ export const adminService = {
   getDistributionCharts: (view = "monthly") =>
     API.get(`/admin/dashboard/charts/distributions?view=${view}`),
   getRequestsCharts: () => API.get(`/admin/dashboard/charts/requests`),
-  getRoles: () => API.get("role").then((res) => res.data.data),
 
   getProfile: () => API.get("/api/profile"),
+
+  getRoles: () => API.get("/roles").then((res) => res.data.data),
+  getRoleById: (id) => API.get(`/roles/${id}`),
+  addRole: (data) => API.post("/roles", data),
+  updateRole: (id, data) => API.patch(`/roles/${id}`, data),
+  deleteRole: (id) => API.delete(`/roles/${id}`),
 };
