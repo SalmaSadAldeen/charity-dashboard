@@ -14,6 +14,7 @@ import RolesHeader from "@/pages/RolesGallery/components/RolesHeader";
 import RolesTable from "@/pages/RolesGallery/components/RolesTable";
 import RoleModal from "@/pages/RolesGallery/components/RoleModel";
 import DeleteConfirmModal from "@/pages/RolesGallery/components/DeleteConfirmModal";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading"; // استيراد الهوك
 
 export default function RolesPage() {
   const dispatch = useDispatch();
@@ -41,6 +42,7 @@ export default function RolesPage() {
   useEffect(() => {
     dispatch(fetchRoles());
   }, [dispatch, lang]);
+  const isReallyLoading = useDelayedLoading(status === "loading", 300);
 
   const handleOpenAddModal = () => {
     setIsEditMode(false);
@@ -88,7 +90,7 @@ export default function RolesPage() {
     setRoleToDeleteId(id);
     setIsDeleteModalOpen(true);
   };
- const handleConfirmDelete = async () => {
+  const handleConfirmDelete = async () => {
     if (!roleToDeleteId) return;
 
     const res = await dispatch(deleteRole(roleToDeleteId));
@@ -96,62 +98,77 @@ export default function RolesPage() {
     setRoleToDeleteId(null);
 
     if (res.error) {
-      toast.error(
-        res.payload || t("roleLinkedError"),
-        {
-          position: lang === "ar" ? "bottom-left" : "bottom-right",
-          style: {
-            borderRadius: "16px",
-            background: "#1e293b",
-            color: "#ffffff",
-            border: "1px solid #334155",
-            borderLeft: "4px solid var(--color-error)",
-            boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.5), 0 10px 10px -5px rgb(0 0 0 / 0.4)",
-            padding: "14px 18px",
-            fontWeight: "600",
-            opacity: "1",
-          },
-        }
-      );
+      toast.error(res.payload || t("roleLinkedError"), {
+        position: lang === "ar" ? "bottom-left" : "bottom-right",
+        style: {
+          borderRadius: "16px",
+          background: "#1e293b",
+          color: "#ffffff",
+          border: "1px solid #334155",
+          borderLeft: "4px solid var(--color-error)",
+          boxShadow:
+            "0 20px 25px -5px rgb(0 0 0 / 0.5), 0 10px 10px -5px rgb(0 0 0 / 0.4)",
+          padding: "14px 18px",
+          fontWeight: "600",
+          opacity: "1",
+        },
+      });
     } else {
-      toast.success(
-        t("roleDeleteSuccess"),
-        {
-          position: lang === "ar" ? "bottom-left" : "bottom-right",
-          style: {
-            borderRadius: "16px",
-            background: "#1e293b",
-            color: "#ffffff",
-            border: "1px solid #334155",
-            borderLeft: "4px solid #22c55e",
-            boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.5), 0 10px 10px -5px rgb(0 0 0 / 0.4)",
-            padding: "14px 18px",
-            fontWeight: "600",
-            opacity: "1",
-          },
-        }
-      );
+      toast.success(t("roleDeleteSuccess"), {
+        position: lang === "ar" ? "bottom-left" : "bottom-right",
+        style: {
+          borderRadius: "16px",
+          background: "#1e293b",
+          color: "#ffffff",
+          border: "1px solid #334155",
+          borderLeft: "4px solid #22c55e",
+          boxShadow:
+            "0 20px 25px -5px rgb(0 0 0 / 0.5), 0 10px 10px -5px rgb(0 0 0 / 0.4)",
+          padding: "14px 18px",
+          fontWeight: "600",
+          opacity: "1",
+        },
+      });
       dispatch(fetchRoles());
     }
   };
 
   return (
-    <main
-      className="p-8 bg-surface-container text-on-surface-variant min-h-screen"
+    <div
+      className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative"
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
-      <div className="max-w-5xl mx-auto space-y-6">
-        <RolesHeader t={t} onAddClick={handleOpenAddModal} />
+      {/* 1. Header Area */}
+      <RolesHeader t={t} onAddClick={handleOpenAddModal} />
 
-        <RolesTable
-          roles={roles}
-          status={status}
-          onEdit={handleOpenEditRole}
-          onDelete={handleDeleteClick} // تمرير دالة فتح مودال الحذف          t={t}
-          lang={lang}
-          t={t}
-        />
-      </div>
+      {/* 2. Main Content Area مع تثبيت الارتفاع لمنع الرجة */}
+      <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
+        <div className="relative min-h-[300px] flex flex-col">
+          {/* الأفرلاي الخاص بالتحميل (Overlay) */}
+          {isReallyLoading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-3xl z-20">
+              <div className="flex items-center gap-2 text-on-surface-variant/80 text-base font-medium">
+                <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
+                <span className="ms-2">
+                  {t("loading") ||
+                    (lang === "ar" ? "جاري التحميل..." : "Loading...")}
+                </span>
+              </div>
+            </div>
+          )}
+
+          <RolesTable
+            roles={roles}
+            status={status}
+            onEdit={handleOpenEditRole}
+            onDelete={handleDeleteClick}
+            t={t}
+            lang={lang}
+          />
+        </div>
+      </section>
 
       <RoleModal
         isOpen={isModalOpen}
@@ -171,6 +188,6 @@ export default function RolesPage() {
         t={t}
         lang={lang}
       />
-    </main>
+    </div>
   );
 }

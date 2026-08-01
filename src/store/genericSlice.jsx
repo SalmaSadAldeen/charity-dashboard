@@ -81,7 +81,7 @@ export const createGenericActions = (resource) => ({
           return (await requestsService.fetchHelpRequestById(id)).data; // تأكدي من وجود هذه الدالة في requestsService
         }
         if (resource === "donors") {
-          return (await donorService.fetchDonorById(id)).data;
+          return (await donorService.fetchDonorHistory(id)).data;
         }
         if (resource === "roles") {
           // <--- أضيفي هذه

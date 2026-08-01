@@ -1,19 +1,29 @@
 import { Mail, Phone, Calendar, User, Clock, Globe } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 
 export default function EmployeeProfile() {
   const { t, lang } = useTranslation();
   const details = useSelector((state) => state.employees.selectedDetails);
   const detailsStatus = useSelector((state) => state.employees.detailsStatus);
 
-  if (detailsStatus === "loading") return <div>جاري التحميل...</div>;
-  if (!details) return null;
+  // نحتفظ بآخر بيانات تم عرضها حتى لا تختفي البطاقة أو ترج أثناء التحميل
+  const [cachedDetails, setCachedDetails] = useState(null);
 
+  useEffect(() => {
+    if (details) {
+      setCachedDetails(details);
+    }
+  }, [details]);
+
+  // إذا لم يكن لدينا أي بيانات قديمة أو جديدة لعرضها
+  if (!cachedDetails) return null;
+
+  const isLoading = detailsStatus === "loading";
   const isRTL = lang === "ar";
-  const { personalPhoto, dateOfBirth } = details.employee || {};
+  const { personalPhoto, dateOfBirth } = cachedDetails.employee || {};
 
-  // دالة موحدة لتنسيق التواريخ حسب لغة التطبيق (عربي/إنجليزي)
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
@@ -30,10 +40,17 @@ export default function EmployeeProfile() {
 
   return (
     <div
-      className={`max-w-md mx-auto mt-10 ${isRTL ? "rtl" : "ltr"}`}
+      className={`max-w-md mx-auto mt-10 transition-all duration-300 ${isRTL ? "rtl" : "ltr"}`}
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="bg-surface-lowest rounded-[2rem] border border-border shadow-xl overflow-hidden">
+      <div className="bg-surface-lowest rounded-[2rem] border border-border shadow-xl overflow-hidden relative">
+        {/* مؤشر تحميل خفيف يظهر في الزاوية أثناء جلب بيانات الموظف الجديد */}
+        {isLoading && (
+          <div className="absolute top-3 right-3 z-10 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+            {lang === "ar" ? "جاري التحديث..." : "Updating..."}
+          </div>
+        )}
+
         {/* الهيدر مع الصورة */}
         <div className="h-32 bg-primary relative">
           <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
@@ -45,26 +62,28 @@ export default function EmployeeProfile() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                details.firstName?.charAt(0)
+                cachedDetails.firstName?.charAt(0)
               )}
             </div>
           </div>
         </div>
 
         <div className="pt-16 pb-8 px-8 text-center">
-          <h1 className="text-2xl font-bold text-on-surface-variant">{`${details.firstName} ${details.lastName}`}</h1>
+          <h1 className="text-2xl font-bold text-on-surface-variant">
+            {`${cachedDetails.firstName} ${cachedDetails.lastName}`}
+          </h1>
 
-          {/* استخدام Grid لضمان استقامة العناوين والقيم */}
+          {/* استخدام الـ Grid */}
           <div className="grid grid-cols-1 gap-y-4 mt-8">
             <DetailRow
               icon={<Mail size={18} />}
               label={t("email")}
-              value={details.email}
+              value={cachedDetails.email}
             />
             <DetailRow
               icon={<Phone size={18} />}
               label={t("phoneNumber")}
-              value={details.number}
+              value={cachedDetails.number}
             />
             <DetailRow
               icon={<Globe size={18} />}
@@ -79,12 +98,12 @@ export default function EmployeeProfile() {
             <DetailRow
               icon={<Clock size={18} />}
               label={t("joinedAt")}
-              value={formatDate(details.createdAt)}
+              value={formatDate(cachedDetails.createdAt)}
             />
             <DetailRow
               icon={<User size={18} />}
               label={t("gender")}
-              value={details.gender === "MALE" ? t("male") : t("female")}
+              value={cachedDetails.gender === "MALE" ? t("male") : t("female")}
             />
           </div>
 
@@ -94,7 +113,7 @@ export default function EmployeeProfile() {
               {t("permissionsAndRoles")}
             </p>
             <div className="flex flex-wrap gap-2">
-              {details.roles?.map((r) => (
+              {cachedDetails.roles?.map((r) => (
                 <span
                   key={r.role.id}
                   className="px-3 py-1 bg-surface-container text-primary rounded-full text-xs font-bold border border-primary/10"
@@ -110,7 +129,6 @@ export default function EmployeeProfile() {
   );
 }
 
-// تعديل التنسيق ليكون متساوياً تماماً
 const DetailRow = ({ icon, label, value }) => (
   <div className="flex items-center gap-2 text-on-surface-variant">
     <div className="text-primary w-6 flex justify-center">{icon}</div>

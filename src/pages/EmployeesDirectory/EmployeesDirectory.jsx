@@ -9,6 +9,7 @@ import ConfirmModal from "./components/ConfirmModal";
 import EditUser from "../EditUser/EditUser";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useGenericDelete } from "@/hooks/useGenericDelete";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import {
   setEmployee,
   clearEmployee,
@@ -35,7 +36,7 @@ export default function EmployeesDirectory() {
     pagination,
     selectedItem,
   } = useSelector((state) => state.employees);
-
+  const isReallyLoading = useDelayedLoading(status === "loading", 300);
   const { handleDelete, isLoading } = useGenericDelete("employee");
 
   useEffect(() => {
@@ -86,36 +87,51 @@ export default function EmployeesDirectory() {
           iconBg="bg-white/20"
         />
       </div>
-
-      {/* القسم الثاني: الجدول والبروفايل */}
       <div className="grid grid-cols-12 gap-6 items-start w-full">
         <div
           className={`${selectedItem ? "col-span-12 lg:col-span-8" : "col-span-12"} transition-all duration-500`}
         >
-          <div className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border flex flex-col">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-on-surface-variant">
-                {t("employeesRecord")}
-              </h2>
-              <button
-                onClick={() => navigate("/dashboard/add-user")}
-                className="flex items-center gap-2 bg-primary-container text-on-surface-variant px-6 py-2.5 rounded-xl hover:bg-secondary transition-all"
-              >
-                <Plus size={20} /> {t("addEmployee")}
-              </button>
-            </div>
+          <div className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-on-surface-variant">
+                  {t("employeesRecord")}
+                </h2>
+                <button
+                  onClick={() => navigate("/dashboard/add-user")}
+                  className="flex items-center gap-2 bg-primary-container text-on-surface-variant px-6 py-2.5 rounded-xl hover:bg-secondary transition-all"
+                >
+                  <Plus size={20} /> {t("addEmployee")}
+                </button>
+              </div>
 
-            <div className="transition-all duration-300">
-              <EmployeeTable
-                data={employees}
-                status={status}
-                selectedItem={selectedItem}
-                onSelect={handleSelect}
-                onDeleteRequest={(id) => setDeleteId(id)}
-                onEdit={handleEditClick}
-                lang={lang}
-                t={t}
-              />
+              {/* منطقة الجدول مع الأفرلاي الخاص بالتحميل المؤجل لمنع الرجة */}
+              <div className="relative min-h-[300px] flex flex-col">
+                {isReallyLoading && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-2xl z-20">
+                    <div className="flex items-center gap-2 text-on-surface-variant/80 text-base font-medium">
+                      <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
+                      <span className="ms-2">
+                        {lang === "ar" ? "جاري التحميل..." : "Loading..."}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <EmployeeTable
+                  data={employees}
+                  status={status}
+                  isReallyLoading={isReallyLoading}
+                  selectedItem={selectedItem}
+                  onSelect={handleSelect}
+                  onDeleteRequest={(id) => setDeleteId(id)}
+                  onEdit={handleEditClick}
+                  lang={lang}
+                  t={t}
+                />
+              </div>
             </div>
 
             <div className="flex justify-between items-center mt-6 px-6 py-4 bg-surface rounded-2xl border border-border">

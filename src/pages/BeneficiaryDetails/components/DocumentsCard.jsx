@@ -59,6 +59,7 @@ export default function DocumentsCard({ data }) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         imageUrl={activeUrl}
+        t={t}
       />
     </div>
   );

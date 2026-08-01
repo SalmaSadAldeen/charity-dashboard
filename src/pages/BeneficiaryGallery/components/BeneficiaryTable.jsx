@@ -2,8 +2,10 @@ import { Eye } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Link } from "react-router-dom";
 
-export default function BeneficiaryTable({ data }) {
-  const { t } = useTranslation();
+export default function BeneficiaryTable({ data, status }) {
+  const { t, lang } = useTranslation();
+  const isLoading = status === "loading";
+  const isEmpty = !isLoading && (!data || data.length === 0);
 
   // دالة الألوان الأصلية
   const getAvatarColor = (id) => {
@@ -19,22 +21,24 @@ export default function BeneficiaryTable({ data }) {
   const getSocialStatusValue = (item) => {
     if (!item?.socialStatus) return "-";
 
-    const status = item.socialStatus.trim().toUpperCase();
+    const statusVal = item.socialStatus.trim().toUpperCase();
     const gender = item.gender ? item.gender.trim().toUpperCase() : "";
 
     const isFemale = gender === "FEMALE" || gender === "أنثى" || gender === "F";
     const isMale = gender === "MALE" || gender === "ذكر" || gender === "M";
 
-    let possibleKeys = []; // <--- تم تعريف المتغير هنا بشكل صحيح
+    let possibleKeys = [];
 
     if (isFemale) {
-      possibleKeys = [`${status}_FEMALE`, `${status.toLowerCase()}_female`];
+      possibleKeys = [
+        `${statusVal}_FEMALE`,
+        `${statusVal.toLowerCase()}_female`,
+      ];
     } else if (isMale) {
-      possibleKeys = [`${status}_MALE`, `${status.toLowerCase()}_male`];
+      possibleKeys = [`${statusVal}_MALE`, `${statusVal.toLowerCase()}_male`];
     }
 
-    // إضافة المفاتيح العامة (تعتبر المذكر أو القيمة الافتراضية عند غياب الجنس)
-    possibleKeys.push(status, status.toLowerCase());
+    possibleKeys.push(statusVal, statusVal.toLowerCase());
 
     for (const key of possibleKeys) {
       const translated = t?.(key);
@@ -47,8 +51,8 @@ export default function BeneficiaryTable({ data }) {
   };
 
   // ألوان الحالة
-  const getStatusStyle = (status) => {
-    switch (status) {
+  const getStatusStyle = (itemStatus) => {
+    switch (itemStatus) {
       case "ACCEPTED":
         return "bg-[#eefcf4] text-[#1b6b3e] border-[#c8e6d5]";
       case "PENDING":
@@ -80,49 +84,67 @@ export default function BeneficiaryTable({ data }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-border bg-white">
-          {data?.map((item) => (
-            <tr
-              key={item.id}
-              className="group hover:bg-primary-container/5 transition-all"
-            >
-              <td className="p-4 truncate">
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs border ${getAvatarColor(
-                      item.id
-                    )}`}
-                  >
-                    {item.firstName?.charAt(0)}
-                  </div>
-                  <span className="font-bold text-sm text-on-surface-variant">{`${
-                    item.firstName || ""
-                  } ${item.lastName || ""}`}</span>
-                </div>
-              </td>
-              <td className="p-4 text-center">
-                <span className="text-[11px] font-bold text-[#5e5846] bg-[#fdfaf0] px-4 py-1.5 rounded-xl border border-[#f2e9d0]">
-                  {getSocialStatusValue(item)}
-                </span>
-              </td>
-              <td className="p-4 text-center">
-                <span
-                  className={`inline-block px-4 py-1.5 rounded-xl text-[10px] font-black border uppercase ${getStatusStyle(
-                    item.status
-                  )}`}
-                >
-                  {t(item.status)}
-                </span>
-              </td>
-              <td className="p-4 text-center">
-                <Link
-                  to={`/dashboard/beneficiaries/${item.id}`}
-                  className="inline-block p-2 bg-white border border-border rounded-xl text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
-                >
-                  <Eye size={16} />
-                </Link>
+          {isLoading ? (
+            <tr>
+              <td colSpan="4" className="py-12"></td>
+            </tr>
+          ) : isEmpty ? (
+            <tr>
+              <td
+                colSpan="4"
+                className="text-center py-12 text-gray-400 font-medium text-base"
+              >
+                {t("noData") ||
+                  (lang === "ar"
+                    ? "لا توجد بيانات متاحة"
+                    : "No data available")}
               </td>
             </tr>
-          ))}
+          ) : (
+            data?.map((item) => (
+              <tr
+                key={item.id}
+                className="group hover:bg-primary-container/5 transition-all"
+              >
+                <td className="p-4 truncate">
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs border ${getAvatarColor(
+                        item.id,
+                      )}`}
+                    >
+                      {item.firstName?.charAt(0)}
+                    </div>
+                    <span className="font-bold text-sm text-on-surface-variant">{`${
+                      item.firstName || ""
+                    } ${item.lastName || ""}`}</span>
+                  </div>
+                </td>
+                <td className="p-4 text-center">
+                  <span className="text-[11px] font-bold text-[#5e5846] bg-[#fdfaf0] px-4 py-1.5 rounded-xl border border-[#f2e9d0]">
+                    {getSocialStatusValue(item)}
+                  </span>
+                </td>
+                <td className="p-4 text-center">
+                  <span
+                    className={`inline-block px-4 py-1.5 rounded-xl text-[10px] font-black border uppercase ${getStatusStyle(
+                      item.status,
+                    )}`}
+                  >
+                    {t(item.status)}
+                  </span>
+                </td>
+                <td className="p-4 text-center">
+                  <Link
+                    to={`/dashboard/beneficiaries/${item.id}`}
+                    className="inline-block p-2 bg-white border border-border rounded-xl text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
+                  >
+                    <Eye size={16} />
+                  </Link>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

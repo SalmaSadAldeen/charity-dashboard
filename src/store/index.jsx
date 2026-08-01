@@ -88,7 +88,7 @@ export const {
   updateItem: updateRole,
   deleteItem: deleteRole,
 } = rolesSlice.actions;
-export const { fetchItems: fetchDonors, fetchItemById: fetchDonorById } =
+export const { fetchItems: fetchDonors, fetchItemById: fetchDonorHistory } =
   donorsSlice.actions;
 export const {
   fetchItems: getProfile, // إعادة تسمية fetchItems إلى getProfile لتناسب طلبك

@@ -39,12 +39,10 @@ export default function AppRoutes() {
         <Route path="orphans" element={<OrphansGallery />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="donors" element={<DonorsPage />} />
-
         <Route index element={<Dashboard />} />
         <Route path="employees" element={<EmployeesDirectory />} />
         <Route path="beneficiaries" element={<BeneficiariesPage />} />
         <Route path="add-user" element={<AddUser />} />
-
         <Route path="requests" element={<HelpRequestsPage />} />
         <Route path="help-requests/:id" element={<HelpRequestDetailsPage />} />
         <Route path="orphan/details/:id" element={<OrphanProfilePage />} />
@@ -52,6 +50,7 @@ export default function AppRoutes() {
         <Route path="beneficiaries/:id" element={<BeneficiaryDetails />} />
         <Route path="roles" element={<RolesPage />} />
         <Route path="roles/:id" element={<RoleDetailsPage />} />
+        {/* <Route path="donors/:id" element={<DonorHistoryModal />} /> */}
       </Route>
       {/* 4. معالجة أي مسار غير معروف */}
       {/* <Route path="*" element={<Navigate to="/login" replace />} /> */}

@@ -10,6 +10,9 @@ export default function EmployeeTable({
   lang,
   t,
 }) {
+  const isLoading = status === "loading";
+  const isEmpty = !data || data.length === 0;
+
   return (
     <div className="bg-surface-lowest rounded-3xl border border-border shadow-sm overflow-hidden relative min-h-[300px]">
       <table className="w-full border-collapse table-fixed">
@@ -27,37 +30,17 @@ export default function EmployeeTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-border relative">
-          {/* شاشة التحميل (Overlay) تظهر حصراً داخل منطقة الجدول وفوق البيانات */}
-          {status === "loading" && (
-            <tr>
-              <td colSpan="3" className="relative p-0 h-[250px]">
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-[1px] z-10">
-                  <div className="flex justify-center items-center gap-2 text-on-surface-variant/70 text-base">
-                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
-                    <span className="ms-2 font-medium">
-                      {t("loading") ||
-                        (lang === "ar" ? "جاري التحميل..." : "Loading...")}
-                    </span>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          )}
-
-          {/* عرض رسالة عدم وجود بيانات فقط عند انتهاء التحميل وعدم توفر عناصر */}
-          {status !== "loading" && (!data || data.length === 0) ? (
+          {/* لا تظهر رسالة "لا توجد بيانات" إلا بعد انتهاء التحميل وتأكدنا أن القائمة فارغة */}
+          {!isLoading && isEmpty ? (
             <tr>
               <td
                 colSpan="3"
-                className="text-center py-12 text-gray-400 font-medium"
+                className="text-center py-16 text-gray-400 font-medium"
               >
                 {lang === "ar" ? "لا توجد بيانات متاحة" : "No data available"}
               </td>
             </tr>
           ) : (
-            status !== "loading" &&
             (data || []).map((item) => {
               const isSelected = selectedItem?.id === item.id;
               return (

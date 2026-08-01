@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import {
   Clock,
   CheckCircle,
@@ -28,6 +29,7 @@ export default function HelpRequestsPage() {
   const { items, status, pagination } = useSelector(
     (state) => state.helpRequests,
   );
+  const isReallyLoading = useDelayedLoading(status === "loading", 300);
 
   useEffect(() => {
     dispatch(
@@ -93,11 +95,19 @@ export default function HelpRequestsPage() {
           </div>
 
           {/* تمرير البيانات وحالة التحميل مباشرة للجدول ليقوم بإدارتها بالكامل */}
-          <div
-            className={`transition-opacity duration-300 ease-in-out ${
-              status === "loading" ? "opacity-60" : "opacity-100"
-            }`}
-          >
+          <div className="relative min-h-[300px] flex flex-col">
+            {isReallyLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-3xl z-10">
+                <div className="flex items-center gap-2 text-on-surface-variant/70 text-base font-medium">
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
+                  <span className="ms-2">
+                    {lang === "ar" ? "جاري التحميل..." : "Loading..."}
+                  </span>
+                </div>
+              </div>
+            )}
             <HelpRequestsTable
               data={items}
               status={status}

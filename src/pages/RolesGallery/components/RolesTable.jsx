@@ -9,133 +9,119 @@ export default function RolesTable({
   lang,
 }) {
   const navigate = useNavigate();
+  const isLoading = status === "loading";
+  const isEmpty = !roles || roles.length === 0;
+
   return (
-    <div className="bg-surface-lowest rounded-3xl shadow-xl shadow-surface-container/60 border border-border/80 overflow-hidden backdrop-blur-md transition-all duration-300">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b border-border/80 text-on-surface-variant/90 text-sm bg-surface-container/70">
-              <th className="py-4 px-6 font-semibold w-20 text-start">
-                {t("tableId") || "# ID"}
-              </th>
-              <th className="py-4 px-6 font-semibold text-start">
-                {t("roleLabel") || "التسمية (Role Name)"}
-              </th>
-              <th className="py-4 px-6 font-semibold text-start">
-                {t("createdAt") || "تاريخ الإنشاء"}
-              </th>
-              <th className="py-4 px-6 font-semibold text-center w-36">
-                {t("actions") || "الإجراءات"}
-              </th>
+    <div className="w-full overflow-hidden rounded-2xl border border-border shadow-sm relative bg-surface-lowest backdrop-blur-md">
+      <table className="w-full border-collapse">
+        <thead className="bg-[#f9f7f4] border-b border-border">
+          <tr className="text-on-surface-variant/90 text-sm">
+            <th className="py-4 px-6 font-semibold w-20 text-start">
+              {t("tableId") || "# ID"}
+            </th>
+            <th className="py-4 px-6 font-semibold text-start">
+              {t("roleLabel") || "التسمية (Role Name)"}
+            </th>
+            <th className="py-4 px-6 font-semibold text-start">
+              {t("createdAt") || "تاريخ الإنشاء"}
+            </th>
+            <th className="py-4 px-6 font-semibold text-center w-36">
+              {t("actions") || "الإجراءات"}
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border/40 bg-white">
+          {!isLoading && isEmpty ? (
+            <tr>
+              <td
+                colSpan="4"
+                className="text-center py-16 text-gray-400 font-medium text-base"
+              >
+                {t("noRolesFound") ||
+                  (lang === "ar" ? "لا توجد أدوار مضافة" : "No roles found")}
+              </td>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-border/40">
-            {status === "loading" && roles.length === 0 ? (
-              <tr>
-                <td
-                  colSpan="4"
-                  className="text-center py-12 text-on-surface-variant/70 text-base"
+          ) : (
+            (roles || []).map((role) => {
+              const isProtected = role.id <= 6;
+
+              const displayLabel =
+                typeof role.label === "object"
+                  ? lang === "ar"
+                    ? role.label.ar || role.label.en
+                    : role.label.en || role.label.ar
+                  : role.label;
+
+              const formattedDate = role.createdAt
+                ? new Date(role.createdAt).toLocaleDateString(
+                    lang === "ar" ? "ar-EG" : "en-US",
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    },
+                  )
+                : "-";
+
+              return (
+                <tr
+                  key={role.id}
+                  onClick={() => navigate(`/dashboard/roles/${role.id}`)}
+                  className="group transition-all duration-200 hover:bg-primary/[0.04] text-sm cursor-pointer"
                 >
-                  <div className="flex justify-center items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce"></span>
-                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
-                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
-                    <span className="ms-2">
-                      {t("loading") || "جاري التحميل..."}
-                    </span>
-                  </div>
-                </td>
-              </tr>
-            ) : roles.length === 0 ? (
-              <tr>
-                <td
-                  colSpan="4"
-                  className="text-center py-12 text-gray-400 text-base"
-                >
-                  {t("noRolesFound") || "لا توجد أدوار مضافة"}
-                </td>
-              </tr>
-            ) : (
-              roles.map((role) => {
-                const isProtected = role.id <= 6;
-
-                const displayLabel =
-                  typeof role.label === "object"
-                    ? lang === "ar"
-                      ? role.label.ar || role.label.en
-                      : role.label.en || role.label.ar
-                    : role.label;
-
-                const formattedDate = role.createdAt
-                  ? new Date(role.createdAt).toLocaleDateString(
-                      lang === "ar" ? "ar-EG" : "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      },
-                    )
-                  : "-";
-
-                return (
-                  <tr
-                    key={role.id}
-                    onClick={() => navigate(`/dashboard/roles/${role.id}`)}
-                    className="group transition-all duration-200 hover:bg-primary/[0.04] hover:shadow-[inset_4px_0_0_0_var(--color-primary)] text-sm cursor-pointer"
+                  <td className="py-4 px-6 font-bold text-primary text-start">
+                    {role.id}
+                  </td>
+                  <td className="py-4 px-6 font-medium text-on-surface text-start">
+                    {displayLabel}
+                  </td>
+                  <td className="py-4 px-6 text-xs text-on-surface-variant/70 text-start">
+                    {formattedDate}
+                  </td>
+                  <td
+                    className="py-4 px-6 flex justify-center items-center gap-2.5"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <td className="py-4 px-6 font-bold text-primary text-start">
-                      {role.id}
-                    </td>
-                    <td className="py-4 px-6 font-medium text-on-surface text-start">
-                      {displayLabel}
-                    </td>
-                    <td className="py-4 px-6 text-xs text-on-surface-variant/70 text-start">
-                      {formattedDate}
-                    </td>
-                    <td
-                      className="py-4 px-6 flex justify-center items-center gap-2.5"
-                      onClick={(e) => e.stopPropagation()} // منع انتقال الصفحة عند الضغط حصراً على الأزرار
+                    <button
+                      onClick={() => onEdit(role)}
+                      className="p-2 bg-primary/10 text-primary rounded-xl hover:bg-primary hover:text-white hover:scale-105 transition-all shadow-sm"
+                      title={t("edit") || "تعديل"}
                     >
-                      <button
-                        onClick={() => onEdit(role)}
-                        className="p-2 bg-primary/10 text-primary rounded-xl hover:bg-primary hover:text-white hover:scale-105 transition-all shadow-sm"
-                        title={t("edit") || "تعديل"}
+                      <span className="material-symbols-outlined text-lg leading-none">
+                        edit
+                      </span>
+                    </button>
+                    {isProtected ? (
+                      <span
+                        className="p-2 bg-surface-container text-on-surface-variant/40 rounded-xl cursor-not-allowed shadow-sm border border-border/40"
+                        title={
+                          t("protectedRoleTooltip") ||
+                          "دور محمي من النظام لا يمكن حذفه"
+                        }
                       >
                         <span className="material-symbols-outlined text-lg leading-none">
-                          edit
+                          lock
+                        </span>
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => onDelete(role.id)}
+                        className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white hover:scale-105 transition-all shadow-sm"
+                        title={t("delete") || "حذف"}
+                      >
+                        <span className="material-symbols-outlined text-lg leading-none">
+                          delete
                         </span>
                       </button>
-                      {isProtected ? (
-                        <span
-                          className="p-2 bg-surface-container text-on-surface-variant/40 rounded-xl cursor-not-allowed shadow-sm border border-border/40"
-                          title={
-                            t("protectedRoleTooltip") ||
-                            "دور محمي من النظام لا يمكن حذفه"
-                          }
-                        >
-                          <span className="material-symbols-outlined text-lg leading-none">
-                            lock
-                          </span>
-                        </span>
-                      ) : (
-                        <button
-                          onClick={() => onDelete(role.id)}
-                          className="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white hover:scale-105 transition-all shadow-sm"
-                          title={t("delete") || "حذف"}
-                        >
-                          <span className="material-symbols-outlined text-lg leading-none">
-                            delete
-                          </span>
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+                    )}
+                  </td>
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

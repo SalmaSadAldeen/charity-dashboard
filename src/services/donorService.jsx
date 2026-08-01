@@ -7,5 +7,5 @@ export const donorService = {
       `/api/admin/donors?isSponsor=${isSponsor}&page=${page}&limit=${limit}`,
     ),
 
-  fetchDonorById: (id) => API.get(`/api/admin/donors/${id}`),
+  fetchDonorHistory: (id) => API.get(`/api/admin/donors/${id}/history`),
 };

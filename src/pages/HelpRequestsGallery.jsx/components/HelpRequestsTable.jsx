@@ -1,7 +1,8 @@
 import { useTranslation } from "@/hooks/useTranslation";
 
-export default function HelpRequestsTable({ data, onRowClick }) {
+export default function HelpRequestsTable({ data, status, onRowClick }) {
   const { t, lang } = useTranslation();
+  const isLoading = status === "loading";
   const isEmpty = !data || data.length === 0;
 
   return (
@@ -20,7 +21,12 @@ export default function HelpRequestsTable({ data, onRowClick }) {
           </tr>
         </thead>
         <tbody>
-          {isEmpty ? (
+          {/* إذا لسا عم يحمل، ما تظهر كلمة لا توجد بيانات فوراً، فيكِ تخلي الصف فارغ أو مخفي مؤقتاً */}
+          {isLoading ? (
+            <tr>
+              <td colSpan="5" className="py-12"></td>
+            </tr>
+          ) : isEmpty ? (
             <tr>
               <td
                 colSpan="5"

@@ -51,6 +51,15 @@ export const translations = {
       "Access Restricted. Contact the System Super Administrator.",
     charityOSAccess: "CharityOS - Administrative Access",
     authorizedCredentialsNote: "Please enter your authorized credentials.",
+    donorFinancialHistory: "Donor Financial History",
+    sponsorshipDonation: "Sponsorship Donation",
+    aidRequestDonation: "Aid Request Donation",
+    walletTopUp: "Wallet Top-Up",
+    amount: "Amount",
+    transactionType: "Transaction Type",
+    dateTime: "Date & Time",
+    loadingHistory: "Loading history...",
+    noFinancialRecords: "No financial records found for this donor.",
 
     // --- 5. Users & Employees Management ---
     addNewSystemUser: "Add New System User",
@@ -250,7 +259,7 @@ export const translations = {
     view_profile: "View Profile",
     view_details: "View details",
     confirm: "Confirm",
-    loading: "Loading data...",
+    loading: "Loading data",
     noData: "No data available",
     showing: "Showing",
     from: "of",
@@ -290,8 +299,9 @@ export const translations = {
     pleaseFixErrors: "Please fix all errors before saving",
     successAdded: "Added successfully",
 
-  "roleLinkedError": "Cannot delete this role because it is linked to employees",
-  "roleDeleteSuccess": "Role deleted successfully",
+    roleLinkedError:
+      "Cannot delete this role because it is linked to employees",
+    roleDeleteSuccess: "Role deleted successfully",
     reject_title: "Reject Request with Reasons",
     reject_subtitle:
       "Please fill in the rejection reason in both Arabic and English accurately.",
@@ -445,7 +455,7 @@ export const translations = {
     sponsorStatus: "حالة الكفالة",
     joinDate: "تاريخ الانضمام",
     back: "السابق",
-    
+
     // --- 7. Orphans & Sponsorships ---
     orphans: "شؤون الأيتام والكفالات",
     orphansList: "سجل الأيتام",
@@ -507,7 +517,7 @@ export const translations = {
     noEmployeesAssigned: "لا يوجد موظفون مرتبطون بهذا الدور حالياً",
     noPermissions: "لا توجد صلاحيات مرتبطة",
     permissions: "الصلاحيات المرتبطة",
-    loading: "جاري التحميل...",
+    loading: "جاري التحميل",
     noRolesFound: "لا توجد أدوار مضافة",
     roleLabel: "التسمية (Label)",
     actions: "الإجراءات",
@@ -569,7 +579,6 @@ export const translations = {
     view_profile: "عرض التفاصيل",
     view_details: "عرض التفاصيل",
 
-    cancel: "إلغاء",
     confirm: "تأكيد",
     noData: "لا توجد بيانات لعرضها",
     showing: "عرض",
@@ -585,6 +594,15 @@ export const translations = {
     deleteConfirmMessage: "سيتم حذف السجل نهائياً، هل تريد المتابعة؟",
     ar: "عربي",
     en: "إنجليزي",
+    donorFinancialHistory: "السجل المالي للمتبرع",
+    sponsorshipDonation: "كفالة يتيم",
+    aidRequestDonation: "تبرع لطلب مساعدة",
+    walletTopUp: "شحن محفظة",
+    amount: "المبلغ",
+    transactionType: "نوع المعاملة والتفاصيل",
+    dateTime: "التاريخ والوقت",
+    loadingHistory: "جاري تحميل السجل...",
+    noFinancialRecords: "لا توجد حركات مالية مسجلة لهذا المتبرع حالياً",
 
     // --- 13. Validations & Feedback ---
     note: "ملاحظة",

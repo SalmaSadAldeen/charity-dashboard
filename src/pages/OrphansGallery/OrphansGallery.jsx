@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { OrphanCard } from "@/pages/OrphansGallery/components/OrphanCard";
 import { useTranslation } from "@/hooks/useTranslation";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import {
   Plus,
   ChevronLeft,
@@ -22,9 +23,9 @@ export default function OrphansGallery() {
   const [supportedFilter, setSupportedFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const ITEMS_PER_PAGE = 2; // تم تعديلها لتقسيمها على 3 أعمدة (صفين × 3 كاردات)
+  const ITEMS_PER_PAGE = 8; // تم تعديلها لتقسيمها على 3 أعمدة (صفين × 3 كاردات)
   const { items, pagination, status } = useSelector((state) => state.orphans);
-
+  const isReallyLoading = useDelayedLoading(status === "loading", 300);
   // 1. طلب البيانات عند تحميل الواجهة أول مرة أو عند تغيير اللغة فقط
   useEffect(() => {
     dispatch(
@@ -100,7 +101,8 @@ export default function OrphansGallery() {
 
       {/* منطقة عرض الكاردات مع الـ Overlay المباشر والارتفاع المضبوط */}
       <div className="relative min-h-[300px] flex flex-col">
-        {status === "loading" && (
+        {/* استبدلنا status === "loading" بـ isReallyLoading */}
+        {isReallyLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-3xl z-10">
             <div className="flex items-center gap-2 text-on-surface-variant/70 text-base font-medium">
               <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
