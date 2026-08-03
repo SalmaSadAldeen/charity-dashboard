@@ -2,12 +2,9 @@ import { Eye } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Link } from "react-router-dom";
 
-export default function BeneficiaryTable({ data, status }) {
+export default function BeneficiaryTable({ data, isLoading, onRowClick }) {
   const { t, lang } = useTranslation();
-  const isLoading = status === "loading";
-  const isEmpty = !isLoading && (!data || data.length === 0);
 
-  // دالة الألوان الأصلية
   const getAvatarColor = (id) => {
     const palette = [
       "bg-[#735c00]/15 text-[#735c00]",
@@ -17,7 +14,6 @@ export default function BeneficiaryTable({ data, status }) {
     return palette[(id || 0) % palette.length];
   };
 
-  // دالة الترجمة الذكية مع تعريف possibleKeys بشكل صحيح
   const getSocialStatusValue = (item) => {
     if (!item?.socialStatus) return "-";
 
@@ -50,7 +46,6 @@ export default function BeneficiaryTable({ data, status }) {
     return item.socialStatus;
   };
 
-  // ألوان الحالة
   const getStatusStyle = (itemStatus) => {
     switch (itemStatus) {
       case "ACCEPTED":
@@ -85,26 +80,33 @@ export default function BeneficiaryTable({ data, status }) {
         </thead>
         <tbody className="divide-y divide-border bg-white">
           {isLoading ? (
-            <tr>
-              <td colSpan="4" className="py-12"></td>
-            </tr>
-          ) : isEmpty ? (
-            <tr>
-              <td
-                colSpan="4"
-                className="text-center py-12 text-gray-400 font-medium text-base"
-              >
-                {t("noData") ||
-                  (lang === "ar"
-                    ? "لا توجد بيانات متاحة"
-                    : "No data available")}
-              </td>
-            </tr>
-          ) : (
-            data?.map((item) => (
+            // 1. عرض الـ Skeleton حصراً أثناء التحميل بناءً على الـ prop القادم
+            [...Array(5)].map((_, index) => (
+              <tr key={index} className="animate-pulse">
+                <td className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-gray-200 shrink-0" />
+                    <div className="h-4 bg-gray-200 rounded-lg w-32" />
+                  </div>
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-7 bg-gray-200 rounded-xl w-24 mx-auto" />
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-7 bg-gray-200 rounded-xl w-20 mx-auto" />
+                </td>
+                <td className="p-4 text-center">
+                  <div className="w-9 h-9 bg-gray-200 rounded-xl mx-auto" />
+                </td>
+              </tr>
+            ))
+          ) : data && data.length > 0 ? (
+            // 2. عرض البيانات الحقيقية في حال توفرها
+            data.map((item) => (
               <tr
                 key={item.id}
-                className="group hover:bg-primary-container/5 transition-all"
+                onClick={() => onRowClick?.(item)}
+                className="group hover:bg-primary-container/5 transition-all cursor-pointer"
               >
                 <td className="p-4 truncate">
                   <div className="flex items-center gap-4">
@@ -134,7 +136,10 @@ export default function BeneficiaryTable({ data, status }) {
                     {t(item.status)}
                   </span>
                 </td>
-                <td className="p-4 text-center">
+                <td
+                  className="p-4 text-center"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <Link
                     to={`/dashboard/beneficiaries/${item.id}`}
                     className="inline-block p-2 bg-white border border-border rounded-xl text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
@@ -144,6 +149,19 @@ export default function BeneficiaryTable({ data, status }) {
                 </td>
               </tr>
             ))
+          ) : (
+            // 3. عرض رسالة "لا توجد بيانات" عند انتهاء التحميل وعدم وجود عناصر
+            <tr>
+              <td
+                colSpan="4"
+                className="text-center py-12 text-gray-400 font-medium text-base"
+              >
+                {t("noData") ||
+                  (lang === "ar"
+                    ? "لا توجد بيانات متاحة"
+                    : "No data available")}
+              </td>
+            </tr>
           )}
         </tbody>
       </table>

@@ -11,7 +11,7 @@ import {
   BookOpen,
 } from "lucide-react";
 
-export default function OrphanInfoCard({ orphan, t, }) {
+export default function OrphanInfoCard({ orphan, t }) {
   const openFileWindow = (path) => {
     if (!path) return;
     const cleanPath = path.replace(/\\/g, "/").replace(/^uploads\//, "");
@@ -23,13 +23,12 @@ export default function OrphanInfoCard({ orphan, t, }) {
     );
   };
 
-  // مصفوفة حقول معلومات اليتيم المرتبة
   const orphanFields = [
     {
       label: t("orphan_name"),
       value: `${orphan?.firstName || ""} ${orphan?.lastName || ""}`,
       icon: <User size={16} className="text-primary" />,
-      span: "col-span-full", // الاسم يأخذ العرض كاملاً ليكون متناسقاً
+      span: "col-span-full",
     },
     {
       label: t("father_name"),
@@ -68,7 +67,6 @@ export default function OrphanInfoCard({ orphan, t, }) {
       value: orphan?.brotherAndSisterNumber ?? "-",
       icon: <Users size={16} className="text-primary" />,
     },
-   
     {
       label: t("guardian_phone"),
       value: orphan?.guaranteedPhone || "-",
@@ -84,7 +82,7 @@ export default function OrphanInfoCard({ orphan, t, }) {
       value: orphan?.shoesSize || "-",
       icon: <Award size={16} className="text-primary" />,
     },
-        {
+    {
       label: t("talent"),
       value: orphan?.talent || "-",
       icon: <Award size={16} className="text-primary" />,
@@ -101,8 +99,7 @@ export default function OrphanInfoCard({ orphan, t, }) {
       icon: <MapPin size={16} className="text-primary" />,
       span: "sm:col-span-2",
     },
-
-     {
+    {
       label: t("guardian_name"),
       value: orphan?.guardianName || "-",
       icon: <User size={16} className="text-primary" />,
@@ -121,7 +118,6 @@ export default function OrphanInfoCard({ orphan, t, }) {
         {t("orphan_info")}
       </h3>
 
-      {/* تم تصحيح الشبكة لتكون متناسقة وثابتة تماماً بدون فراغات */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {orphanFields.map((field, index) => (
           <div

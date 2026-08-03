@@ -90,7 +90,10 @@ export default function RolesPage() {
 
       <RoleModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setRoleToEdit(null); // 👈 هذه مهمة جداً لكي لا تحتفظ الصفحة بالرول القديم
+        }}
         roleToEdit={roleToEdit}
         onSuccess={() => dispatch(fetchRoles())}
         lang={lang}

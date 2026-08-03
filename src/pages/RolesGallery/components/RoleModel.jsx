@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPermissions } from "@/store/index";
+import { fetchPermissions, clearRoleDetails } from "@/store/index";
 import { useRoleForm } from "@/hooks/useRoleForm";
 import { X, Shield, Check, Loader2 } from "lucide-react";
 
@@ -13,17 +13,9 @@ export default function RoleModal({
   t,
 }) {
   const dispatch = useDispatch();
-  // 👈 التعديل هنا: جلب الصلاحيات وحالتها من state.permissions (وليس roles)
   const { items: permissions, status: permStatus } = useSelector(
     (state) => state.permissions,
   );
-
-  // جلب الصلاحيات عند فتح المودال
-  useEffect(() => {
-    if (isOpen) {
-      dispatch(fetchPermissions());
-    }
-  }, [isOpen, dispatch, lang]);
 
   const {
     labelAr,
@@ -35,9 +27,25 @@ export default function RoleModal({
     handleSubmit,
     loading,
     isEditMode,
+    resetForm,
   } = useRoleForm({ roleToEdit, onClose, onSuccess });
 
+  useEffect(() => {
+    if (isOpen) {
+      dispatch(fetchPermissions());
+    }
+  }, [isOpen, dispatch, lang]);
+
+  const handleCloseModal = () => {
+    if (resetForm) resetForm();
+    dispatch(clearRoleDetails?.());
+    onClose();
+  };
+
   if (!isOpen) return null;
+
+  const isPermLoading = permStatus === "loading";
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
@@ -60,8 +68,8 @@ export default function RoleModal({
             </div>
           </div>
           <button
-            onClick={onClose}
-            className="w-9 h-9 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors shadow-sm border border-gray-100"
+            onClick={handleCloseModal}
+            className="w-9 h-9 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors shadow-sm border border-gray-100 cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -102,15 +110,25 @@ export default function RoleModal({
             </div>
           </div>
 
-          {/* قائمة الصلاحيات (Checkboxes) */}
+          {/* قائمة الصلاحيات (مع سكيليتون بدل الـ Loader) */}
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase mb-3">
               {t("availablePermissions")}
             </label>
 
-            {permStatus === "loading" ? (
-              <div className="flex justify-center py-10">
-                <Loader2 className="animate-spin text-primary" size={28} />
+            {isPermLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-64 overflow-y-auto p-1 border border-gray-100 rounded-2xl bg-gray-50/50">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-white animate-pulse"
+                  >
+                    <div className="flex items-center gap-2.5 w-full">
+                      <div className="w-5 h-5 rounded-md bg-gray-200 shrink-0"></div>
+                      <div className="h-3.5 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-64 overflow-y-auto p-1 border border-gray-100 rounded-2xl bg-gray-50/50">
@@ -153,15 +171,15 @@ export default function RoleModal({
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
             <button
               type="button"
-              onClick={onClose}
-              className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition-colors"
+              onClick={handleCloseModal}
+              className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition-colors cursor-pointer"
             >
               {t("cancel")}
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
             >
               {loading && <Loader2 size={16} className="animate-spin" />}
               {isEditMode ? t("updateRole") : t("saveRole")}

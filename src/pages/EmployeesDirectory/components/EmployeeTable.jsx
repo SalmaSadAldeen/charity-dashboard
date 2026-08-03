@@ -39,7 +39,33 @@ export default function EmployeeTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-[#e6e0d5]">
-          {!isLoading && isEmpty ? (
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <tr key={index} className="animate-pulse">
+                <td className="py-4 px-6 align-middle">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-2xl bg-gray-200 shrink-0"></div>
+                    <div className="flex flex-col gap-2 w-36">
+                      <div className="h-4 bg-gray-200 rounded w-full"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-4 px-6 align-middle">
+                  <div className="flex gap-2">
+                    <div className="h-6 bg-gray-200 rounded-lg w-20"></div>
+                    <div className="h-6 bg-gray-200 rounded-lg w-16"></div>
+                  </div>
+                </td>
+                <td className="py-4 px-6 align-middle">
+                  <div className="flex justify-center items-center gap-2">
+                    <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
+                    <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : isEmpty ? (
             <tr>
               <td
                 colSpan="3"
@@ -49,7 +75,7 @@ export default function EmployeeTable({
               </td>
             </tr>
           ) : (
-            (data || []).map((item) => {
+            data.map((item) => {
               const isSelected = selectedItem?.id === item.id;
               return (
                 <tr
@@ -67,7 +93,11 @@ export default function EmployeeTable({
                   {/* عمود الموظف */}
                   <td className="py-4 px-6 align-middle">
                     <div className="flex items-center gap-3.5">
-                      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-base border shrink-0 shadow-2xs ${getAvatarColor(item.id)}`}>
+                      <div
+                        className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-base border shrink-0 shadow-2xs ${getAvatarColor(
+                          item.id,
+                        )}`}
+                      >
                         {item.firstName?.charAt(0)}
                       </div>
                       <div className="flex flex-col">
@@ -81,7 +111,7 @@ export default function EmployeeTable({
                     </div>
                   </td>
 
-                  {/* عمود الأدوار الوظيفية (مرتب ومنسق بشكل ممتاز داخل مساحته بدون تداخل) */}
+                  {/* عمود الأدوار الوظيفية */}
                   <td className="py-4 px-6 align-middle">
                     <div className="flex flex-wrap items-center gap-2 justify-start">
                       {item.roles?.map((r) => {

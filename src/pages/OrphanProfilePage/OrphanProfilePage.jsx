@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchOrphanById } from "@/store/index";
 import { useGenericDelete } from "@/hooks/useGenericDelete";
 import ConfirmModal from "@/pages/EmployeesDirectory/components/ConfirmModal";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 
 export default function OrphanProfilePage() {
   const { t, lang } = useTranslation();
@@ -16,64 +17,88 @@ export default function OrphanProfilePage() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { handleDelete } = useGenericDelete("orphan");
+  const { handleDelete, isLoading: isDeleting } = useGenericDelete("orphan");
+
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
+
   const { selectedDetails: orphan, status } = useSelector(
     (state) => state.orphans,
   );
+
+  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+
   useEffect(() => {
     if (id) {
-      // جلب البيانات مع كل تغير في الـ ID أو الـ lang
-      dispatch(fetchOrphanById({ id }));
+      setHasLoadedAtLeastOnce(false);
+      dispatch(fetchOrphanById({ id })).then(() => {
+        setHasLoadedAtLeastOnce(true);
+      });
     }
+  }, [id, lang, dispatch]);
 
-    // تنظيف البيانات فقط عند الخروج من الصفحة
-    // return () => {
-    //   dispatch(clearOrphanDetails());
-    // };
-  }, [id, lang, dispatch]); // لاحظي وجود lang هنا
-  // في الـ return، استخدمي الـ status لإظهار حالة التحميل
-  // 1. حماية وقت التحميل أو إذا لم تكن البيانات موجودة بعد
-  if (status === "loading" || !orphan) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[85vh]">
-        <div className="flex items-center gap-2 text-on-surface-variant/70 text-base font-medium">
-          <span className="w-2 h-2 rounded-full bg-primary animate-bounce"></span>
-          <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
-          <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
-          <span className="ms-2">
-            {t("loading") || (lang === "ar" ? "جاري التحميل..." : "Loading...")}
-          </span>
-        </div>
-      </div>
-    );
-  }
+  const showSkeleton = isReallyLoading || !hasLoadedAtLeastOnce || !orphan;
+
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <OrphanHeader
-        orphan={orphan}
-        onEdit={() => navigate(`/dashboard/orphans/edit/${id}`)}
-        onDelete={() => setIsDeleteModalOpen(true)}
-        t={t}
-      />
+      {/* 1. رأس الملف الشخصي (Header أو Skeleton الخاص به) */}
+      {showSkeleton ? (
+        <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-40 flex items-center justify-between animate-pulse w-full">
+          <div className="flex items-center gap-6 w-1/2">
+            <div className="w-24 h-24 rounded-2xl bg-gray-200 shrink-0"></div>
+            <div className="space-y-3 w-full">
+              <div className="h-6 bg-gray-200 rounded-xl w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded-lg w-1/2"></div>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="w-24 h-10 bg-gray-200 rounded-xl"></div>
+            <div className="w-24 h-10 bg-gray-200 rounded-xl"></div>
+          </div>
+        </div>
+      ) : (
+        <OrphanHeader
+          orphan={orphan}
+          onEdit={() => navigate(`/dashboard/orphans/edit/${id}`)}
+          onDelete={() => setIsDeleteModalOpen(true)}
+          t={t}
+        />
+      )}
 
+      {/* 2. الأقسام السفلية (تظهر بشكل سكيليتون مستقل أو تعرض البيانات فور جاهزيتها) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <OrphanInfoGrid orphan={orphan} t={t} lang={lang} />
-          <OrphanJsonSection orphan={orphan} t={t} lang={lang} />
+          {showSkeleton ? (
+            <>
+              <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-80 animate-pulse"></div>
+              <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-64 animate-pulse"></div>
+            </>
+          ) : (
+            <>
+              <OrphanInfoGrid orphan={orphan} t={t} lang={lang} />
+              <OrphanJsonSection orphan={orphan} t={t} lang={lang} />
+            </>
+          )}
         </div>
+
         <div className="space-y-6">
-          <FamilyStats orphan={orphan} t={t} />
+          {showSkeleton ? (
+            <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-96 animate-pulse"></div>
+          ) : (
+            <FamilyStats orphan={orphan} t={t} />
+          )}
         </div>
       </div>
 
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         onConfirm={async () => {
-          await handleDelete(id, () => setIsDeleteModalOpen(false));
-          navigate("/dashboard/orphans");
+          await handleDelete(id, () => {
+            setIsDeleteModalOpen(false);
+            navigate("/dashboard/orphans");
+          });
         }}
         onCancel={() => setIsDeleteModalOpen(false)}
-        isLoading={false}
+        isLoading={isDeleting}
       />
     </div>
   );

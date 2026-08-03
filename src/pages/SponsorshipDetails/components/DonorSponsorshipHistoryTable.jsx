@@ -22,7 +22,6 @@ export default function DonorSponsorshipHistoryTable({
 
       <div className="w-full overflow-hidden rounded-2xl border border-border shadow-sm relative bg-surface-lowest backdrop-blur-md flex flex-col">
         <table className="w-full border-collapse table-fixed">
-          {/* Header ثابت دائماً لا يتأثر بأي حالة */}
           <thead className="bg-[#f9f7f4] border-b border-border">
             <tr className="text-on-surface-variant/90 text-sm">
               <th className="py-4 px-6 font-semibold w-24 text-start">
@@ -45,7 +44,6 @@ export default function DonorSponsorshipHistoryTable({
 
           <tbody className="divide-y divide-border/40 bg-white">
             {isLoading ? (
-              /* 1. أولاً: إذا كان جاري التحميل، اعرض الـ Skeleton المتناسق */
               [...Array(4)].map((_, index) => (
                 <tr key={`skeleton-${index}`} className="animate-pulse">
                   <td className="py-4 px-6">
@@ -66,7 +64,6 @@ export default function DonorSponsorshipHistoryTable({
                 </tr>
               ))
             ) : isEmpty ? (
-              /* 2. ثانياً: إذا انتهى التحميل ولا توجد بيانات */
               <tr>
                 <td
                   colSpan="5"
@@ -79,7 +76,6 @@ export default function DonorSponsorshipHistoryTable({
                 </td>
               </tr>
             ) : (
-              /* 3. ثالثاً: عرض البيانات الفعلية بشكل مرتب */
               historyData.sponsorshipHistory.map((item) => (
                 <tr
                   key={item.id}

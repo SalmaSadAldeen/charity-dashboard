@@ -6,7 +6,6 @@ import {
 export default function SponsorshipMainInfo({ sponsorship ,t}) {
   const { monthlyAmount, startDate, endDate, status, rejectionReason, cancellationSource, createdAt } = sponsorship;
 
-  // إعداد مصفوفة البيانات الأساسية للكفالة لعرضها بشكل كروت مرتبة
   const mainInfoItems = [
     { 
       label: t("monthly_amount"), 
@@ -37,7 +36,6 @@ export default function SponsorshipMainInfo({ sponsorship ,t}) {
         {t("sponsorship_details")}
       </h3>
 
-      {/* شبكة الكروت المنظمة تماماً مثل كرت المتبرع واليتيم */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {mainInfoItems.map((item, index) => (
           <div 
@@ -55,7 +53,6 @@ export default function SponsorshipMainInfo({ sponsorship ,t}) {
         ))}
       </div>
 
-      {/* حقول الحالات الخاصّة (الرفض أو الإلغاء) تظهر بشكل مميز وأنيق إذا وجدت */}
       {status === "REJECTED" && rejectionReason && (
         <div className="text-sm text-red-600 bg-red-50 p-4 rounded-2xl border border-red-200 flex items-start gap-3">
           <XCircle size={20} className="shrink-0 mt-0.5" />

@@ -47,7 +47,36 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-border bg-white">
-          {!isLoading && isEmpty ? (
+          {isLoading ? (
+            Array.from({ length: 4 }).map((_, index) => (
+              <tr key={index} className="animate-pulse">
+                <td className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gray-200 shrink-0"></div>
+                    <div className="space-y-2 w-full">
+                      <div className="h-4 bg-gray-200 rounded-lg w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded-lg w-1/2"></div>
+                    </div>
+                  </div>
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-7 bg-gray-200 rounded-xl w-3/4 mx-auto"></div>
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-7 bg-gray-200 rounded-xl w-2/3 mx-auto"></div>
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-6 bg-gray-200 rounded-xl w-20 mx-auto"></div>
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-4 bg-gray-200 rounded-lg w-24 mx-auto"></div>
+                </td>
+                <td className="p-4 text-center">
+                  <div className="w-9 h-9 bg-gray-200 rounded-xl mx-auto"></div>
+                </td>
+              </tr>
+            ))
+          ) : isEmpty ? (
             <tr>
               <td
                 colSpan="6"
@@ -57,12 +86,11 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
               </td>
             </tr>
           ) : (
-            (data || []).map((item) => (
+            data.map((item) => (
               <tr
                 key={item.donorId || item.id}
                 className="group hover:bg-primary-container/5 transition-all"
               >
-                {/* الاسم والبريد الإلكتروني */}
                 <td className="p-4 truncate">
                   <div className="flex items-center gap-3">
                     <div
@@ -85,8 +113,6 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
                     </div>
                   </div>
                 </td>
-
-                {/* معلومات الاتصال */}
                 <td className="p-4 text-center truncate">
                   <span
                     className="text-xs font-bold text-[#5e5846] bg-[#fdfaf0] px-2.5 py-1.5 rounded-xl border border-[#f2e9d0] inline-flex items-center gap-1 truncate max-w-full"
@@ -98,8 +124,6 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
                     </span>
                   </span>
                 </td>
-
-                {/* الدولة (countryName) */}
                 <td className="p-4 text-center truncate">
                   <span
                     className="text-xs font-bold text-gray-700 bg-gray-50 px-2.5 py-1.5 rounded-xl border border-gray-200 inline-flex items-center gap-1 truncate max-w-full"
@@ -109,8 +133,6 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
                     <span className="truncate">{item.countryName || "-"}</span>
                   </span>
                 </td>
-
-                {/* حالة الكفالة */}
                 <td className="p-4 text-center">
                   {item.isSponsor ? (
                     <span className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[10px] font-black bg-[#eefcf4] text-[#1b6b3e] border border-[#c8e6d5]">
@@ -124,8 +146,6 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
                     </span>
                   )}
                 </td>
-
-                {/* تاريخ الانضمام */}
                 <td className="p-4 text-center">
                   <span
                     className="text-xs text-gray-500 font-medium inline-flex items-center gap-1"
@@ -144,8 +164,6 @@ export default function DonorTable({ data, status, t, lang, onRowClick }) {
                       : "-"}
                   </span>
                 </td>
-
-                {/* الإجراءات (زر العين فقط) */}
                 <td className="p-4 text-center">
                   <button
                     type="button"

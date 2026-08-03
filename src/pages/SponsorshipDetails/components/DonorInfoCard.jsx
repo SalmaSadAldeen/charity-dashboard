@@ -15,7 +15,6 @@ export default function DonorInfoCard({ donor, t }) {
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* عرض الاسم إذا وجد */}
         {fullName && (
           <div className="bg-surface-lowest p-4 rounded-2xl border border-border/60 shadow-2xs flex flex-col justify-between space-y-1.5 sm:col-span-2">
             <div className="flex items-center gap-2 text-xs font-medium text-gray-400">
@@ -28,7 +27,6 @@ export default function DonorInfoCard({ donor, t }) {
           </div>
         )}
 
-        {/* عرض رقم الهاتف إذا وجد فقط، وإذا لم يوجد يختفي مع الليبل */}
         {phone && (
           <div className="bg-surface-lowest p-4 rounded-2xl border border-border/60 shadow-2xs flex flex-col justify-between space-y-1.5">
             <div className="flex items-center gap-2 text-xs font-medium text-gray-400">
@@ -41,7 +39,6 @@ export default function DonorInfoCard({ donor, t }) {
           </div>
         )}
 
-        {/* عرض البريد الإلكتروني إذا وجد فقط، وإذا لم يوجد يختفي مع الليبل */}
         {email && (
           <div className="bg-surface-lowest p-4 rounded-2xl border border-border/60 shadow-2xs flex flex-col justify-between space-y-1.5">
             <div className="flex items-center gap-2 text-xs font-medium text-gray-400">

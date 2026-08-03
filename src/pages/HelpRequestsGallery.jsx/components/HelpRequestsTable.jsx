@@ -21,11 +21,30 @@ export default function HelpRequestsTable({ data, status, onRowClick }) {
           </tr>
         </thead>
         <tbody>
-          {/* إذا لسا عم يحمل، ما تظهر كلمة لا توجد بيانات فوراً، فيكِ تخلي الصف فارغ أو مخفي مؤقتاً */}
           {isLoading ? (
-            <tr>
-              <td colSpan="5" className="py-12"></td>
-            </tr>
+            Array.from({ length: 5 }).map((_, index) => (
+              <tr
+                key={index}
+                className="bg-white border border-border/50 shadow-sm rounded-2xl animate-pulse"
+              >
+                <td className="px-6 py-5">
+                  <div className="h-4 bg-gray-200 rounded-lg w-3/4"></div>
+                </td>
+                <td className="px-6 py-5">
+                  <div className="h-6 bg-gray-200 rounded-lg w-24"></div>
+                </td>
+                <td className="px-6 py-5">
+                  <div className="w-32 mx-auto bg-gray-200 rounded-full h-1.5 mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-12 mx-auto"></div>
+                </td>
+                <td className="px-6 py-5 text-center">
+                  <div className="h-4 bg-gray-200 rounded w-10 mx-auto"></div>
+                </td>
+                <td className="px-6 py-5 text-end">
+                  <div className="h-8 bg-gray-200 rounded-xl w-24 ml-auto"></div>
+                </td>
+              </tr>
+            ))
           ) : isEmpty ? (
             <tr>
               <td
@@ -76,7 +95,7 @@ export default function HelpRequestsTable({ data, status, onRowClick }) {
                 <td className="px-6 py-5 text-end">
                   <button
                     onClick={() => onRowClick(req)}
-                    className="bg-white border border-primary/20 text-primary px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider hover:bg-primary hover:text-white transition-all duration-200 shadow-sm"
+                    className="bg-white border border-primary/20 text-primary px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider hover:bg-primary hover:text-white transition-all duration-200 shadow-sm cursor-pointer"
                   >
                     {t("view_details")}
                   </button>

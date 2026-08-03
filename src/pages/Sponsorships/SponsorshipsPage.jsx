@@ -16,17 +16,21 @@ export default function SponsorshipsPage() {
   );
 
   const [currentStatus, setCurrentStatus] = useState("");
-  const isReallyLoading = useDelayedLoading(status === "loading", 400);
+  const isReallyLoading = useDelayedLoading(status === "loading", 500);
 
-  // 1. جلب البيانات عند أول تحميل للصفحة أو عند تغير اللغة فقط
+  // تتبع ما إذا تم جلب البيانات لضمان عدم ظهور رسالة "لا توجد داتا" في البداية أبداً
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
+
+  // جلب البيانات عند أول تحميل أو عند تغير الفلتر أو اللغة
   useEffect(() => {
-    dispatch(fetchSponsorships({ status: currentStatus }));
-  }, [lang, dispatch]);
+    setHasLoadedAtLeastOnce(false); // إعادة تعيين عند تغيير الفلتر أو اللغة
+    dispatch(fetchSponsorships({ status: currentStatus })).then(() => {
+      setHasLoadedAtLeastOnce(true);
+    });
+  }, [lang, currentStatus, dispatch]);
 
-  // 2. عند تغيير الفلتر: تحديث الحالة وإرسال الطلب فوراً (تماماً مثل الأيتام)
   const handleFilterChange = (val) => {
     setCurrentStatus(val);
-    dispatch(fetchSponsorships({ status: val }));
   };
 
   const filters = [
@@ -46,7 +50,10 @@ export default function SponsorshipsPage() {
   ];
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div
+      className="p-6 max-w-7xl mx-auto space-y-6"
+      dir={lang === "ar" ? "rtl" : "ltr"}
+    >
       <div>
         <h1 className="text-2xl font-black text-on-surface-variant">
           {t("sponsorships")}
@@ -62,34 +69,64 @@ export default function SponsorshipsPage() {
         onFilterChange={handleFilterChange}
       />
 
-      {/* منطقة عرض الكاردات مع الـ Overlay المباشر والارتفاع المضبوط */}
+      {/* منطقة عرض الكاردات مع التحكم الكامل بمراحل الظهور */}
       <div className="relative min-h-[300px] flex flex-col">
-        {isReallyLoading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-3xl z-10">
-            <div className="flex items-center gap-2 text-on-surface-variant/70 text-base font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
-              <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
-              <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
-              <span className="ms-2">
-                {lang === "ar" ? "جاري التحميل..." : "Loading..."}
-              </span>
-            </div>
-          </div>
-        )}
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {sponsorships && sponsorships.length > 0 ? (
+          {/* 1. حالة التحميل أو عدم الانتهاء لأول مرة: عرض السكليتون حصرياً */}
+          {isReallyLoading || !hasLoadedAtLeastOnce ? (
+            Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={index}
+                className="animate-pulse h-full flex flex-col p-6 rounded-[2rem] border-2 border-border bg-surface-lowest shadow-[0_5px_30px_rgba(0,0,0,0.02)] justify-between gap-6"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="w-14 h-14 rounded-2xl bg-gray-200"></div>
+                  <div className="h-4 bg-gray-200 rounded w-16"></div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 rounded bg-gray-200 shrink-0"></div>
+                    <div className="space-y-1.5 w-full">
+                      <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 rounded bg-gray-200 shrink-0"></div>
+                    <div className="space-y-1.5 w-full">
+                      <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-border flex justify-between items-center">
+                  <div className="h-5 bg-gray-200 rounded w-16"></div>
+                  <div className="h-4 bg-gray-200 rounded w-24"></div>
+                </div>
+
+                <div className="pt-4 border-t border-border flex justify-between items-center">
+                  <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20"></div>
+                </div>
+              </div>
+            ))
+          ) : sponsorships && sponsorships.length > 0 ? (
+            /* 2. حالة وجود بيانات: عرض الكاردات الحقيقية */
             sponsorships.map((item) => (
               <SponsorshipCard key={item.id} sponsorship={item} />
             ))
-          ) : status !== "loading" ? (
+          ) : (
+            /* 3. حالة عدم وجود بيانات: تظهر فقط بعد انتهاء التحميل تماماً وثبوت عدم وجود عناصر */
             <div className="col-span-full text-center py-16 bg-surface-lowest rounded-2xl border border-border text-on-surface-variant/60 font-medium text-base shadow-sm">
               {t("noSponsorships") ||
                 (lang === "ar"
                   ? "لا توجد طلبات كفالة متاحة حالياً"
                   : "No sponsorship requests available")}
             </div>
-          ) : null}
+          )}
         </div>
       </div>
     </div>

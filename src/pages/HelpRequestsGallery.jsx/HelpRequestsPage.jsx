@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -26,19 +26,24 @@ export default function HelpRequestsPage() {
   const statusFilter = searchParams.get("status") || null;
   const currentPage = Number(searchParams.get("page")) || 1;
 
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
+
   const { items, status, pagination } = useSelector(
     (state) => state.helpRequests,
   );
-  const isReallyLoading = useDelayedLoading(status === "loading", 400);
+  const isReallyLoading = useDelayedLoading(status === "loading", 500);
 
   useEffect(() => {
+    setHasLoadedAtLeastOnce(false);
     dispatch(
       fetchHelpRequests({
         status: statusFilter || "",
         page: currentPage,
         limit: ITEMS_PER_PAGE,
       }),
-    );
+    ).then(() => {
+      setHasLoadedAtLeastOnce(true);
+    });
   }, [statusFilter, currentPage, lang, dispatch]);
 
   const handleFilterChange = (val) => {
@@ -69,6 +74,9 @@ export default function HelpRequestsPage() {
     { label: t("REJECTED"), value: "REJECTED", icon: <XCircle size={16} /> },
     { label: t("cancel"), value: "CANCELLED", icon: <XCircle size={16} /> },
   ];
+
+  const showSkeleton = isReallyLoading || !hasLoadedAtLeastOnce;
+
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative">
       {/* 1. Header */}
@@ -83,7 +91,7 @@ export default function HelpRequestsPage() {
         </div>
       </header>
 
-      {/* 2. Main Section - تم إضافة min-h-[500px] لتثبيت ارتفاع الحاوية ومنع الرجة تماماً */}
+      {/* 2. Main Section */}
       <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
         <div>
           <div className="mb-8">
@@ -94,23 +102,11 @@ export default function HelpRequestsPage() {
             />
           </div>
 
-          {/* تمرير البيانات وحالة التحميل مباشرة للجدول ليقوم بإدارتها بالكامل */}
+          {/* الجدول يعرض الهيد الحقيقي فوراً، والسكيليتون في الصفوف تحته */}
           <div className="relative min-h-[300px] flex flex-col">
-            {isReallyLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-3xl z-10">
-                <div className="flex items-center gap-2 text-on-surface-variant/70 text-base font-medium">
-                  <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
-                  <span className="ms-2">
-                    {lang === "ar" ? "جاري التحميل..." : "Loading..."}
-                  </span>
-                </div>
-              </div>
-            )}
             <HelpRequestsTable
               data={items}
-              status={status}
+              status={showSkeleton ? "loading" : status}
               onRowClick={(req) =>
                 navigate(
                   `/dashboard/help-requests/${req.id}?${searchParams.toString()}`,
@@ -128,9 +124,9 @@ export default function HelpRequestsPage() {
             </span>
             <div className="flex items-center gap-2">
               <button
-                disabled={currentPage === 1 || status === "loading"}
+                disabled={currentPage === 1 || showSkeleton}
                 onClick={() => handlePageChange(currentPage - 1)}
-                className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary"
+                className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary cursor-pointer"
               >
                 {lang === "ar" ? (
                   <ChevronRight size={18} />
@@ -139,11 +135,9 @@ export default function HelpRequestsPage() {
                 )}
               </button>
               <button
-                disabled={
-                  currentPage >= pagination.lastPage || status === "loading"
-                }
+                disabled={currentPage >= pagination.lastPage || showSkeleton}
                 onClick={() => handlePageChange(currentPage + 1)}
-                className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary"
+                className="p-2.5 rounded-xl border border-border bg-white text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-primary cursor-pointer"
               >
                 {lang === "ar" ? (
                   <ChevronLeft size={18} />

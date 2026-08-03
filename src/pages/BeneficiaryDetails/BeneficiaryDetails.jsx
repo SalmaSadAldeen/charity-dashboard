@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBeneficiariesById, updateBeneficiaryStatus } from "@/store/index";
@@ -11,7 +11,7 @@ import { RequestActionFooter } from "./components/RequestActionFooter";
 import RejectionNote from "@/pages/BeneficiaryDetails/components/RejectionNote";
 import { RejectActionModal } from "./components/RejectActionModal";
 import { CheckCircle2 } from "lucide-react";
-import { useDelayedLoading } from "@/hooks/useDelayedLoading"; // استيراد هُوك التحميل المؤجل
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 
 export default function BeneficiaryDetails() {
   const { id } = useParams();
@@ -23,8 +23,11 @@ export default function BeneficiaryDetails() {
     (state) => state.beneficiaries,
   );
 
-  // استخدام الهوك المنظم للتحميل تماماً مثل الصفحة الأخرى لمنع الوميض المزعج
-  const isReallyLoading = useDelayedLoading(status === "loading", 300);
+  // استخدام الهوك المنظم للتحميل لتجنب الوميض المزعج بمدة 300ms
+  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+
+  // تتبع حالة ما إذا تم انتهاء أول عملية جلب للبيانات لضمان استقرار العرض
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
 
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null });
 
@@ -37,7 +40,12 @@ export default function BeneficiaryDetails() {
   });
 
   useEffect(() => {
-    dispatch(fetchBeneficiariesById({ id }));
+    if (id) {
+      setHasLoadedAtLeastOnce(false);
+      dispatch(fetchBeneficiariesById({ id })).then(() => {
+        setHasLoadedAtLeastOnce(true);
+      });
+    }
   }, [id, dispatch, lang]);
 
   const handleActionSubmit = async (e) => {
@@ -65,24 +73,32 @@ export default function BeneficiaryDetails() {
     }
   };
 
-  // شاشة التحميل المطابقة تماماً لتصميم الصفحة السابقة
-  if (isReallyLoading)
+  // Structural Skeleton المطابق لتصميم الواجهة الحقيقية تماماً لمنع القفز البصري
+  if (isReallyLoading || !hasLoadedAtLeastOnce)
     return (
-      <div className="flex flex-col items-center justify-center min-h-[85vh]">
-        <div className="flex items-center gap-2 text-on-surface-variant/70 text-base font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
-          <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
-          <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
-          <span className="ms-2">
-            {lang === "ar" ? "جاري التحميل..." : "Loading..."}
-          </span>
+      <div
+        className="p-6 md:p-8 max-w-5xl mx-auto space-y-6 min-h-[85vh] flex flex-col justify-between animate-pulse"
+        dir={lang === "ar" ? "rtl" : "ltr"}
+      >
+        <div className="space-y-8 w-full">
+          {/* Header Skeleton */}
+          <div className="h-28 bg-gray-200 rounded-3xl w-full" />
+
+          {/* Cards Grid Skeleton (PersonalInfo & Financial) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+            <div className="h-[420px] bg-gray-200 rounded-3xl" />
+            <div className="h-[420px] bg-gray-200 rounded-3xl" />
+          </div>
+
+          {/* Documents Card Skeleton */}
+          <div className="h-56 bg-gray-200 rounded-3xl w-full" />
         </div>
       </div>
     );
 
   if (!beneficiary)
     return (
-      <div className="p-20 text-center">
+      <div className="p-20 text-center text-slate-500 font-bold">
         {lang === "ar" ? "لم يتم العثور على البيانات" : "No data found"}
       </div>
     );

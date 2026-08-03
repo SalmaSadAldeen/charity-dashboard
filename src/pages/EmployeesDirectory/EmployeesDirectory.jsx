@@ -30,6 +30,9 @@ export default function EmployeesDirectory() {
   const [deleteId, setDeleteId] = useState(null);
   const [employeeToEdit, setEmployeeToEdit] = useState(null);
 
+  // تتبع حالة ما إذا تم انتهاء أول عملية جلب للبيانات لضمان استقرار العرض
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
+
   const {
     items: employees = [],
     status,
@@ -37,14 +40,19 @@ export default function EmployeesDirectory() {
     selectedItem,
   } = useSelector((state) => state.employees);
 
-  const isReallyLoading = useDelayedLoading(status === "loading", 400);
+  const isReallyLoading = useDelayedLoading(status === "loading", 500);
   const { handleDelete, isLoading } = useGenericDelete("employee");
 
   const totalPages = pagination?.lastPage || 1;
   const showPagination = totalPages > 1;
 
   useEffect(() => {
-    dispatch(fetchEmployees({ page: currentPage, limit: ITEMS_PER_PAGE }));
+    setHasLoadedAtLeastOnce(false);
+    dispatch(fetchEmployees({ page: currentPage, limit: ITEMS_PER_PAGE })).then(
+      () => {
+        setHasLoadedAtLeastOnce(true);
+      },
+    );
   }, [dispatch, currentPage, lang]);
 
   useEffect(() => {
@@ -70,6 +78,9 @@ export default function EmployeesDirectory() {
     dispatch(setEmployee(emp));
   };
 
+  // هل يجب عرض حالة التحميل؟
+  const showSkeleton = isReallyLoading || !hasLoadedAtLeastOnce;
+
   return (
     <div className="p-8 w-full max-w-7xl mx-auto space-y-6 relative">
       {/* القسم الأول: الإحصائيات في الأعلى */}
@@ -94,38 +105,24 @@ export default function EmployeesDirectory() {
 
       {/* الجدول يأخذ العرض كاملاً */}
       <div className="w-full">
-        <div className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
+        <div className="bg-[#ffffff] p-6 rounded-[2rem] shadow-sm border border-[#d0c6b0] min-h-[500px] flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-on-surface-variant">
+              <h2 className="text-2xl font-bold text-[#4d4636]">
                 {t("employeesRecord")}
               </h2>
               <button
                 onClick={() => navigate("/dashboard/add-user")}
-                className="flex items-center gap-2 bg-primary-container text-on-surface-variant px-6 py-2.5 rounded-xl hover:bg-secondary transition-all"
+                className="flex items-center gap-2 bg-[#f5ede0] border border-[#d0c6b0] text-[#735c00] px-6 py-2.5 rounded-xl hover:bg-[#735c00] hover:text-[#ffffff] transition-all shadow-2xs font-bold cursor-pointer"
               >
                 <Plus size={20} /> {t("addEmployee")}
               </button>
             </div>
 
             <div className="relative min-h-[300px] flex flex-col">
-              {isReallyLoading && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-2xl z-20">
-                  <div className="flex items-center gap-2 text-on-surface-variant/80 text-base font-medium">
-                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce"></span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
-                    <span className="ms-2">
-                      {lang === "ar" ? "جاري التحميل..." : "Loading..."}
-                    </span>
-                  </div>
-                </div>
-              )}
-
               <EmployeeTable
                 data={employees}
-                status={status}
-                isReallyLoading={isReallyLoading}
+                status={showSkeleton ? "loading" : status}
                 selectedItem={selectedItem}
                 onSelect={handleSelect}
                 onDeleteRequest={(id) => setDeleteId(id)}
@@ -137,16 +134,16 @@ export default function EmployeesDirectory() {
           </div>
 
           {showPagination && (
-            <div className="flex justify-between items-center mt-6 px-6 py-4 bg-surface rounded-2xl border border-border">
-              <span className="text-xs font-medium text-on-surface-variant">
+            <div className="flex justify-between items-center mt-6 px-6 py-4 bg-[#f9f7f4] rounded-2xl border border-[#d0c6b0]">
+              <span className="text-xs font-medium text-[#4d4636]">
                 {t("showing")} {pagination?.currentPage || 1} {t("from")}{" "}
                 {totalPages}
               </span>
               <div className="flex items-center gap-1">
                 <button
-                  disabled={currentPage === 1 || status === "loading"}
+                  disabled={currentPage === 1 || showSkeleton}
                   onClick={() => setCurrentPage((prev) => prev - 1)}
-                  className="p-2 rounded-lg hover:bg-primary-container text-primary disabled:opacity-30"
+                  className="p-2 rounded-lg hover:bg-[#f5ede0] text-[#735c00] disabled:opacity-30 transition-colors cursor-pointer"
                 >
                   {lang === "ar" ? (
                     <ChevronRight size={18} />
@@ -155,9 +152,9 @@ export default function EmployeesDirectory() {
                   )}
                 </button>
                 <button
-                  disabled={currentPage >= totalPages || status === "loading"}
+                  disabled={currentPage >= totalPages || showSkeleton}
                   onClick={() => setCurrentPage((prev) => prev + 1)}
-                  className="p-2 rounded-lg hover:bg-primary-container text-primary disabled:opacity-30"
+                  className="p-2 rounded-lg hover:bg-[#f5ede0] text-[#735c00] disabled:opacity-30 transition-colors cursor-pointer"
                 >
                   {lang === "ar" ? (
                     <ChevronLeft size={18} />
@@ -171,12 +168,10 @@ export default function EmployeesDirectory() {
         </div>
       </div>
 
-      {/* نافذة البروفايل الجانبية مع لمسة جمالية وتدرج لوني فخم */}
+      {/* نافذة البروفايل الجانبية */}
       {selectedItem && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs transition-all">
           <div className="w-full max-w-md bg-[#fdfcfa] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 border-s border-[#d0c6b0]/40">
-            
-            {/* رأس النافذة مع تدرج لوني جمالي وزر إغلاق ثابت */}
             <div className="sticky top-0 z-20 bg-gradient-to-r from-[#f5ede0] to-[#fdfcfa] px-6 py-4 border-b border-[#d0c6b0]/50 flex justify-between items-center shadow-2xs">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#735c00]"></div>
@@ -192,12 +187,9 @@ export default function EmployeesDirectory() {
                 <span>{t("closeDetails")}</span>
               </button>
             </div>
-
-            {/* محتوى البروفايل */}
             <div className="p-6 overflow-y-auto flex-1">
               <EmployeeProfile />
             </div>
-
           </div>
         </div>
       )}
@@ -215,7 +207,7 @@ export default function EmployeesDirectory() {
           onClick={() => setIsEditModalOpen(false)}
         >
           <div
-            className="bg-surface-lowest p-8 rounded-3xl w-full max-w-2xl shadow-xl h-[85vh] flex flex-col overflow-hidden"
+            className="bg-[#ffffff] p-8 rounded-[2rem] w-full max-w-2xl shadow-xl h-[85vh] flex flex-col overflow-hidden border border-[#d0c6b0]"
             onClick={(e) => e.stopPropagation()}
           >
             <EditUser

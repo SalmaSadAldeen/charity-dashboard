@@ -10,6 +10,7 @@ import RequestAttachmentsCard from "@/pages/AidDetails/components/RequestAttachm
 import { RequestActionModal } from "./components/RequestActionModal";
 import { RequestActionFooter } from "./components/RequestActionFooter";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 
 import { fetchHelpRequestById, updateHelpRequestStatus } from "@/store/index";
 
@@ -23,6 +24,11 @@ export default function HelpRequestDetailsPage() {
     (state) => state.helpRequests,
   );
 
+  const isReallyLoading = useDelayedLoading(detailsStatus === "loading", 500);
+
+  // تتبع حالة ما إذا تم انتهاء أول عملية جلب للبيانات لضمان استقرار العرض
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
+
   const [activeTab, setActiveTab] = useState("general");
   const [modalConfig, setModalConfig] = useState({
     isOpen: false,
@@ -31,14 +37,20 @@ export default function HelpRequestDetailsPage() {
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchHelpRequestById({ id }));
+      setHasLoadedAtLeastOnce(false);
+      dispatch(fetchHelpRequestById({ id })).then(() => {
+        setHasLoadedAtLeastOnce(true);
+      });
     }
   }, [id, dispatch, lang]);
 
-  const data = selectedDetails?.data || selectedDetails||{};
+  // استخراج البيانات بحماية تامة
+  const data = selectedDetails?.data || selectedDetails || null;
+  const hasData = data && typeof data === "object" && Object.keys(data).length > 0;
   const isRtl = lang === "ar";
-  const isUrgent = data?.isUrgent;
-  const currentStatus = data?.status;
+  
+  const isUrgent = data?.isUrgent ?? false;
+  const currentStatus = data?.status ?? null;
 
   const handleGoBack = () => navigate(-1);
 
@@ -164,15 +176,43 @@ export default function HelpRequestDetailsPage() {
               </div>
             </div>
 
-            {/* Content Area */}
+            {/* Content Area with Strict Loading Protection */}
             <div className="p-6 bg-gray-50/25 relative min-h-[520px] flex flex-col justify-start">
-              {detailsStatus === "failed" && !data ? (
+              {isReallyLoading || !hasLoadedAtLeastOnce ? (
+                /* عرض الـ Skeleton حصرياً طالما لم يتم تحميل البيانات أو جاري التحميل */
+                <div className="space-y-6 w-full animate-pulse">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-gray-200/80 rounded-2xl" />
+                    <div className="space-y-2 flex-1">
+                      <div className="h-5 bg-gray-200/80 rounded-lg w-1/3" />
+                      <div className="h-4 bg-gray-200/80 rounded-lg w-1/4" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                    <div className="h-12 bg-gray-200/80 rounded-xl" />
+                    <div className="h-12 bg-gray-200/80 rounded-xl" />
+                    <div className="h-12 bg-gray-200/80 rounded-xl" />
+                    <div className="h-12 bg-gray-200/80 rounded-xl" />
+                  </div>
+                  <div className="h-28 bg-gray-200/80 rounded-2xl mt-4" />
+                </div>
+              ) : detailsStatus === "failed" ? (
+                /* رسالة الخطأ في حال فشل الطلب بالكامل */
                 <div className="text-center py-12 px-4 bg-rose-50 text-rose-600 rounded-3xl border border-rose-100 text-xs font-bold m-auto">
                   {t?.("error_loading_data") ||
                     t?.("errorLoadingData") ||
                     "حدث خطأ أثناء تحميل البيانات"}
                 </div>
+              ) : !hasData ? (
+                /* رسالة عدم وجود داتا تظهر في النهاية بعد اكتمال التحميل تماماً */
+                <div className="col-span-full text-center py-20 bg-surface-lowest rounded-2xl border border-border text-on-surface-variant/60 font-medium text-base shadow-sm m-auto w-full">
+                  {t?.("noData") ||
+                    (lang === "ar"
+                      ? "لا توجد تفاصيل متاحة لهذا الطلب"
+                      : "No details available for this request")}
+                </div>
               ) : (
+                /* عرض البيانات الحقيقية فور توفرها بشكل كامل ونظيف */
                 <div className="space-y-6 w-full">
                   {activeTab === "general" && (
                     <BeneficiaryPersonalInfo

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // 1. أضفنا useNavigate لكي نتمكن من العودة للصفحة السابقة بعد اتخاذ القرار
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchSponsorshipById,
@@ -9,12 +9,7 @@ import {
 import { fetchDonorHistory, clearDonorDetails } from "@/store/index";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
-import {
-  HeartHandshake,
-  History,
-  User,
-  Loader2,
-} from "lucide-react"; // أضفنا أيقونة التحقق CheckCircle2
+import { HeartHandshake, History, User } from "lucide-react";
 
 import SponsorshipDetailsCard from "./components/SponsorshipDetailsCard";
 import OrphanInfoCard from "./components/OrphanInfoCard";
@@ -24,14 +19,13 @@ import { RejectActionModal } from "../BeneficiaryDetails/components/RejectAction
 
 export default function SponsorshipDetailsPage() {
   const { sponsorshipId } = useParams();
-  const navigate = useNavigate(); // تهيئة التنقل بين الصفحات
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { t, lang } = useTranslation();
   const [selectedOrphanId, setSelectedOrphanId] = useState(null);
 
   const [activeTab, setActiveTab] = useState("info");
 
-  // 2. أضفنا تعريف الـ state الخاصة بالموديل (القبول أو الرفض) وحفظ بيانات سبب الرفض
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null });
   const [rejectData, setRejectData] = useState({
     status: "REJECTED",
@@ -48,11 +42,9 @@ export default function SponsorshipDetailsPage() {
   const { selectedDetails: donorHistoryData, detailsStatus: donorStatus } =
     useSelector((state) => state.donors);
 
-  // استخدام الهوك لمنع ظهور اللودر إلا إذا التأخير طال وكان التحميل لأول مرة
   const isDetailsLoading = detailsStatus === "loading" && !sponsorship;
-  const showLoader = useDelayedLoading(isDetailsLoading, 400);
+  const showSkeleton = useDelayedLoading(isDetailsLoading, 400);
 
-  // جلب تفاصيل الكفالة عند تحميل الصفحة
   useEffect(() => {
     if (
       sponsorshipId &&
@@ -78,7 +70,6 @@ export default function SponsorshipDetailsPage() {
     sponsorship?.donor?.id ||
     sponsorship?.donorId;
 
-  // جلب السجل المالي للمتبرع
   useEffect(() => {
     if (donorId && donorId !== "undefined" && !isNaN(donorId)) {
       dispatch(
@@ -90,18 +81,15 @@ export default function SponsorshipDetailsPage() {
     }
   }, [dispatch, donorId, lang]);
 
-  // 3. دالة إرسال التحديث (قبول أو رفض) إلى الـ API
   const handleActionSubmit = async (e) => {
     if (e) e.preventDefault();
     try {
       const isReject = modalConfig.type === "reject";
 
-      // إذا كان قبول، نرسل الحالة ومعها الـ orphanId الذي اخترناه من القائمة
       const requestData = isReject
         ? rejectData
         : { status: "ACCEPTED", orphanId: Number(selectedOrphanId) };
 
-      // التحقق البسيط قبل الإرسال في حال كان قبول ولم يتم اختيار يتيم
       if (!isReject && !selectedOrphanId) {
         alert(
           lang === "ar"
@@ -127,19 +115,6 @@ export default function SponsorshipDetailsPage() {
     }
   };
 
-  // شاشة التحميل الأولية
-  if (showLoader) {
-    return (
-      <div className="flex flex-col items-center justify-center py-32 space-y-3">
-        <Loader2 size={36} className="animate-spin text-primary" />
-        <p className="font-medium text-gray-500">
-          {t("loading_sponsorship_details") || "جاري تحميل تفاصيل الكفالة..."}
-        </p>
-      </div>
-    );
-  }
-
-  // في حال لم يتم العثور على الكفالة
   if (!sponsorship && detailsStatus === "succeeded") {
     return (
       <div className="text-center py-20 font-medium text-gray-400">
@@ -149,13 +124,12 @@ export default function SponsorshipDetailsPage() {
   }
 
   return (
-    // أضفنا خصائص التصميم لتوزيع العناصر وجعل المحتوى يمتد بسلاسة مع أزرار الأسفل
     <div
-      className="p-6 max-w-7xl mx-auto space-y-6 min-h-[85vh] flex flex-col justify-between"
+      className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative"
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="space-y-6 w-full">
-        {/* التبويبات العلوية */}
+        {/* Tabs */}
         <div className="flex border-b border-border gap-4 overflow-x-auto">
           <button
             onClick={() => setActiveTab("info")}
@@ -194,36 +168,74 @@ export default function SponsorshipDetailsPage() {
           </button>
         </div>
 
-        {/* محتوى التبويبات */}
-        {activeTab === "info" && (
-          <div className="animate-fade-in">
-            <SponsorshipDetailsCard
-              sponsorship={sponsorship}
-              t={t}
-              lang={lang}
-            />
-          </div>
-        )}
+        {/* Main Section */}
+     {/* Main Section */}
+        <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
+          <div className="relative min-h-[400px] flex flex-col">
+            {showSkeleton ? (
+              /* Skeleton مطابق 100% للشكل الحقيقي مع إطارات الـ Border لضمان ظهورها فوراً */
+              <div className="animate-pulse space-y-6 py-2 w-full">
+                {/* رأس الكارد */}
+                <div className="flex items-center justify-between border-b border-border pb-4">
+                  <div className="h-6 bg-gray-200 rounded-lg w-1/4"></div>
+                  <div className="h-7 bg-gray-200 rounded-full w-20"></div>
+                </div>
 
-        {activeTab === "orphan" && (
-          <div className="animate-fade-in">
-            <OrphanInfoCard orphan={sponsorship?.orphan} t={t} lang={lang} />
-          </div>
-        )}
+                {/* الإطار الأول (يمثل إطار المتبرع - يظهر فوراً بالبوردر) */}
+                <div className="p-4 rounded-2xl border border-border space-y-3 max-w-xl">
+                  <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                  <div className="h-12 bg-gray-200 rounded-xl w-full"></div>
+                </div>
 
-        {activeTab === "history" && (
-          <div className="animate-fade-in">
-            <DonorSponsorshipHistoryTable
-              historyData={donorHistoryData}
-              loading={donorStatus === "loading"}
-              t={t}
-              lang={lang}
-            />
+                {/* الإطار الثاني (يمثل إطار تفاصيل الكفالة - يظهر فوراً بالبوردر) */}
+                <div className="p-4 rounded-2xl border border-border space-y-4">
+                  <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="h-16 bg-gray-200 rounded-xl"></div>
+                    <div className="h-16 bg-gray-200 rounded-xl"></div>
+                    <div className="h-16 bg-gray-200 rounded-xl"></div>
+                    <div className="h-16 bg-gray-200 rounded-xl"></div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {activeTab === "info" && (
+                  <div className="animate-fade-in">
+                    <SponsorshipDetailsCard
+                      sponsorship={sponsorship}
+                      t={t}
+                      lang={lang}
+                    />
+                  </div>
+                )}
+
+                {activeTab === "orphan" && (
+                  <div className="animate-fade-in">
+                    <OrphanInfoCard
+                      orphan={sponsorship?.orphan}
+                      t={t}
+                      lang={lang}
+                    />
+                  </div>
+                )}
+
+                {activeTab === "history" && (
+                  <div className="animate-fade-in">
+                    <DonorSponsorshipHistoryTable
+                      historyData={donorHistoryData}
+                      loading={donorStatus === "loading"}
+                      t={t}
+                      lang={lang}
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </div>
-        )}
+        </section>
       </div>
 
-      {/* 4. شريط الأزرار السفلي (يظهر حصرياً إذا كانت الكفالة بحالة PENDING بداخل المكون نفسه) */}
       <RequestActionFooter
         currentStatus={sponsorship?.status}
         t={t}
@@ -243,7 +255,6 @@ export default function SponsorshipDetailsPage() {
         }}
       />
 
-      {/* موديل رفض الكفالة فقط */}
       <RejectActionModal
         isOpen={modalConfig.isOpen && modalConfig.type === "reject"}
         onClose={() => setModalConfig({ isOpen: false, type: null })}
