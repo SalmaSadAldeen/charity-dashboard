@@ -48,6 +48,13 @@ export default function Sidebar() {
         icon: "child_care",
         path: "/dashboard/orphans",
       },
+      
+        {
+        id: "sponsorships",
+        name: t("sponsorships"),
+        icon: "child_care",
+        path: "/dashboard/sponsorships",
+      },
     ],
     administrative: [
       {

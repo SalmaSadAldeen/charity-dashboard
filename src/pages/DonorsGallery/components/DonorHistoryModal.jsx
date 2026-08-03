@@ -12,7 +12,7 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
   useEffect(() => {
     if (donorId) {
       // جلب الداتا الجديدة مباشرة بدون تصفير القديمة مسبقاً
-      dispatch(fetchDonorHistory({ id: donorId }));
+      dispatch(fetchDonorHistory({ id: donorId,type: "history" }));
     }
     return () => {
       // تفريغ البيانات فقط عند إغلاق المودال نهائياً

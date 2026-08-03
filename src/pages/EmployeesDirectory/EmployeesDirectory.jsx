@@ -37,7 +37,7 @@ export default function EmployeesDirectory() {
     selectedItem,
   } = useSelector((state) => state.employees);
 
-  const isReallyLoading = useDelayedLoading(status === "loading", 300);
+  const isReallyLoading = useDelayedLoading(status === "loading", 400);
   const { handleDelete, isLoading } = useGenericDelete("employee");
 
   const totalPages = pagination?.lastPage || 1;

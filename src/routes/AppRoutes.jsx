@@ -18,6 +18,8 @@ import { ProfilePage } from "@/pages/ProfilePage/ProfilePage";
 import DonorsPage from "@/pages/DonorsGallery/DonorsPage";
 import RolesPage from "@/pages/RolesGallery/RolesPage";
 import RoleDetailsPage from "@/pages/RoleDetailsPage/RoleDetailsPage";
+import SponsorshipsPage from "@/pages/Sponsorships/SponsorshipsPage";
+import SponsorshipDetailsPage from "@/pages/SponsorshipDetails/SponsorshipDetailsPage";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -42,6 +44,7 @@ export default function AppRoutes() {
         <Route index element={<Dashboard />} />
         <Route path="employees" element={<EmployeesDirectory />} />
         <Route path="beneficiaries" element={<BeneficiariesPage />} />
+        <Route path="sponsorships" element={<SponsorshipsPage />} />
         <Route path="add-user" element={<AddUser />} />
         <Route path="requests" element={<HelpRequestsPage />} />
         <Route path="help-requests/:id" element={<HelpRequestDetailsPage />} />
@@ -50,6 +53,11 @@ export default function AppRoutes() {
         <Route path="beneficiaries/:id" element={<BeneficiaryDetails />} />
         <Route path="roles" element={<RolesPage />} />
         <Route path="roles/:id" element={<RoleDetailsPage />} />
+        // إذا كان مكتوباً هكذا:
+        <Route
+          path="sponsorships/:sponsorshipId"
+          element={<SponsorshipDetailsPage />}
+        />
         {/* <Route path="donors/:id" element={<DonorHistoryModal />} /> */}
       </Route>
       {/* 4. معالجة أي مسار غير معروف */}

@@ -3,7 +3,10 @@ import { adminService } from "@/services/adminService";
 import { orphanService } from "@/services/orphanService";
 import { beneficiaryService } from "@/services/beneficiaryService";
 import { requestsService } from "@/services/requestsService";
-import { donorService } from "@/services/donorService"; // <--- 1. استيراد خدمة المتبرعين
+import { donorService } from "@/services/donorService";
+import { sponsorshipsService } from "@/services/sponsorshipsService.jsx";
+
+// <--- 1. استيراد خدمة المتبرعين
 // استيراد الخدمة الجديدة
 export const createGenericActions = (resource) => ({
   fetchItems: createAsyncThunk(
@@ -61,6 +64,14 @@ export const createGenericActions = (resource) => ({
         if (resource === "permissions") {
           return (await adminService.getPermissions()).data;
         }
+
+        if (resource === "sponsorships") {
+          return (
+            await sponsorshipsService.fetchSponsorships(
+              params.status, // تمرير الحالة مثل PENDING, ACCEPTED
+            )
+          ).data;
+        }
         throw new Error(`Fetch action not defined for ${resource}`);
       } catch (err) {
         return rejectWithValue(err.response?.data?.message || err.message);
@@ -87,12 +98,29 @@ export const createGenericActions = (resource) => ({
         if (resource === "helpRequests") {
           return (await requestsService.fetchHelpRequestById(id)).data; // تأكدي من وجود هذه الدالة في requestsService
         }
+
         if (resource === "donors") {
-          return (await donorService.fetchDonorHistory(id)).data;
+          // إذا أرسلنا النوع history، نجلب التقرير المالي للعام الحالي
+          if (id.type === "history") {
+            return (await donorService.fetchDonorHistory(id.donorId)).data;
+          }
+          // إذا أرسلنا النوع sponsorships، نجلب تاريخ الكفالات الكامل
+          if (id.type === "sponsorships") {
+            return (
+              await sponsorshipsService.fetchDonorSponsorshipHistory(id.donorId)
+            ).data;
+          }
+          // وإلا نجلب بيانات المتبرع العادية (إذا تم إرسال الـ id كقيمة مباشرة)
+          const actualId = typeof id === "object" ? id.donorId : id;
+          return (await donorService.fetchDonorHistory(actualId)).data;
         }
+
         if (resource === "roles") {
           // <--- أضيفي هذه
           return (await adminService.getRoleById(id)).data;
+        }
+        if (resource === "sponsorships") {
+          return (await sponsorshipsService.fetchSponsorshipById(id)).data; // تأكدي من توفر الدالة بالخدمة إن وجدت
         }
 
         throw new Error(`Fetch single action not defined for ${resource}`);
@@ -168,6 +196,28 @@ export const createGenericActions = (resource) => ({
           response = await adminService.updateRole(id, data); // 👈 هنا سيصل الـ id الصحيح تماماً ولن يكون undefined أبدًا
         } else if (resource === "beneficiaries") {
           response = await beneficiaryService.updateBeneficiary(id, data);
+        } else if (resource === "sponsorships") {
+          // --- التعديل هنا خصيصاً لطلبات الكفالة ---
+          // بناء الـ FormData تماماً كما تتطلب الأند بوينت الصعبة
+          const formData = new FormData();
+          formData.append("status", data.status);
+
+          if (data.orphanId) {
+            formData.append("orphanId", data.orphanId);
+          }
+
+          if (data.rejectionReason) {
+            formData.append(
+              "rejectionReason",
+              JSON.stringify(data.rejectionReason),
+            );
+          }
+
+          // استدعاء الخدمة الخاصة بالكفالات لتنفيذ PATCH باستخدام FormData
+          response = await sponsorshipsService.updateSponsorshipStatus(
+            id,
+            formData,
+          );
         } else {
           throw new Error(`Update action not defined for ${resource}`);
         }
@@ -195,6 +245,28 @@ export const createGenericActions = (resource) => ({
           response = await requestsService.updateRequestStatus(id, data);
         } else if (resource === "beneficiaries" || resource === "beneficiary") {
           response = await beneficiaryService.updateBeneficiaryStatus(id, data);
+        } else if (resource === "sponsorships") {
+          const formData = new FormData();
+          formData.append("status", data.status);
+
+          if (data.orphanId) {
+            formData.append("orphanId", data.orphanId);
+          }
+
+          if (data.rejectionReason) {
+            formData.append(
+              "rejectionReason",
+              JSON.stringify(data.rejectionReason),
+            );
+          }
+
+          response = await sponsorshipsService.updateSponsorshipStatus(
+            id,
+            formData,
+          );
+
+          // تأكدي من التعامل مع الرد سواء كان يحتوي على .data أو كان هو نفسه الرد
+          return response?.data || response;
         } else {
           throw new Error(`Update status action not defined for ${resource}`);
         }
@@ -371,16 +443,47 @@ export const createGenericSlice = (resource) => {
           .addCase(updateItemStatus.pending, (state) => {
             state.status = "loading";
           })
+          // .addCase(updateItemStatus.fulfilled, (state, action) => {
+          //   const updated = action.payload?.data || action.payload;
+          //   // تحديث العنصر في القائمة إن وجد
+          //   state.items = state.items.map((item) =>
+          //     item.id === updated.id ? updated : item,
+          //   );
+          //   // تحديث التفاصيل المحددة إذا كانت مفتوحة
+          //   if (state.selectedDetails?.id === updated.id) {
+          //     state.selectedDetails = updated;
+          //   }
+          //   state.status = "succeeded";
+          // })
           .addCase(updateItemStatus.fulfilled, (state, action) => {
             const updated = action.payload?.data || action.payload;
-            // تحديث العنصر في القائمة إن وجد
-            state.items = state.items.map((item) =>
-              item.id === updated.id ? updated : item,
-            );
-            // تحديث التفاصيل المحددة إذا كانت مفتوحة
-            if (state.selectedDetails?.id === updated.id) {
+
+            // حماية تامة للتأكد من أن items مصفوفة صالحة وليست undefined
+            if (Array.isArray(state.items)) {
+              state.items = state.items.map((item) => {
+                // مطابقة الـ ID بحذر (سواء كان ID مباشر أو داخل كائن فرعي)
+                const itemId = item.id;
+                const updatedId = updated?.id;
+                const orphanId = updated?.orphan?.id;
+
+                if (itemId === updatedId || (orphanId && itemId === orphanId)) {
+                  return {
+                    ...item,
+                    ...updated,
+                  };
+                }
+                return item;
+              });
+            }
+
+            // تحديث التفاصيل المحددة إذا كانت مطابقة
+            if (
+              state.selectedDetails?.id === updated?.id ||
+              state.selectedDetails?.id === updated?.orphan?.id
+            ) {
               state.selectedDetails = updated;
             }
+
             state.status = "succeeded";
           })
           .addCase(updateItemStatus.rejected, (state, action) => {

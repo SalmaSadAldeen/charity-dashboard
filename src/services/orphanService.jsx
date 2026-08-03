@@ -2,13 +2,10 @@ import { API } from "./api";
 
 export const orphanService = {
   // في orphanService.js
-  getOrphans: (page = 1, limit = 10, supported = null) => {
-    let url = `/orphan?page=${page}&limit=${limit}`;
-    if (supported !== null) {
-      url += `&supported=${supported}`;
-    }
-    return API.get(url);
-  },
+  getOrphans: (page = 1, limit = 10, supported = null) =>
+    API.get(
+      `/orphan?page=${page}&limit=${limit}${supported !== null ? `&supported=${supported}` : ""}`,
+    ),
   // جلب يتيم واحد بالتفصيل
   fetchOrphanById: (id) => API.get(`/orphan/${id}`),
 

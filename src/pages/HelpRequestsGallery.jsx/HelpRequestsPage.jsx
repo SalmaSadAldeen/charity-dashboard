@@ -29,7 +29,7 @@ export default function HelpRequestsPage() {
   const { items, status, pagination } = useSelector(
     (state) => state.helpRequests,
   );
-  const isReallyLoading = useDelayedLoading(status === "loading", 300);
+  const isReallyLoading = useDelayedLoading(status === "loading", 400);
 
   useEffect(() => {
     dispatch(

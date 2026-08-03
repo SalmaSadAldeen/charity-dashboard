@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchDonors,
-  fetchDonorHistory,
-  clearDonorDetails,
-} from "@/store/index";
+import { fetchDonors, clearDonorDetails } from "@/store/index";
 import {
   Users,
   ShieldCheck,
@@ -37,7 +33,7 @@ export default function DonorsPage() {
   const currentPage = Number(searchParams.get("page")) || 1;
   const ITEMS_PER_PAGE = 4;
 
-  const isReallyLoading = useDelayedLoading(status === "loading", 300);
+  const isReallyLoading = useDelayedLoading(status === "loading", 400);
   useEffect(() => {
     // إرسال القيمة كنص صريح تماماً كما يتوقعها الـ Service القديم
     let sponsorValue = "";
@@ -136,7 +132,6 @@ export default function DonorsPage() {
               onRowClick={(donor) => {
                 const donorId = donor.donorId || donor.id;
                 setSelectedDonorId(donorId);
-                dispatch(fetchDonorHistory({ id: donorId }));
               }}
             />
           </div>

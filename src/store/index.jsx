@@ -15,6 +15,7 @@ const helpRequestsSlice = createGenericSlice("helpRequests");
 const profileSlice = createGenericSlice("profile");
 const donorsSlice = createGenericSlice("donors");
 const permissionsSlice = createGenericSlice("permissions");
+const sponsorshipsSlice = createGenericSlice("sponsorships"); // <--- تعريف slice الكفالات
 // <--- 2. تعريف slice المتبرعين
 // --- 1. تصدير أctions الموظفين ---
 export const {
@@ -99,9 +100,21 @@ export const { fetchItems: fetchDonors, fetchItemById: fetchDonorHistory } =
 export const {
   fetchItems: getProfile, // إعادة تسمية fetchItems إلى getProfile لتناسب طلبك
 } = profileSlice.actions;
+// --- تصدير actions الكفالات ---
+export const {
+  setSelectedItem: setSponsorship,
+  clearSelected: clearSponsorship,
+  clearSelectedDetails: clearSponsorshipDetails,
+} = sponsorshipsSlice.slice.actions;
+
+export const {
+  fetchItems: fetchSponsorships,
+  fetchItemById: fetchSponsorshipById,
+
+  updateItemStatus: updateSponsorshipStatus, // إذا أردتِ قبول أو رفض طلب الكفالة مستقبلاً
+} = sponsorshipsSlice.actions;
 // ... (تصدير الأدوار وبقية الـ Store) // تأكدي من أنكِ أخذتِ الـ actions من orphansSlice
 // export const { setSelectedItem, clearSelected } = employeesSlice.slice.actions;
-orphansSlice.slice.actions;
 // 3. إعداد الـ Store
 export const store = configureStore({
   reducer: {
@@ -116,6 +129,8 @@ export const store = configureStore({
     helpRequests: helpRequestsSlice.slice.reducer,
     profile: profileSlice.slice.reducer,
     donors: donorsSlice.slice.reducer,
-    permissions: permissionsSlice.slice.reducer, // <--- أضيفي هذه هنا
+    permissions: permissionsSlice.slice.reducer,
+    sponsorships: sponsorshipsSlice.slice.reducer, // <--- أضيفي هذه هنا لعرض الكفالات
+    // <--- أضيفي هذه هنا
   },
 });

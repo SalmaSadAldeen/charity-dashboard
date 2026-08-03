@@ -11,6 +11,7 @@ import { RequestActionFooter } from "./components/RequestActionFooter";
 import RejectionNote from "@/pages/BeneficiaryDetails/components/RejectionNote";
 import { RejectActionModal } from "./components/RejectActionModal";
 import { CheckCircle2 } from "lucide-react";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading"; // استيراد هُوك التحميل المؤجل
 
 export default function BeneficiaryDetails() {
   const { id } = useParams();
@@ -21,6 +22,9 @@ export default function BeneficiaryDetails() {
   const { selectedDetails: beneficiary, detailsStatus: status } = useSelector(
     (state) => state.beneficiaries,
   );
+
+  // استخدام الهوك المنظم للتحميل تماماً مثل الصفحة الأخرى لمنع الوميض المزعج
+  const isReallyLoading = useDelayedLoading(status === "loading", 300);
 
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null });
 
@@ -35,13 +39,13 @@ export default function BeneficiaryDetails() {
   useEffect(() => {
     dispatch(fetchBeneficiariesById({ id }));
   }, [id, dispatch, lang]);
+
   const handleActionSubmit = async (e) => {
     if (e) e.preventDefault();
     try {
       const isReject = modalConfig.type === "reject";
       const requestData = isReject ? rejectData : { status: "ACCEPTED" };
 
-      // تعديل لجلب الـ ID الرئيسي الصحيح (رقم 3 في حالتك الحالية)
       const targetId = beneficiary?.id;
       console.log("الـ ID الرئيسي الصحيح المعتمد للإرسال:", targetId);
 
@@ -60,7 +64,9 @@ export default function BeneficiaryDetails() {
       navigate(-1);
     }
   };
-  if (status === "loading")
+
+  // شاشة التحميل المطابقة تماماً لتصميم الصفحة السابقة
+  if (isReallyLoading)
     return (
       <div className="flex flex-col items-center justify-center min-h-[85vh]">
         <div className="flex items-center gap-2 text-on-surface-variant/70 text-base font-medium">
@@ -74,7 +80,6 @@ export default function BeneficiaryDetails() {
       </div>
     );
 
-  // أو عرض رسالة "لا توجد بيانات" بحال لم يتم العثور على المستفيد
   if (!beneficiary)
     return (
       <div className="p-20 text-center">

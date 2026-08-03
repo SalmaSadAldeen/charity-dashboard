@@ -9,7 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-export const OrphanCard = ({ orphan }) => {
+export const OrphanCard = ({ orphan ,isSelected}) => {
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
 
@@ -40,8 +40,13 @@ export const OrphanCard = ({ orphan }) => {
       className="cursor-pointer group h-full"
     >
       {/* تنسيق الكارد بالكامل هنا: الـ Border والـ Shadow والـ Rounded */}
-      <div className="h-full flex flex-col p-6 rounded-[2rem] border-2 border-border bg-surface-lowest shadow-[0_5px_30px_rgba(0,0,0,0.05)] transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-lg">
-        {/* الأفاتار */}
+<div 
+        className={`h-full flex flex-col p-6 rounded-[2rem] border-2 bg-surface-lowest shadow-[0_5px_30px_rgba(0,0,0,0.05)] transition-all duration-300 ${
+          isSelected 
+            ? "border-primary ring-2 ring-primary/20 shadow-lg" 
+            : "border-border group-hover:border-primary/50 group-hover:shadow-lg"
+        }`}
+      >        {/* الأفاتار */}
         <div className="flex justify-start mb-6">
           <div
             className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-lg ${getAvatarColor(orphan.id)}`}
