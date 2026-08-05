@@ -328,6 +328,7 @@ export const createGenericSlice = (resource) => {
         builder
           // --- حالات الجلب ---
           .addCase(fetchItems.pending, (state) => {
+            // ✅ التعديل هنا: منع تصفير الحالة إذا كانت الداتا موجودة أصلاً (لمنع الرفة)
             state.status = state.items.length > 0 ? "succeeded" : "loading";
             state.error = null;
           })
@@ -426,11 +427,10 @@ export const createGenericSlice = (resource) => {
           })
 
           // --- حالات الجلب المفرد ---
-          // داخل الـ extraReducers:
           .addCase(fetchItemById.pending, (state) => {
-            state.detailsStatus = "loading";
-            state.selectedDetails = null;
-            // استخدمنا حالة التفاصيل
+            // ✅ التعديل هنا: منع تصفير selectedDetails إذا كانت موجودة مسبقاً لمنع الرفة
+            state.detailsStatus = state.selectedDetails ? "succeeded" : "loading";
+            // ❌ تم إزالة السطر الذي كان يفرغ البيانات: state.selectedDetails = null;
           })
           .addCase(fetchItemById.fulfilled, (state, action) => {
             state.selectedDetails = action.payload?.data || action.payload; // خزنّا في الـ Details
@@ -443,18 +443,6 @@ export const createGenericSlice = (resource) => {
           .addCase(updateItemStatus.pending, (state) => {
             state.status = "loading";
           })
-          // .addCase(updateItemStatus.fulfilled, (state, action) => {
-          //   const updated = action.payload?.data || action.payload;
-          //   // تحديث العنصر في القائمة إن وجد
-          //   state.items = state.items.map((item) =>
-          //     item.id === updated.id ? updated : item,
-          //   );
-          //   // تحديث التفاصيل المحددة إذا كانت مفتوحة
-          //   if (state.selectedDetails?.id === updated.id) {
-          //     state.selectedDetails = updated;
-          //   }
-          //   state.status = "succeeded";
-          // })
           .addCase(updateItemStatus.fulfilled, (state, action) => {
             const updated = action.payload?.data || action.payload;
 

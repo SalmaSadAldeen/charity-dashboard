@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRoles, deleteRole, fetchRoleById } from "@/store/index";
+import { fetchRoles, deleteRole, fetchRoleById } from "@/store/index"; // 👈 تأكدي من تضمين fetchRoleById هنا
 import { useTranslation } from "@/hooks/useTranslation";
 import toast from "react-hot-toast";
 
@@ -19,10 +19,19 @@ export default function RolesPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [roleToDeleteId, setRoleToDeleteId] = useState(null);
 
+  const hasExistingRoles = Array.isArray(roles) && roles.length > 0;
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingRoles);
+
   // جلب الداتا عند أول تحميل أو عند تغير اللغة
   useEffect(() => {
-    dispatch(fetchRoles());
-  }, [dispatch, lang]);
+    if (!hasExistingRoles) {
+      setHasLoadedAtLeastOnce(false);
+    }
+    dispatch(fetchRoles()).then(() => {
+      setHasLoadedAtLeastOnce(true);
+    });
+  }, [dispatch, lang, hasExistingRoles]);
 
   // زر الإضافة (فتح مودال فارغ)
   const handleOpenAddModal = () => {
@@ -30,15 +39,15 @@ export default function RolesPage() {
     setIsModalOpen(true);
   };
 
-  // زر التعديل (فتح المودال فوراً بسلاسة وتحديث البيانات في الخلفية)
+  // زر التعديل (فتح المودال فوراً وجلب الداتا الكاملة بالخلفية)
   const handleOpenEditRole = (role) => {
-    console.log("📤 [Role passed to modal]:", role); // تأكدي أن هذا يطبع الكائن وفيه الـ id
     setRoleToEdit(role);
     setIsModalOpen(true);
 
+    // 👈 استدعاء الـ endpoint الخاصة بجلب الدور بالـ ID لتعبئة اللغات والصلاحيات بدقة
     dispatch(fetchRoleById({ id: role.id })).then((res) => {
-      if (res.payload?.data) {
-        setRoleToEdit(res.payload.data);
+      if (res.payload?.data || res.payload) {
+        setRoleToEdit(res.payload.data || res.payload);
       }
     });
   };
@@ -64,7 +73,10 @@ export default function RolesPage() {
       toast.success(t("roleDeleteSuccess"), {
         position: lang === "ar" ? "bottom-left" : "bottom-right",
       });
-      dispatch(fetchRoles());
+      setHasLoadedAtLeastOnce(false);
+      dispatch(fetchRoles()).then(() => {
+        setHasLoadedAtLeastOnce(true);
+      });
     }
   };
 
@@ -89,13 +101,19 @@ export default function RolesPage() {
       </section>
 
       <RoleModal
+        key={roleToEdit ? roleToEdit.id : "add-mode"}
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-          setRoleToEdit(null); // 👈 هذه مهمة جداً لكي لا تحتفظ الصفحة بالرول القديم
+          setRoleToEdit(null);
         }}
         roleToEdit={roleToEdit}
-        onSuccess={() => dispatch(fetchRoles())}
+        onSuccess={() => {
+          setHasLoadedAtLeastOnce(false);
+          dispatch(fetchRoles()).then(() => {
+            setHasLoadedAtLeastOnce(true);
+          });
+        }}
         lang={lang}
         t={t}
       />

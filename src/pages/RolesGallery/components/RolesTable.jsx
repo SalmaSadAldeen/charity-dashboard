@@ -35,26 +35,26 @@ export default function RolesTable({
 
         <tbody className="divide-y divide-border/40 bg-white">
           {isLoading ? (
-            /* 1. أولاً: إذا كان جاري التحميل، اعرض الـ Skeleton */
+            /* 1. أولاً: السكليتون داخل الجدول مباشرة بنفس ألوان باقي الواجهات */
             [...Array(5)].map((_, index) => (
               <tr key={`skeleton-${index}`} className="animate-pulse">
                 <td className="py-4 px-6">
-                  <div className="h-4 bg-gray-200 rounded-md w-8"></div>
+                  <div className="h-4 bg-slate-200 rounded-md w-8"></div>
                 </td>
                 <td className="py-4 px-6">
-                  <div className="h-4 bg-gray-200 rounded-md w-36"></div>
+                  <div className="h-4 bg-slate-200 rounded-md w-36"></div>
                 </td>
                 <td className="py-4 px-6">
-                  <div className="h-4 bg-gray-200 rounded-md w-28"></div>
+                  <div className="h-4 bg-slate-200 rounded-md w-28"></div>
                 </td>
                 <td className="py-4 px-6 flex justify-center items-center gap-2.5">
-                  <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
-                  <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
+                  <div className="w-9 h-9 bg-slate-200 rounded-xl"></div>
+                  <div className="w-9 h-9 bg-slate-200 rounded-xl"></div>
                 </td>
               </tr>
             ))
           ) : isEmpty ? (
-            /* 2. ثانياً: إذا انتهى التحميل ولم يتم العثور على بيانات، اعرض رسالة الفراغ */
+            /* 2. ثانياً: إذا انتهى التحميل ولم يتم العثور على بيانات */
             <tr>
               <td
                 colSpan="4"
@@ -65,7 +65,7 @@ export default function RolesTable({
               </td>
             </tr>
           ) : (
-            /* 3. ثالثاً: إذا توفرت الداتا، اعرض الجدول بشكل طبيعي */
+            /* 3. ثالثاً: عرض الداتا الحقيقية */
             roles.map((role) => {
               const isProtected = role.id <= 7;
 

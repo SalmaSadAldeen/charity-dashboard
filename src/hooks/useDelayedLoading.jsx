@@ -13,16 +13,13 @@ export function useDelayedLoading(isLoading, delay = 300) {
     let timer;
 
     if (isLoading) {
-      // ابدأ العد التنازلي قبل إظهار اللودر
       timer = setTimeout(() => {
         setShowLoader(true);
       }, delay);
     } else {
-      // أول ما ينتهي التحميل، اخفِ اللودر فوراً
       setShowLoader(false);
     }
 
-    // تنظيف المؤقت إذا تغيرت الحالة بسرعة لمنع تسريب الذاكرة (Memory Leak)
     return () => clearTimeout(timer);
   }, [isLoading, delay]);
 

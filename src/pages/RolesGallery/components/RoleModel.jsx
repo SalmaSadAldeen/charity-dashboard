@@ -17,6 +17,9 @@ export default function RoleModal({
     (state) => state.permissions,
   );
 
+  console.log("🔍 [Permissions List]:", permissions);
+  console.log("✏️ [Role To Edit Data]:", roleToEdit);
+
   const {
     labelAr,
     setLabelAr,
@@ -44,8 +47,7 @@ export default function RoleModal({
 
   if (!isOpen) return null;
 
-  const isPermLoading = permStatus === "loading";
-
+  const isPermLoading = permStatus === "loading" || permStatus === "pending";
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
@@ -89,7 +91,7 @@ export default function RoleModal({
               <input
                 type="text"
                 required
-                value={labelAr}
+                value={labelAr || ""}
                 onChange={(e) => setLabelAr(e.target.value)}
                 placeholder={t("roleNameArPlaceholder")}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
@@ -102,7 +104,7 @@ export default function RoleModal({
               <input
                 type="text"
                 required
-                value={labelEn}
+                value={labelEn || ""}
                 onChange={(e) => setLabelEn(e.target.value)}
                 placeholder={t("roleNameEnPlaceholder")}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
@@ -110,7 +112,7 @@ export default function RoleModal({
             </div>
           </div>
 
-          {/* قائمة الصلاحيات (مع سكيليتون بدل الـ Loader) */}
+          {/* قائمة الصلاحيات */}
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase mb-3">
               {t("availablePermissions")}
@@ -133,9 +135,11 @@ export default function RoleModal({
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-64 overflow-y-auto p-1 border border-gray-100 rounded-2xl bg-gray-50/50">
                 {permissions?.map((permission) => {
-                  const isSelected = selectedPermissions.includes(
-                    permission.id,
-                  );
+                  const isSelected =
+                    Array.isArray(selectedPermissions) &&
+                    selectedPermissions.some(
+                      (pId) => String(pId) === String(permission.id),
+                    );
                   return (
                     <div
                       key={permission.id}

@@ -13,13 +13,34 @@ export const useRoleForm = ({ roleToEdit, onClose, onSuccess }) => {
 
   useEffect(() => {
     console.log("🔍 [Full roleToEdit Object]:", roleToEdit);
-    if (isEditMode && roleToEdit) {
-      setLabelAr(roleToEdit.label?.ar || "");
-      setLabelEn(roleToEdit.label?.en || "");
 
-      const existingPermissions = roleToEdit.permissions
-        ? roleToEdit.permissions.map((p) => (typeof p === "object" ? p.id : p))
-        : roleToEdit.permissionIds || [];
+    if (isEditMode && roleToEdit) {
+      // 1. معالجة الـ label بدقة سواء كان كائناً أو نصاً عادياً
+      if (typeof roleToEdit.label === "object" && roleToEdit.label !== null) {
+        setLabelAr(roleToEdit.label.ar || "");
+        setLabelEn(roleToEdit.label.en || "");
+      } else {
+        // إذا كان الـ label يرجع نصاً عادياً مثل "Finance Management"
+        setLabelAr(roleToEdit.label || "");
+        setLabelEn(roleToEdit.label || "");
+      }
+
+      // 2. معالجة الصلاحيات واستخراج الـ IDs وتحويلها إلى أرقام صريحة
+      const rawPermissions =
+        roleToEdit.permissions ||
+        roleToEdit.permissionIds ||
+        roleToEdit.perms ||
+        [];
+
+      const existingPermissions = rawPermissions
+        .map((p) => {
+          if (typeof p === "object" && p !== null) {
+            return p.id || p._id;
+          }
+          return p;
+        })
+        .filter(Boolean)
+        .map(Number);
 
       setSelectedPermissions(existingPermissions);
     } else {
@@ -28,16 +49,16 @@ export const useRoleForm = ({ roleToEdit, onClose, onSuccess }) => {
       setSelectedPermissions([]);
     }
   }, [roleToEdit, isEditMode]);
-  const handleTogglePermission = (id) => {
-    // 👈 تحويل الـ id إلى رقم صريح (Number) لضمان عدم حدوث مشاكل تطابق الأنواع (Type Mismatch)
-    const numericId = Number(id);
 
+  const handleTogglePermission = (id) => {
+    const numericId = Number(id);
     setSelectedPermissions((prev) =>
       prev.includes(numericId)
         ? prev.filter((item) => item !== numericId)
         : [...prev, numericId],
     );
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -55,7 +76,6 @@ export const useRoleForm = ({ roleToEdit, onClose, onSuccess }) => {
     try {
       let result;
       if (isEditMode) {
-        // 🔍 البحث عن الـ id بكل الطرق الممكنة لمنع ظهور undefined
         const roleId =
           roleToEdit?.id ||
           roleToEdit?._id ||
@@ -63,7 +83,7 @@ export const useRoleForm = ({ roleToEdit, onClose, onSuccess }) => {
             ? Object.values(roleToEdit)[0]
             : roleToEdit);
 
-        console.log("🎯 [Extracted Role ID]:", roleId); // التأكد من أنه ظهر رقماً وليس undefined
+        console.log("🎯 [Extracted Role ID]:", roleId);
 
         if (!roleId) {
           throw new Error("Role ID is missing!");
@@ -88,6 +108,7 @@ export const useRoleForm = ({ roleToEdit, onClose, onSuccess }) => {
       setLoading(false);
     }
   };
+
   return {
     labelAr,
     setLabelAr,

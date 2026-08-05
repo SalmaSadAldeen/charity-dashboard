@@ -19,28 +19,39 @@ export default function OrphanProfilePage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { handleDelete, isLoading: isDeleting } = useGenericDelete("orphan");
 
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
-
   const { selectedDetails: orphan, status } = useSelector(
     (state) => state.orphans,
   );
 
-  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+  // 1. التحقق مما إذا كان اليتيم المخزن حالياً يطابق نفس الـ ID المطلوب في الرابط
+  const hasExistingOrphan = orphan && String(orphan.id) === String(id);
+
+  // 2. حالة تعقب ما إذا تم تحميل تفاصيل هذا اليتيم لمرة واحدة على الأقل
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingOrphan);
+
+  const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
   useEffect(() => {
     if (id) {
-      setHasLoadedAtLeastOnce(false);
+      // إذا لم يكن اليتيم المخزن هو المطلوب، نقوم بإعادة تعيين حالة التحميل لعرض السكليتون بسلام
+      if (!hasExistingOrphan) {
+        setHasLoadedAtLeastOnce(false);
+      }
+
       dispatch(fetchOrphanById({ id })).then(() => {
         setHasLoadedAtLeastOnce(true);
       });
     }
-  }, [id, lang, dispatch]);
+  }, [id, lang, dispatch, hasExistingOrphan]);
 
-  const showSkeleton = isReallyLoading || !hasLoadedAtLeastOnce || !orphan;
+  // 👈 التعديل الحاسم: السكليتون يظهر حصرياً إذا كان هناك تحميل متأخر ولم يكتمل التحميل لمرة واحدة ولم تكن البيانات موجودة أصلاً
+  const showSkeleton =
+    isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingOrphan);
 
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
-      {/* 1. رأس الملف الشخصي (Header أو Skeleton الخاص به) */}
+      {/* 1. رأس الملف الشخصي */}
       {showSkeleton ? (
         <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-40 flex items-center justify-between animate-pulse w-full">
           <div className="flex items-center gap-6 w-1/2">
@@ -55,16 +66,16 @@ export default function OrphanProfilePage() {
             <div className="w-24 h-10 bg-gray-200 rounded-xl"></div>
           </div>
         </div>
-      ) : (
+      ) : orphan ? (
         <OrphanHeader
           orphan={orphan}
           onEdit={() => navigate(`/dashboard/orphans/edit/${id}`)}
           onDelete={() => setIsDeleteModalOpen(true)}
           t={t}
         />
-      )}
+      ) : null}
 
-      {/* 2. الأقسام السفلية (تظهر بشكل سكيليتون مستقل أو تعرض البيانات فور جاهزيتها) */}
+      {/* 2. الأقسام السفلية */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           {showSkeleton ? (
@@ -72,20 +83,20 @@ export default function OrphanProfilePage() {
               <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-80 animate-pulse"></div>
               <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-64 animate-pulse"></div>
             </>
-          ) : (
+          ) : orphan ? (
             <>
               <OrphanInfoGrid orphan={orphan} t={t} lang={lang} />
               <OrphanJsonSection orphan={orphan} t={t} lang={lang} />
             </>
-          )}
+          ) : null}
         </div>
 
         <div className="space-y-6">
           {showSkeleton ? (
             <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-96 animate-pulse"></div>
-          ) : (
+          ) : orphan ? (
             <FamilyStats orphan={orphan} t={t} />
-          )}
+          ) : null}
         </div>
       </div>
 

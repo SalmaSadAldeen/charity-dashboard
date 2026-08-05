@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDonorHistory, clearDonorDetails } from "@/store/index";
 import { History, CreditCard, HeartHandshake, Wallet, X } from "lucide-react";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 
 export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
   const dispatch = useDispatch();
@@ -9,13 +10,13 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
     (state) => state.donors,
   );
 
+  const isReallyLoading = useDelayedLoading(detailsStatus === "loading", 500);
+
   useEffect(() => {
     if (donorId) {
-      // جلب الداتا الجديدة مباشرة بدون تصفير القديمة مسبقاً
-      dispatch(fetchDonorHistory({ id: donorId,type: "history" }));
+      dispatch(fetchDonorHistory({ id: donorId, type: "history" }));
     }
     return () => {
-      // تفريغ البيانات فقط عند إغلاق المودال نهائياً
       dispatch(clearDonorDetails());
     };
   }, [dispatch, donorId]);
@@ -24,14 +25,11 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
     ? selectedDetails
     : selectedDetails?.data || [];
 
-  // هل توجد داتا قديمة معروضة حالياً على الشاشة؟
   const hasExistingData = historyList.length > 0;
 
-  // التحميل الأولي فقط إذا كانت الشاشة فارغة تماماً وما في داتا قديمة
-  const isLoading =
-    (detailsStatus === "loading" || !selectedDetails) && !hasExistingData;
+  // السكيليتون يظهر فقط بعد التأخير المخصص إذا لم تكن البيانات القديمة موجودة
+  const showSkeleton = isReallyLoading && !hasExistingData;
 
-  // هل انتهى الجلب وكانت القائمة فارغة حقاً؟
   const isEmpty = detailsStatus === "succeeded" && historyList.length === 0;
 
   const renderTransactionDetails = (item) => {
@@ -160,7 +158,6 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
             </table>
 
             <div className="flex-1 overflow-y-auto relative">
-              {/* شريط تحميل علوي ناعم يظهر أثناء جلب السجل الجديد في الخلفية */}
               {detailsStatus === "loading" && hasExistingData && (
                 <div className="absolute top-0 inset-x-0 h-1 bg-primary/20 overflow-hidden z-20">
                   <div className="w-full h-full bg-primary animate-indeterminate"></div>
@@ -169,8 +166,7 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
 
               <table className="w-full border-collapse table-fixed">
                 <tbody className="divide-y divide-border bg-white">
-                  {/* 1. حالة بناء الهياكل الوهمية (Skeletons) ريثما تأتي الداتا (تظهر فقط عند أول فتحة) */}
-                  {isLoading ? (
+                  {showSkeleton ? (
                     [...Array(4)].map((_, i) => (
                       <tr key={`skeleton-${i}`} className="animate-pulse">
                         <td className="p-4 w-[30%]">
@@ -191,7 +187,6 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
                       </tr>
                     ))
                   ) : isEmpty ? (
-                    /* 2. إذا انتهى الجلب وكانت القائمة فارغة حقاً */
                     <tr>
                       <td
                         colSpan="3"
@@ -204,7 +199,6 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
                       </td>
                     </tr>
                   ) : (
-                    /* 3. عرض البيانات الحقيقية (سواء القديمة لحين تحديثها أو الجديدة فور وصولها) */
                     historyList.map((item, index) => (
                       <tr
                         key={index}

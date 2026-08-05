@@ -26,15 +26,21 @@ export default function HelpRequestsPage() {
   const statusFilter = searchParams.get("status") || null;
   const currentPage = Number(searchParams.get("page")) || 1;
 
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
-
   const { items, status, pagination } = useSelector(
     (state) => state.helpRequests,
   );
-  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+
+  const hasExistingItems = Array.isArray(items) && items.length > 0;
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingItems);
+
+  const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
   useEffect(() => {
-    setHasLoadedAtLeastOnce(false);
+    if (!hasExistingItems) {
+      setHasLoadedAtLeastOnce(false);
+    }
+
     dispatch(
       fetchHelpRequests({
         status: statusFilter || "",
@@ -75,8 +81,7 @@ export default function HelpRequestsPage() {
     { label: t("cancel"), value: "CANCELLED", icon: <XCircle size={16} /> },
   ];
 
-  const showSkeleton = isReallyLoading || !hasLoadedAtLeastOnce;
-
+  const showSkeleton = isReallyLoading && !hasExistingItems;
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative">
       {/* 1. Header */}

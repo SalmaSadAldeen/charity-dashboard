@@ -33,8 +33,10 @@ export default function DonorsPage() {
   const currentPage = Number(searchParams.get("page")) || 1;
   const ITEMS_PER_PAGE = 4;
 
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
-  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+  const hasExistingItems = Array.isArray(donors) && donors.length > 0;
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingItems);
+  const isReallyLoading = useDelayedLoading(status === "loading", 300);
 
   useEffect(() => {
     let sponsorValue = "";
@@ -44,7 +46,9 @@ export default function DonorsPage() {
       sponsorValue = "false";
     }
 
-    setHasLoadedAtLeastOnce(false);
+    if (!hasExistingItems) {
+      setHasLoadedAtLeastOnce(false);
+    }
     dispatch(
       fetchDonors({
         page: currentPage,
@@ -84,7 +88,9 @@ export default function DonorsPage() {
   ];
 
   const totalPages = pagination?.totalPages || pagination?.lastPage || 1;
-  const showSkeleton = isReallyLoading || !hasLoadedAtLeastOnce;
+
+  // السكيليتون يظهر فقط بعد التأخير المخصص إذا لم تكن البيانات القديمة موجودة
+  const showSkeleton = isReallyLoading && !hasExistingItems;
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative">

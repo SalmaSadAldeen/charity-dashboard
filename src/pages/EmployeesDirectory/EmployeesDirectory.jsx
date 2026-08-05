@@ -30,9 +30,6 @@ export default function EmployeesDirectory() {
   const [deleteId, setDeleteId] = useState(null);
   const [employeeToEdit, setEmployeeToEdit] = useState(null);
 
-  // تتبع حالة ما إذا تم انتهاء أول عملية جلب للبيانات لضمان استقرار العرض
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
-
   const {
     items: employees = [],
     status,
@@ -40,14 +37,19 @@ export default function EmployeesDirectory() {
     selectedItem,
   } = useSelector((state) => state.employees);
 
-  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+  const hasExistingItems = Array.isArray(employees) && employees.length > 0;
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingItems);
+  const isReallyLoading = useDelayedLoading(status === "loading", 2000);
   const { handleDelete, isLoading } = useGenericDelete("employee");
 
   const totalPages = pagination?.lastPage || 1;
   const showPagination = totalPages > 1;
 
   useEffect(() => {
-    setHasLoadedAtLeastOnce(false);
+    if (!hasExistingItems) {
+      setHasLoadedAtLeastOnce(false);
+    }
     dispatch(fetchEmployees({ page: currentPage, limit: ITEMS_PER_PAGE })).then(
       () => {
         setHasLoadedAtLeastOnce(true);
@@ -78,8 +80,8 @@ export default function EmployeesDirectory() {
     dispatch(setEmployee(emp));
   };
 
-  // هل يجب عرض حالة التحميل؟
-  const showSkeleton = isReallyLoading || !hasLoadedAtLeastOnce;
+  // السكيليتون يظهر فقط بعد التأخير المخصص إذا لم تكن البيانات القديمة موجودة
+  const showSkeleton = isReallyLoading && !hasExistingItems;
 
   return (
     <div className="p-8 w-full max-w-7xl mx-auto space-y-6 relative">
@@ -143,7 +145,7 @@ export default function EmployeesDirectory() {
                 <button
                   disabled={currentPage === 1 || showSkeleton}
                   onClick={() => setCurrentPage((prev) => prev - 1)}
-                  className="p-2 rounded-lg hover:bg-[#f5ede0] text-[#735c00] disabled:opacity-30 transition-colors cursor-pointer"
+                  className="p-2 rounded-lg hover:bg-[#f5ede0] text-[#735c00] disabled:opacity-35 transition-colors cursor-pointer"
                 >
                   {lang === "ar" ? (
                     <ChevronRight size={18} />
@@ -154,7 +156,7 @@ export default function EmployeesDirectory() {
                 <button
                   disabled={currentPage >= totalPages || showSkeleton}
                   onClick={() => setCurrentPage((prev) => prev + 1)}
-                  className="p-2 rounded-lg hover:bg-[#f5ede0] text-[#735c00] disabled:opacity-30 transition-colors cursor-pointer"
+                  className="p-2 rounded-lg hover:bg-[#f5ede0] text-[#735c00] disabled:opacity-35 transition-colors cursor-pointer"
                 >
                   {lang === "ar" ? (
                     <ChevronLeft size={18} />

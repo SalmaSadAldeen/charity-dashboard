@@ -40,10 +40,16 @@ export default function SponsorshipDetailsPage() {
   );
 
   const { selectedDetails: donorHistoryData, detailsStatus: donorStatus } =
-    useSelector((state) => state.donors);
+     useSelector((state) => state.donors);
 
-  const isDetailsLoading = detailsStatus === "loading" && !sponsorship;
-  const showSkeleton = useDelayedLoading(isDetailsLoading, 400);
+  // 1. التحقق مما إذا كانت تفاصيل هذه الكفالة محملة مسبقاً وتطابق نفس الـ ID الحالي
+  const hasExistingSponsorship = sponsorship && String(sponsorship.id) === String(sponsorshipId);
+  
+  // 2. حالة تعقب ما إذا تم تحميل التفاصيل لمرة واحدة على الأقل
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(hasExistingSponsorship);
+
+  const isDetailsLoading = detailsStatus === "loading";
+  const isReallyLoading = useDelayedLoading(isDetailsLoading, 100);
 
   useEffect(() => {
     if (
@@ -51,15 +57,23 @@ export default function SponsorshipDetailsPage() {
       sponsorshipId !== "undefined" &&
       !isNaN(sponsorshipId)
     ) {
+      // إذا لم تكن البيانات مطابقة، نصفر حالة التحميل لعرض السكليتون المناسب
+      if (!hasExistingSponsorship) {
+        setHasLoadedAtLeastOnce(false);
+      }
+
       dispatch(
         fetchSponsorshipById({
           resource: "sponsorships",
           id: Number(sponsorshipId),
         }),
-      );
+      ).then(() => {
+        setHasLoadedAtLeastOnce(true);
+      });
     }
 
     return () => {
+      // ملاحظة: إذا أردتِ منع الوميض عند التنقل السريع، يمكنك إزالة الـ clear أو تركها بحذر مع الشروط الجديدة
       dispatch(clearSponsorshipDetails());
       dispatch(clearDonorDetails());
     };
@@ -115,7 +129,10 @@ export default function SponsorshipDetailsPage() {
     }
   };
 
-  if (!sponsorship && detailsStatus === "succeeded") {
+  // 👈 التعديل الجذري هنا: الـ Skeleton لا يظهر إلا إذا كان يحمل ولم يتم التحميل لمرة واحدة وليس لدينا داتا سابقة
+  const showSkeleton = isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingSponsorship);
+
+  if (!sponsorship && detailsStatus === "succeeded" && !isReallyLoading) {
     return (
       <div className="text-center py-20 font-medium text-gray-400">
         {t("sponsorship_not_found") || "الكفالة غير موجودة"}
@@ -169,25 +186,21 @@ export default function SponsorshipDetailsPage() {
         </div>
 
         {/* Main Section */}
-     {/* Main Section */}
         <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
           <div className="relative min-h-[400px] flex flex-col">
             {showSkeleton ? (
-              /* Skeleton مطابق 100% للشكل الحقيقي مع إطارات الـ Border لضمان ظهورها فوراً */
+              /* Skeleton مطابق تماماً للشكل الحقيقي */
               <div className="animate-pulse space-y-6 py-2 w-full">
-                {/* رأس الكارد */}
                 <div className="flex items-center justify-between border-b border-border pb-4">
                   <div className="h-6 bg-gray-200 rounded-lg w-1/4"></div>
                   <div className="h-7 bg-gray-200 rounded-full w-20"></div>
                 </div>
 
-                {/* الإطار الأول (يمثل إطار المتبرع - يظهر فوراً بالبوردر) */}
                 <div className="p-4 rounded-2xl border border-border space-y-3 max-w-xl">
                   <div className="h-4 bg-gray-200 rounded w-1/4"></div>
                   <div className="h-12 bg-gray-200 rounded-xl w-full"></div>
                 </div>
 
-                {/* الإطار الثاني (يمثل إطار تفاصيل الكفالة - يظهر فوراً بالبوردر) */}
                 <div className="p-4 rounded-2xl border border-border space-y-4">
                   <div className="h-4 bg-gray-200 rounded w-1/4"></div>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -198,7 +211,7 @@ export default function SponsorshipDetailsPage() {
                   </div>
                 </div>
               </div>
-            ) : (
+            ) : sponsorship ? (
               <>
                 {activeTab === "info" && (
                   <div className="animate-fade-in">
@@ -231,7 +244,7 @@ export default function SponsorshipDetailsPage() {
                   </div>
                 )}
               </>
-            )}
+            ) : null}
           </div>
         </section>
       </div>

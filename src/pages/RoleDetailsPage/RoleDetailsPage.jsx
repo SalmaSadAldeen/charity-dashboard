@@ -15,26 +15,31 @@ export default function RoleDetailsPage() {
   const dispatch = useDispatch();
   const { t, lang } = useTranslation();
 
-  // تتبع حالة التحميل الأولي لاستقرار العرض تماماً مثل باقي الصفحات
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
-
   const { selectedDetails: role, status } = useSelector((state) => state.roles);
 
-  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+  // التأكد من أن الـ role موجود ويطابق الـ ID الحالي تماماً
+  const hasExistingRole = role && String(role.id) === String(id);
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingRole);
+
+  const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
   useEffect(() => {
-    setHasLoadedAtLeastOnce(false);
     if (id) {
+      if (!hasExistingRole) {
+        setHasLoadedAtLeastOnce(false);
+      }
       dispatch(fetchRoleById({ id })).then(() => {
         setHasLoadedAtLeastOnce(true);
       });
     }
-  }, [dispatch, id, lang]);
+  }, [dispatch, id, lang, hasExistingRole]);
 
-  const showSkeleton = isReallyLoading || !hasLoadedAtLeastOnce;
+  // الشرط الأدق: عرض السكليتون إذا كان هناك تحميل أو أن الـ role غير متوفر أو لا يطابق الـ ID
+  const showSkeleton =
+    isReallyLoading || !role || String(role.id) !== String(id);
 
-  // إذا لم يتم جلب البيانات لأول مرة بعد ولم تكن موجودة في الـ store
-  if (showSkeleton && !role) {
+  if (showSkeleton) {
     return (
       <main
         className="p-8 bg-surface-container text-on-surface-variant min-h-screen"

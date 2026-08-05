@@ -23,11 +23,14 @@ export default function BeneficiaryDetails() {
     (state) => state.beneficiaries,
   );
 
-  // استخدام الهوك المنظم للتحميل لتجنب الوميض المزعج بمدة 300ms
   const isReallyLoading = useDelayedLoading(status === "loading", 500);
 
-  // تتبع حالة ما إذا تم انتهاء أول عملية جلب للبيانات لضمان استقرار العرض
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
+  const hasExistingData =
+    beneficiary &&
+    typeof beneficiary === "object" &&
+    Object.keys(beneficiary).length > 0;
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingData);
 
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null });
 
@@ -41,7 +44,9 @@ export default function BeneficiaryDetails() {
 
   useEffect(() => {
     if (id) {
-      setHasLoadedAtLeastOnce(false);
+      if (!hasExistingData) {
+        setHasLoadedAtLeastOnce(false);
+      }
       dispatch(fetchBeneficiariesById({ id })).then(() => {
         setHasLoadedAtLeastOnce(true);
       });
@@ -73,8 +78,10 @@ export default function BeneficiaryDetails() {
     }
   };
 
-  // Structural Skeleton المطابق لتصميم الواجهة الحقيقية تماماً لمنع القفز البصري
-  if (isReallyLoading || !hasLoadedAtLeastOnce)
+  const showSkeleton =
+    (isReallyLoading || !hasLoadedAtLeastOnce) && !hasExistingData;
+
+  if (showSkeleton)
     return (
       <div
         className="p-6 md:p-8 max-w-5xl mx-auto space-y-6 min-h-[85vh] flex flex-col justify-between animate-pulse"

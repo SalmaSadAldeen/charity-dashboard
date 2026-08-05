@@ -14,7 +14,11 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import { fetchOrphans, updateSponsorshipStatus } from "@/store/index";
+import {
+  fetchOrphans,
+  updateSponsorshipStatus,
+  fetchSponsorships,
+} from "@/store/index";
 
 export default function OrphansGallery() {
   const { t, lang } = useTranslation();
@@ -32,16 +36,28 @@ export default function OrphansGallery() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedOrphanId, setSelectedOrphanId] = useState(null);
 
-  // تتبع حالة ما إذا تم انتهاء أول عملية جلب للبيانات لضمان استقرار العرض
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
-
   const ITEMS_PER_PAGE = 8;
-  const { items, pagination, status } = useSelector((state) => state.orphans);
-  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+  const {
+    items = [],
+    pagination,
+    status,
+  } = useSelector((state) => state.orphans);
 
-  // 1. طلب البيانات عند تحميل الواجهة أول مرة أو عند تغيير الفلتر أو الصفحة أو اللغة أو وضع الاختيار
+  const isReallyLoading = useDelayedLoading(status === "loading", 100);
+
+  // 1. هل توجد بيانات سابقة في الـ Store تعرض حالياً؟
+  const hasExistingItems = Array.isArray(items) && items.length > 0;
+
+  // 2. حالة تعقب ما إذا تم تحميل البيانات لمرة واحدة على الأقل خلال الجلسة الحالية
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingItems);
+
+  // طلب البيانات عند أول تحميل أو عند تغير الفلتر أو الصفحة أو اللغة أو وضع الاختيار
   useEffect(() => {
-    setHasLoadedAtLeastOnce(false);
+    if (!hasExistingItems) {
+      setHasLoadedAtLeastOnce(false);
+    }
+
     dispatch(
       fetchOrphans({
         page: currentPage,
@@ -51,38 +67,39 @@ export default function OrphansGallery() {
     ).then(() => {
       setHasLoadedAtLeastOnce(true);
     });
-  }, [dispatch, lang, supportedFilter, currentPage, selectMode]);
+  }, [
+    dispatch,
+    lang,
+    supportedFilter,
+    currentPage,
+    selectMode,
+    hasExistingItems,
+  ]);
 
-  // 2. عند تغيير الفلتر
+  // عند تغيير الفلتر
   const handleFilterChange = (val) => {
     if (selectMode) return;
     setSupportedFilter(val);
     setCurrentPage(1);
-    setHasLoadedAtLeastOnce(false);
     dispatch(
       fetchOrphans({
         page: 1,
         limit: ITEMS_PER_PAGE,
         supported: val,
       }),
-    ).then(() => {
-      setHasLoadedAtLeastOnce(true);
-    });
+    );
   };
 
-  // 3. عند تغيير الصفحة
+  // عند تغيير الصفحة
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    setHasLoadedAtLeastOnce(false);
     dispatch(
       fetchOrphans({
         page: newPage,
         limit: ITEMS_PER_PAGE,
         supported: selectMode ? false : supportedFilter,
       }),
-    ).then(() => {
-      setHasLoadedAtLeastOnce(true);
-    });
+    );
   };
 
   // دالة تأكيد اختيار اليتيم وربطه بالكفالة ثم العودة لواجهة الكفالات
@@ -95,7 +112,7 @@ export default function OrphansGallery() {
           data: { status: "ACCEPTED", orphanId: Number(selectedOrphanId) },
         }),
       ).unwrap();
-
+      await dispatch(fetchSponsorships({ status: "" }));
       navigate("/dashboard/sponsorships");
     } catch (error) {
       console.error("خطأ أثناء ربط الكفالة باليتيم:", error);
@@ -107,6 +124,10 @@ export default function OrphansGallery() {
     { label: t("isSupported"), value: true, icon: <CheckCircle size={16} /> },
     { label: t("notSupported"), value: false, icon: <XCircle size={16} /> },
   ];
+
+  // الـ Skeleton يظهر فقط إذا كان يحمل ولم يتم التحميل لمرة واحدة أو لا توجد داتا سابقة
+  const showSkeleton =
+    isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingItems);
 
   return (
     <main
@@ -169,11 +190,11 @@ export default function OrphansGallery() {
         />
       </div>
 
-      {/* منطقة عرض الكاردات مع التحكم الكامل بمراحل الظهور (نفس كود الكفالات تماماً) */}
+      {/* منطقة عرض الكاردات */}
       <div className="relative min-h-[300px] flex flex-col">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {/* 1. حالة التحميل أو عدم الانتهاء لأول مرة: عرض السكليتون حصرياً */}
-          {isReallyLoading || !hasLoadedAtLeastOnce ? (
+          {showSkeleton ? (
+            /* 1. حالة التحميل الأولي */
             Array.from({ length: 8 }).map((_, index) => (
               <div
                 key={index}
@@ -208,7 +229,7 @@ export default function OrphansGallery() {
               </div>
             ))
           ) : items && items.length > 0 ? (
-            /* 2. حالة وجود بيانات: عرض الكاردات الحقيقية */
+            /* 2. حالة وجود بيانات */
             items.map((orphan) => {
               const isSelected = selectedOrphanId === orphan.id;
               return (
@@ -245,13 +266,13 @@ export default function OrphansGallery() {
                 </div>
               );
             })
-          ) : (
-            /* 3. حالة عدم وجود بيانات: تظهر فقط بعد انتهاء التحميل تماماً وثبوت عدم وجود عناصر */
+          ) : !isReallyLoading && hasLoadedAtLeastOnce ? (
+            /* 3. رسالة الفراغ تظهر حصرياً بعد انتهاء التحميل وثبوت خلو القائمة تماماً */
             <div className="col-span-full text-center py-16 bg-surface-lowest rounded-2xl border border-border text-on-surface-variant/60 font-medium text-base shadow-sm">
               {t("noData") ||
                 (lang === "ar" ? "لا توجد بيانات متاحة" : "No data available")}
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -259,7 +280,7 @@ export default function OrphansGallery() {
       {pagination?.lastPage > 1 && (
         <div className="flex justify-center items-center gap-4 mt-10">
           <button
-            disabled={currentPage === 1 || status === "loading"}
+            disabled={currentPage === 1 || showSkeleton}
             onClick={() => handlePageChange(currentPage - 1)}
             className="p-3 rounded-xl bg-white border border-gray-200 hover:border-primary text-primary disabled:opacity-30 transition-all shadow-sm cursor-pointer"
           >
@@ -275,9 +296,7 @@ export default function OrphansGallery() {
           </span>
 
           <button
-            disabled={
-              currentPage === pagination.lastPage || status === "loading"
-            }
+            disabled={currentPage === pagination.lastPage || showSkeleton}
             onClick={() => handlePageChange(currentPage + 1)}
             className="p-3 rounded-xl bg-white border border-gray-200 hover:border-primary text-primary disabled:opacity-30 transition-all shadow-sm cursor-pointer"
           >

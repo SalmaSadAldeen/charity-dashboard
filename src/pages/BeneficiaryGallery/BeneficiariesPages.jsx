@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBeneficiaries } from "@/store/index";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -28,30 +28,26 @@ export default function BeneficiariesPage() {
   const ITEMS_PER_PAGE = 5;
   const navigate = useNavigate();
 
-  // تتبع حالة ما إذا تم انتهاء أول عملية جلب للبيانات لضمان استقرار العرض
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
+  // التحقق هل توجد عناصر مخزنة مسبقاً في الـ Store
+  const hasExistingItems = Array.isArray(beneficiaries) && beneficiaries.length > 0;
+  const isReallyLoading = useDelayedLoading(status === "loading", 500);
 
   useEffect(() => {
     dispatch(fetchBeneficiaryStats());
   }, [dispatch]);
 
   useEffect(() => {
-    setHasLoadedAtLeastOnce(false);
     dispatch(
       fetchBeneficiaries({
         status: currentStatus || "",
         page: currentPage,
         limit: ITEMS_PER_PAGE,
       }),
-    ).then(() => {
-      setHasLoadedAtLeastOnce(true);
-    });
+    );
   }, [currentStatus, currentPage, lang, dispatch]);
 
-  const isReallyLoading = useDelayedLoading(status === "loading", 500);
-
-  // هل يجب عرض السكيليتون؟
-  const showSkeleton = isReallyLoading || !hasLoadedAtLeastOnce;
+  // الحل الجذري: السكليتون لا يظهر أبداً إذا كانت هناك عناصر موجودة مسبقاً (حتى لو غيرت الفلتر أو الصفحة، تبقى الداتا القديمة ثابتة حتى تأتي الجديدة بدون اهتزاز أو سكليتون)
+  const showSkeleton = isReallyLoading && !hasExistingItems;
 
   const handleFilterChange = (val) => {
     const params = new URLSearchParams(searchParams);
@@ -111,7 +107,6 @@ export default function BeneficiariesPage() {
           </div>
 
           <div className="relative min-h-[300px] flex flex-col">
-            {/* تمرير حالة التحميل الحقيقية والمكون الحقيقي للجدول لكي يحتفظ بالهيد الأصلي الخاص به */}
             <BeneficiaryTable
               data={beneficiaries}
               isLoading={showSkeleton}
@@ -131,7 +126,7 @@ export default function BeneficiariesPage() {
 
               <div className="flex items-center gap-2">
                 <button
-                  disabled={currentPage === 1 || status === "loading"}
+                  disabled={currentPage === 1 || showSkeleton}
                   onClick={() => handlePageChange(currentPage - 1)}
                   className="p-2.5 rounded-xl border border-border bg-surface-lowest text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 cursor-pointer"
                 >
@@ -143,9 +138,7 @@ export default function BeneficiariesPage() {
                 </button>
 
                 <button
-                  disabled={
-                    currentPage >= pagination.lastPage || status === "loading"
-                  }
+                  disabled={currentPage >= pagination.lastPage || showSkeleton}
                   onClick={() => handlePageChange(currentPage + 1)}
                   className="p-2.5 rounded-xl border border-border bg-surface-lowest text-primary hover:bg-primary hover:text-white transition-all shadow-sm disabled:opacity-30 cursor-pointer"
                 >

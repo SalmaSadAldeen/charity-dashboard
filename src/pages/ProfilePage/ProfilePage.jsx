@@ -5,21 +5,25 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { ShieldAlert } from "lucide-react";
 import { ProfileHero } from "@/pages/ProfilePage/components/ProfileHero";
 import { ProfileInfo } from "@/pages/ProfilePage/components/ProfileInfo";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 
 export function ProfilePage() {
   const dispatch = useDispatch();
   const { t, lang } = useTranslation();
   const isRTL = lang === "ar";
 
-  // تتبع حالة ما إذا تم انتهاء أول عملية جلب للبيانات لضمان استقرار العرض
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
-
   const profileData = useSelector((state) => state.profile?.selectedDetails);
   const status = useSelector((state) => state.profile?.detailsStatus);
   const error = useSelector((state) => state.profile?.error);
 
+  const hasExistingProfile = !!profileData;
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(hasExistingProfile);
+  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+
   useEffect(() => {
-    setHasLoadedAtLeastOnce(false);
+    if (!hasExistingProfile) {
+      setHasLoadedAtLeastOnce(false);
+    }
     dispatch(getProfile()).then(() => {
       setHasLoadedAtLeastOnce(true);
     });
@@ -41,10 +45,10 @@ export function ProfilePage() {
     }
   };
 
-  // هل يتم عرض السكيليتون الرمادي الآن؟ (عند التحميل الأول أَوْ غياب الداتا تماماً)
-  const showSkeleton = (status === "loading" || status === "idle" || !hasLoadedAtLeastOnce) && !profileData;
+  // السكيليتون يظهر فقط بعد التأخير المخصص إذا لم تكن البيانات القديمة موجودة
+  const showSkeleton = (isReallyLoading && !hasExistingProfile) || !hasLoadedAtLeastOnce || !profileData;
 
-  if (status === "failed") {
+  if (status === "failed" && !profileData) {
     return (
       <div className="h-full min-h-screen w-full flex items-center justify-center p-4 bg-surface">
         <div

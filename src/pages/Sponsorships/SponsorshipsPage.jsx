@@ -16,14 +16,22 @@ export default function SponsorshipsPage() {
   );
 
   const [currentStatus, setCurrentStatus] = useState("");
-  const isReallyLoading = useDelayedLoading(status === "loading", 500);
+  const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
-  // تتبع ما إذا تم جلب البيانات لضمان عدم ظهور رسالة "لا توجد داتا" في البداية أبداً
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
+  // 👈 التحقق مما إذا كانت البيانات موجودة مسبقاً في الـ Store لمنع الوميض عند العودة
+  const hasExistingItems =
+    Array.isArray(sponsorships) && sponsorships.length > 0;
+
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingItems);
 
   // جلب البيانات عند أول تحميل أو عند تغير الفلتر أو اللغة
   useEffect(() => {
-    setHasLoadedAtLeastOnce(false); // إعادة تعيين عند تغيير الفلتر أو اللغة
+    // إذا لم تكن البيانات موجودة مسبقاً، نجعل الحالة false لعرض السكليتون
+    if (!hasExistingItems) {
+      setHasLoadedAtLeastOnce(false);
+    }
+
     dispatch(fetchSponsorships({ status: currentStatus })).then(() => {
       setHasLoadedAtLeastOnce(true);
     });
@@ -49,6 +57,10 @@ export default function SponsorshipsPage() {
     },
   ];
 
+  // 👈 الـ Skeleton يظهر فقط إذا كان يحمل ولا توجد بيانات سابقة أو لم يتم التحميل لمرة واحدة بعد
+  const showSkeleton =
+    isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingItems);
+
   return (
     <div
       className="p-6 max-w-7xl mx-auto space-y-6"
@@ -72,8 +84,8 @@ export default function SponsorshipsPage() {
       {/* منطقة عرض الكاردات مع التحكم الكامل بمراحل الظهور */}
       <div className="relative min-h-[300px] flex flex-col">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {/* 1. حالة التحميل أو عدم الانتهاء لأول مرة: عرض السكليتون حصرياً */}
-          {isReallyLoading || !hasLoadedAtLeastOnce ? (
+          {showSkeleton ? (
+            /* 1. حالة التحميل الأولى عندما لا توجد أي بيانات سابقة */
             Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
@@ -114,19 +126,19 @@ export default function SponsorshipsPage() {
               </div>
             ))
           ) : sponsorships && sponsorships.length > 0 ? (
-            /* 2. حالة وجود بيانات: عرض الكاردات الحقيقية */
+            /* 2. حالة وجود بيانات: عرض الكاردات الحقيقية مباشرة دون وميض */
             sponsorships.map((item) => (
               <SponsorshipCard key={item.id} sponsorship={item} />
             ))
-          ) : (
-            /* 3. حالة عدم وجود بيانات: تظهر فقط بعد انتهاء التحميل تماماً وثبوت عدم وجود عناصر */
+          ) : !isReallyLoading && hasLoadedAtLeastOnce ? (
+            /* 3. رسالة "لا توجد بيانات" تظهر حصرياً بعد انتهاء التحميل وثبوت خلو القائمة تماماً */
             <div className="col-span-full text-center py-16 bg-surface-lowest rounded-2xl border border-border text-on-surface-variant/60 font-medium text-base shadow-sm">
               {t("noSponsorships") ||
                 (lang === "ar"
                   ? "لا توجد طلبات كفالة متاحة حالياً"
                   : "No sponsorship requests available")}
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

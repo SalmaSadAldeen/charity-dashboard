@@ -24,10 +24,15 @@ export default function HelpRequestDetailsPage() {
     (state) => state.helpRequests,
   );
 
-  const isReallyLoading = useDelayedLoading(detailsStatus === "loading", 500);
+  const isReallyLoading = useDelayedLoading(detailsStatus === "loading", 400);
 
-  // تتبع حالة ما إذا تم انتهاء أول عملية جلب للبيانات لضمان استقرار العرض
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(false);
+  // استخراج البيانات بحماية تامة
+  const data = selectedDetails?.data || selectedDetails || null;
+  const hasExistingData =
+    data && typeof data === "object" && Object.keys(data).length > 0;
+
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
+    useState(hasExistingData);
 
   const [activeTab, setActiveTab] = useState("general");
   const [modalConfig, setModalConfig] = useState({
@@ -37,18 +42,19 @@ export default function HelpRequestDetailsPage() {
 
   useEffect(() => {
     if (id) {
-      setHasLoadedAtLeastOnce(false);
+      if (!hasExistingData) {
+        setHasLoadedAtLeastOnce(false);
+      }
+
       dispatch(fetchHelpRequestById({ id })).then(() => {
         setHasLoadedAtLeastOnce(true);
       });
     }
   }, [id, dispatch, lang]);
 
-  // استخراج البيانات بحماية تامة
-  const data = selectedDetails?.data || selectedDetails || null;
-  const hasData = data && typeof data === "object" && Object.keys(data).length > 0;
+  const hasData = hasExistingData;
   const isRtl = lang === "ar";
-  
+
   const isUrgent = data?.isUrgent ?? false;
   const currentStatus = data?.status ?? null;
 
@@ -101,6 +107,8 @@ export default function HelpRequestDetailsPage() {
     }
   };
 
+  const showSkeleton = isReallyLoading && !hasData;
+
   return (
     <div
       className="p-6 md:p-8 max-w-5xl mx-auto space-y-6 min-h-[85vh] flex flex-col justify-between"
@@ -125,7 +133,7 @@ export default function HelpRequestDetailsPage() {
               <div className="grid grid-cols-3 gap-2 w-full">
                 <button
                   onClick={() => setActiveTab("general")}
-                  className={`flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-black text-xs transition-all whitespace-nowrap ${
+                  className={`flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-black text-xs transition-all whitespace-nowrap cursor-pointer ${
                     activeTab === "general"
                       ? "bg-white text-primary shadow-sm border border-border"
                       : "text-gray-500 hover:text-on-surface-variant hover:bg-white/60"
@@ -141,7 +149,7 @@ export default function HelpRequestDetailsPage() {
 
                 <button
                   onClick={() => setActiveTab("details")}
-                  className={`flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-extrabold text-xs transition-all whitespace-nowrap ${
+                  className={`flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-extrabold text-xs transition-all whitespace-nowrap cursor-pointer ${
                     activeTab === "details"
                       ? "bg-white text-primary shadow-sm border border-border"
                       : "text-gray-500 hover:text-on-surface-variant hover:bg-white/60"
@@ -157,7 +165,7 @@ export default function HelpRequestDetailsPage() {
 
                 <button
                   onClick={() => setActiveTab("attachments")}
-                  className={`flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-extrabold text-xs transition-all whitespace-nowrap ${
+                  className={`flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-extrabold text-xs transition-all whitespace-nowrap cursor-pointer ${
                     activeTab === "attachments"
                       ? "bg-white text-primary shadow-sm border border-border"
                       : "text-gray-500 hover:text-on-surface-variant hover:bg-white/60"
@@ -176,10 +184,9 @@ export default function HelpRequestDetailsPage() {
               </div>
             </div>
 
-            {/* Content Area with Strict Loading Protection */}
+            {/* Content Area */}
             <div className="p-6 bg-gray-50/25 relative min-h-[520px] flex flex-col justify-start">
-              {isReallyLoading || !hasLoadedAtLeastOnce ? (
-                /* عرض الـ Skeleton حصرياً طالما لم يتم تحميل البيانات أو جاري التحميل */
+              {showSkeleton ? (
                 <div className="space-y-6 w-full animate-pulse">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 bg-gray-200/80 rounded-2xl" />
@@ -196,23 +203,13 @@ export default function HelpRequestDetailsPage() {
                   </div>
                   <div className="h-28 bg-gray-200/80 rounded-2xl mt-4" />
                 </div>
-              ) : detailsStatus === "failed" ? (
-                /* رسالة الخطأ في حال فشل الطلب بالكامل */
+              ) : detailsStatus === "failed" && !hasData ? (
                 <div className="text-center py-12 px-4 bg-rose-50 text-rose-600 rounded-3xl border border-rose-100 text-xs font-bold m-auto">
                   {t?.("error_loading_data") ||
                     t?.("errorLoadingData") ||
                     "حدث خطأ أثناء تحميل البيانات"}
                 </div>
-              ) : !hasData ? (
-                /* رسالة عدم وجود داتا تظهر في النهاية بعد اكتمال التحميل تماماً */
-                <div className="col-span-full text-center py-20 bg-surface-lowest rounded-2xl border border-border text-on-surface-variant/60 font-medium text-base shadow-sm m-auto w-full">
-                  {t?.("noData") ||
-                    (lang === "ar"
-                      ? "لا توجد تفاصيل متاحة لهذا الطلب"
-                      : "No details available for this request")}
-                </div>
-              ) : (
-                /* عرض البيانات الحقيقية فور توفرها بشكل كامل ونظيف */
+              ) : hasData ? (
                 <div className="space-y-6 w-full">
                   {activeTab === "general" && (
                     <BeneficiaryPersonalInfo
@@ -243,7 +240,7 @@ export default function HelpRequestDetailsPage() {
                     />
                   )}
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
 
