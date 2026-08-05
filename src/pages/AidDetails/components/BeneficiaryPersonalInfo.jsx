@@ -16,7 +16,7 @@ export default function BeneficiaryPersonalInfo({
 }) {
   if (!data) return null;
 
-  // دالة لاختيار لون الأيقونة والخلفية بناءً على المعرف (ID)
+
   const getAvatarColor = (id) => {
     const palette = [
       "bg-[#735c00]/15 text-[#735c00]",
@@ -28,38 +28,38 @@ export default function BeneficiaryPersonalInfo({
 
   const avatarColorClass = getAvatarColor(data.id || data.beneficiaryId);
 
-  // دالة بسيطة لاستخراج النص حسب اللغة للعناوين والمواقع
+
   const getLocalized = (obj) => {
     if (!obj) return "-";
     if (typeof obj === "string") return obj;
     return obj[lang] || obj["ar"] || obj["en"] || "-";
   };
 
-  // دالة ذكية لمعالجة الترجمة حسب الحالة الاجتماعية والجنس معاً
+
   const getSocialStatusValue = () => {
     if (!data.socialStatus) return "-";
 
     const status = data.socialStatus.trim().toUpperCase();
     const gender = data.gender ? data.gender.trim().toUpperCase() : "";
 
-    // تحديد ما إذا كانت أنثى أم ذكر بناءً على القيم المحتملة من الـ Backend
+
     const isFemale = gender === "FEMALE" || gender === "أنثى" || gender === "F";
     const isMale = gender === "MALE" || gender === "ذكر" || gender === "M";
 
     let possibleKeys = [];
 
     if (isFemale) {
-      // مفاتيح خاصة بالإناث (مثل: DIVORCED_FEMALE أو divorced_female)
+
       possibleKeys = [`${status}_FEMALE`, `${status.toLowerCase()}_female`];
     } else if (isMale) {
-      // مفاتيح خاصة بالذكور (مثل: DIVORCED_MALE أو divorced_male)
+
       possibleKeys = [`${status}_MALE`, `${status.toLowerCase()}_male`];
     }
 
-    // إضافة المفتاح العام كخيار أخير إذا لم يوجد مخصص للجنس
+
     possibleKeys.push(status, status.toLowerCase());
 
-    // التجربة والبحث عن أول مفتاح ترجمة صالح وموجود في ملفات الترجمة
+
     for (const key of possibleKeys) {
       const translated = t?.(key);
       if (translated && translated !== key) {

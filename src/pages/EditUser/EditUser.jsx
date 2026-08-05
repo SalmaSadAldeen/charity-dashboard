@@ -3,33 +3,32 @@ import EmploymentSection from "@/pages/AddUser/components/EmploymentSection";
 import RolesSection from "@/pages/AddUser/components/RolesSection";
 import { useUserFormLogic } from "@/hooks/useUserFormLogic";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useSelector } from "react-redux"; // السطر الأهم
+import { useSelector } from "react-redux";
 import { useMemo } from "react";
 
-import { useEffect } from "react"; // تأكدي من استيراده
-import { useDispatch } from "react-redux"; // تأكدي من استيراده
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { fetchRoles } from "@/store/index";
 export default function EditUser({ employeeId, onClose }) {
   const { t, lang } = useTranslation();
-  const dispatch = useDispatch(); // أضيفي هذا السطر
-  // const dispatch = useDispatch(); // أضيفي هذا
+  const dispatch = useDispatch();
+
   const rolesStatus = useSelector((state) => state.roles.status);
   const roles = useSelector((state) => state.roles.items || []);
   const employee = useSelector((state) =>
     state.employees.items.find((e) => e.id === employeeId),
   );
-  // useEffect(() => {
-  //   dispatch(fetchRoles());
-  // }, [lang, dispatch]);
 
-  useEffect(() => {
-    // جلب الأدوار فقط إذا كانت الحالة 'idle' (لم يتم الطلب بعد)
-    if (rolesStatus === "idle") {
-      dispatch(fetchRoles());
-    }
-  }, [dispatch, rolesStatus],lang); // الاعتماد هنا ثابت ولا يسبب حلقة
+  useEffect(
+    () => {
+      if (rolesStatus === "idle") {
+        dispatch(fetchRoles());
+      }
+    },
+    [dispatch, rolesStatus],
+    lang,
+  );
   const initialData = useMemo(() => {
-    //console.log("Employee:", employee);
     if (!employee) return null;
     return {
       ...employee,
@@ -38,8 +37,7 @@ export default function EditUser({ employeeId, onClose }) {
       lastName: employee.lastName || "",
       email: employee.email || "",
       number: employee.number || "",
-      // countryCode: employee.countryCode || "",
-      // countryName: employee.countryName || "",
+
       gender: employee.gender || "",
       dateOfBirth: employee.employee?.dateOfBirth
         ? employee.employee.dateOfBirth.split("T")[0]
@@ -61,7 +59,6 @@ export default function EditUser({ employeeId, onClose }) {
     isEdit,
   } = useUserFormLogic(t, initialData, onClose);
 
-  // إذا كان لا يزال يحمل، أظهري Loading
   if (rolesStatus === "loading" && roles.length === 0) {
     return <div className="p-8 text-center">{t("loading")}...</div>;
   }
@@ -71,17 +68,12 @@ export default function EditUser({ employeeId, onClose }) {
     <div
       className={`flex flex-col h-full w-full ${lang === "ar" ? "rtl" : "ltr"}`}
     >
-      {/* 1. الرأس (ثابت) */}
       <div className="shrink-0 mb-6">
         <h2 className="text-[32px] font-bold text-on-surface-variant">
           {t("editProfile")}
         </h2>
-        {/* <p className="text-primary font-medium">
-          {employee.firstName} {employee.lastName}
-        </p> */}
       </div>
 
-      {/* 2. منطقة المحتوى (سكرول مخفي) */}
       <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-0">
         {" "}
         <form
@@ -116,13 +108,12 @@ export default function EditUser({ employeeId, onClose }) {
             toggleRole={toggleRole}
             errors={errors}
             t={t}
-            lang={lang} // أضيفي هذا السطر ليتم تمرير اللغة
+            lang={lang}
             clearError={clearError}
           />
         </form>
       </div>
 
-      {/* 3. الأزرار (مثبتة في الأسفل) */}
       <div className="shrink-0 pt-6 border-t mt-2 flex gap-4 bg-surface-lowest">
         {" "}
         <button

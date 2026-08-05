@@ -14,8 +14,8 @@ export default function OrphanJsonSection({ orphan, t, lang }) {
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {jsonFields.map((f) => {
-          // هنا التعديل: نصل للحقل بناءً على اللغة الحالية
-          // إذا كان orphan[f] موجوداً، نعرض القيمة بناءً على lang (مثلاً ar أو en)
+
+
           const valueToDisplay = orphan[f] ? orphan[f][lang] : "-";
 
           return (

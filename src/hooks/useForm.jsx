@@ -14,7 +14,7 @@ export const useForm = (initialState, validate) => {
   const handleInputChange = (e) => {
     const { name, value, files, type } = e.target;
 
-    // حماية حقل رقم الهاتف: أرقام فقط وبحد أقصى 10 خانات
+
     let newValue;
     if (name === "number") {
       newValue = value.replace(/[^0-9]/g, "").slice(0, 10);

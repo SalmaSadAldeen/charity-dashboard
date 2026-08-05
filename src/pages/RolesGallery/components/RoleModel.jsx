@@ -54,7 +54,6 @@ export default function RoleModal({
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden">
-        {/* Header */}
         <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
@@ -77,12 +76,10 @@ export default function RoleModal({
           </button>
         </div>
 
-        {/* Form Body */}
         <form
           onSubmit={handleSubmit}
           className="flex-1 overflow-y-auto p-6 space-y-6"
         >
-          {/* اسم الدور باللغات */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase mb-2">
@@ -112,7 +109,6 @@ export default function RoleModal({
             </div>
           </div>
 
-          {/* قائمة الصلاحيات */}
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase mb-3">
               {t("availablePermissions")}
@@ -171,7 +167,6 @@ export default function RoleModal({
             )}
           </div>
 
-          {/* Footer Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
             <button
               type="button"

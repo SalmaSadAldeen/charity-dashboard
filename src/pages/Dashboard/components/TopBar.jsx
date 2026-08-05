@@ -13,7 +13,7 @@ export default function TopBar() {
     <header
       className="h-16 px-8 flex items-center justify-between shadow-lg z-10 backdrop-blur-md"
       style={{
-        backgroundColor: "#4d4636E6", // اللون البني الداكن مع شفافية
+        backgroundColor: "#4d4636E6",
         borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
       }}
     >
@@ -31,18 +31,15 @@ export default function TopBar() {
         />
       </div>
 
-      {/* 2. جهة اللغة والبروفايل */}
       <div className="flex items-center gap-4">
-        {/* زر اللغة */}
         <button
-          onClick={handleLangChange} // بدون dispatch() وبدون () => قبلها
+          onClick={handleLangChange}
           className="w-12 h-10 rounded-2xl font-bold text-xs transition-all duration-300 flex items-center justify-center border border-white/10 bg-surface-lowest/5 hover:bg-surface-lowest/10 active:scale-90"
-          style={{ color: "#fad564" }} // اللون الخردلي
+          style={{ color: "#fad564" }}
         >
           {lang === "ar" ? "EN" : "AR"}
         </button>
 
-        {/* البروفايل */}
         <div className="flex items-center gap-3 ps-4 border-s border-white/10">
           <div className="text-start">
             <p className="text-sm font-bold text-white leading-tight">
@@ -52,7 +49,7 @@ export default function TopBar() {
           </div>
           <div
             className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg border border-white/10"
-            style={{ backgroundColor: "#fad564" }} // اللون الخردلي
+            style={{ backgroundColor: "#fad564" }}
           >
             <span className="material-symbols-outlined text-on-surface-variant">
               person

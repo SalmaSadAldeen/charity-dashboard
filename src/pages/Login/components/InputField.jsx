@@ -20,7 +20,6 @@ const InputField = ({
       </label>
 
       <div className="relative flex items-center">
-        {/* أيقونة القفل (الأيقونة الأساسية) */}
         <span
           className={`material-symbols-outlined absolute ${isRtl ? "right-3" : "left-3"} text-[#b5aea3] text-[20px] z-10`}
         >
@@ -33,12 +32,10 @@ const InputField = ({
           onChange={onChange}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          // استخدام padding ثابت (10 للأيقونة الأساسية، 12 للعين)
           className="w-full px-12 py-3 bg-surface-lowest border-2 border-[#e1ded7] rounded-lg text-sm text-[#4a453e] placeholder-[#c4bebc] focus:outline-none focus:border-[#6b6459] transition-colors duration-300 ease-in-out [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
           required
         />
 
-        {/* تعديل زر العين ليكون في الجهة المعاكسة دائماً */}
         {children && (
           <div
             className={`absolute ${isRtl ? "left-3" : "right-3"} flex items-center z-10`}

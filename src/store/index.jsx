@@ -4,24 +4,21 @@ import layoutReducer from "./layoutSlice";
 import languageReducer from "./languageSlice";
 import dashboardReducer from "./dashboardSlice";
 import { createGenericSlice } from "./genericSlice";
-// 1. التعريفات الأساسية (مرة واحدة فقط)
-// ... (الاستيرادات)
 
 const employeesSlice = createGenericSlice("employees");
 const orphansSlice = createGenericSlice("orphans");
 const rolesSlice = createGenericSlice("roles");
-const beneficiariesData = createGenericSlice("beneficiaries"); // لا تنسي إضافة المستفيدين
+const beneficiariesData = createGenericSlice("beneficiaries");
 const helpRequestsSlice = createGenericSlice("helpRequests");
 const profileSlice = createGenericSlice("profile");
 const donorsSlice = createGenericSlice("donors");
 const permissionsSlice = createGenericSlice("permissions");
-const sponsorshipsSlice = createGenericSlice("sponsorships"); // <--- تعريف slice الكفالات
-// <--- 2. تعريف slice المتبرعين
-// --- 1. تصدير أctions الموظفين ---
+const sponsorshipsSlice = createGenericSlice("sponsorships");
+
 export const {
   setSelectedItem: setEmployee,
   clearSelected: clearEmployee,
-  clearSelectedDetails: clearEmployeeDetails, // أضيفيها هنا لتكون متاحة
+  clearSelectedDetails: clearEmployeeDetails,
 } = employeesSlice.slice.actions;
 
 export const {
@@ -32,11 +29,10 @@ export const {
   fetchItemById: fetchEmployeeById,
 } = employeesSlice.actions;
 
-// --- 2. تصدير أctions الأيتام (واضحة ومنظمة) ---
 export const {
   setSelectedItem: setOrphan,
   clearSelected: clearOrphan,
-  clearSelectedDetails: clearOrphanDetails, // سميناها هكذا لمنع التخبيص!
+  clearSelectedDetails: clearOrphanDetails,
 } = orphansSlice.slice.actions;
 
 export const {
@@ -47,11 +43,10 @@ export const {
   fetchItemById: fetchOrphanById,
 } = orphansSlice.actions;
 
-// --- 3. تصدير أctions المستفيدين (التعديل هنا) ---
 export const {
   setSelectedItem: setBeneficiary,
   clearSelected: clearBeneficiary,
-  clearSelectedDetails: clearBeneficiaryDetails, // <--- هذا هو النقص
+  clearSelectedDetails: clearBeneficiaryDetails,
 } = beneficiariesData.slice.actions;
 
 export const {
@@ -69,8 +64,7 @@ export const {
 export const {
   fetchItems: fetchHelpRequests,
   fetchItemById: fetchHelpRequestById,
-  updateItemStatus: updateHelpRequestStatus, // <--- نعيد تسميتها هنا أثناء التصدير لتناسب المكون, // <--- أضفها هنا
-  // أضيفي delete أو update إذا كنتِ تحتاجينها مستقبلاً
+  updateItemStatus: updateHelpRequestStatus,
 } = helpRequestsSlice.actions;
 export const {
   setSelectedItem: setDonor,
@@ -91,16 +85,12 @@ export const {
   deleteItem: deleteRole,
 } = rolesSlice.actions;
 
-export const {
-  fetchItems: fetchPermissions, // <--- تصدير جلب الصلاحيات
-} = permissionsSlice.actions;
+export const { fetchItems: fetchPermissions } = permissionsSlice.actions;
 
 export const { fetchItems: fetchDonors, fetchItemById: fetchDonorHistory } =
   donorsSlice.actions;
-export const {
-  fetchItems: getProfile, // إعادة تسمية fetchItems إلى getProfile لتناسب طلبك
-} = profileSlice.actions;
-// --- تصدير actions الكفالات ---
+export const { fetchItems: getProfile } = profileSlice.actions;
+
 export const {
   setSelectedItem: setSponsorship,
   clearSelected: clearSponsorship,
@@ -111,11 +101,9 @@ export const {
   fetchItems: fetchSponsorships,
   fetchItemById: fetchSponsorshipById,
 
-  updateItemStatus: updateSponsorshipStatus, // إذا أردتِ قبول أو رفض طلب الكفالة مستقبلاً
+  updateItemStatus: updateSponsorshipStatus,
 } = sponsorshipsSlice.actions;
-// ... (تصدير الأدوار وبقية الـ Store) // تأكدي من أنكِ أخذتِ الـ actions من orphansSlice
-// export const { setSelectedItem, clearSelected } = employeesSlice.slice.actions;
-// 3. إعداد الـ Store
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -125,12 +113,11 @@ export const store = configureStore({
     employees: employeesSlice.slice.reducer,
     orphans: orphansSlice.slice.reducer,
     beneficiaries: beneficiariesData.slice.reducer,
-    roles: rolesSlice.slice.reducer, // هذا هو الاسم الذي يجب أن تستخدميه في الـ useSelector
+    roles: rolesSlice.slice.reducer,
     helpRequests: helpRequestsSlice.slice.reducer,
     profile: profileSlice.slice.reducer,
     donors: donorsSlice.slice.reducer,
     permissions: permissionsSlice.slice.reducer,
-    sponsorships: sponsorshipsSlice.slice.reducer, // <--- أضيفي هذه هنا لعرض الكفالات
-    // <--- أضيفي هذه هنا
+    sponsorships: sponsorshipsSlice.slice.reducer,
   },
 });

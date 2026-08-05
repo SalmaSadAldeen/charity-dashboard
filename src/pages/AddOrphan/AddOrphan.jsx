@@ -10,7 +10,7 @@ import AppButton from "@/pages/Dashboard/components/AppButton";
 import { useNavigate } from "react-router-dom";
 export default function AddOrphan() {
   const { t } = useTranslation();
-  const navigate = useNavigate(); // 2. عرفي الـ navigate
+  const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(1);
   const { formData, handleInputChange, handleSubmit, isLoading, errors } =
@@ -26,7 +26,7 @@ export default function AddOrphan() {
     "talent",
   ];
 
-  // دالة ذكية لفحص وجود أخطاء في خطوات معينة
+
   const hasErrorInStep = (step) => {
     const fieldsByStep = {
       1: [
@@ -60,7 +60,7 @@ export default function AddOrphan() {
               key={step}
               className={`w-9 h-9 rounded-2xl flex items-center justify-center font-black transition-colors ${
                 hasErrorInStep(step)
-                  ? "bg-red-500 text-white" // لون أحمر عند وجود خطأ
+                  ? "bg-red-500 text-white"
                   : step === currentStep
                     ? "bg-primary text-white"
                     : "bg-[#fcfaf7] text-on-surface-variant border border-border"

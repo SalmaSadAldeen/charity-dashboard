@@ -13,7 +13,6 @@ export default function DeleteConfirmModal({
         className="bg-surface-lowest rounded-3xl p-7 max-w-md w-full shadow-2xl border border-border/80 space-y-6 relative overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         dir={lang === "ar" ? "rtl" : "ltr"}
       >
-        {/* تأثير بلور خفيف على الأطراف */}
         <div className="absolute -top-12 -left-12 w-32 h-32 bg-red-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="flex items-center gap-4">

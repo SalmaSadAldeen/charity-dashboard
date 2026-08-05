@@ -17,13 +17,11 @@ export default function OrphanHeader({ orphan, onEdit, onDelete ,t}) {
 
   return (
     <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_-5px_rgba(0,0,0,0.05)] flex justify-between items-center">
-      {/* القسم الأيسر: الاسم والحالة */}
       <div className="space-y-3">
         <h1 className="text-4xl font-black text-gray-900">
           {orphan.firstName} {orphan.lastName}
         </h1>
         <div className="flex items-center gap-3 font-bold text-sm">
-          {/* العمر */}
           <span className="bg-gray-50 px-4 py-1.5 rounded-full text-gray-600">
             {calculateAge(orphan.birthOfDate)} {t("years")}
           </span>
@@ -32,8 +30,8 @@ export default function OrphanHeader({ orphan, onEdit, onDelete ,t}) {
           <span
             className={`px-4 py-1.5 rounded-full ${
               orphan.isSupported
-                ? "bg-[#DDE1FF] text-[#00105D]" // لون الـ primary-container
-                : "bg-gray-100 text-gray-600" // لون محايد لغير المكفول
+                ? "bg-[#DDE1FF] text-[#00105D]"
+                : "bg-gray-100 text-gray-600"
             }`}
           >
             {orphan.isSupported ? t("isSupported") : t("notSupported")}

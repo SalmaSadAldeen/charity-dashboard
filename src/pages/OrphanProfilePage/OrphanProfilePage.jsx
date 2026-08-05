@@ -23,10 +23,10 @@ export default function OrphanProfilePage() {
     (state) => state.orphans,
   );
 
-  // 1. التحقق مما إذا كان اليتيم المخزن حالياً يطابق نفس الـ ID المطلوب في الرابط
+
   const hasExistingOrphan = orphan && String(orphan.id) === String(id);
 
-  // 2. حالة تعقب ما إذا تم تحميل تفاصيل هذا اليتيم لمرة واحدة على الأقل
+
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingOrphan);
 
@@ -34,7 +34,7 @@ export default function OrphanProfilePage() {
 
   useEffect(() => {
     if (id) {
-      // إذا لم يكن اليتيم المخزن هو المطلوب، نقوم بإعادة تعيين حالة التحميل لعرض السكليتون بسلام
+
       if (!hasExistingOrphan) {
         setHasLoadedAtLeastOnce(false);
       }
@@ -45,7 +45,7 @@ export default function OrphanProfilePage() {
     }
   }, [id, lang, dispatch, hasExistingOrphan]);
 
-  // 👈 التعديل الحاسم: السكليتون يظهر حصرياً إذا كان هناك تحميل متأخر ولم يكتمل التحميل لمرة واحدة ولم تكن البيانات موجودة أصلاً
+
   const showSkeleton =
     isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingOrphan);
 

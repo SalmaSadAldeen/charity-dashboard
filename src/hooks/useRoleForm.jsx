@@ -15,17 +15,17 @@ export const useRoleForm = ({ roleToEdit, onClose, onSuccess }) => {
     console.log("🔍 [Full roleToEdit Object]:", roleToEdit);
 
     if (isEditMode && roleToEdit) {
-      // 1. معالجة الـ label بدقة سواء كان كائناً أو نصاً عادياً
+
       if (typeof roleToEdit.label === "object" && roleToEdit.label !== null) {
         setLabelAr(roleToEdit.label.ar || "");
         setLabelEn(roleToEdit.label.en || "");
       } else {
-        // إذا كان الـ label يرجع نصاً عادياً مثل "Finance Management"
+
         setLabelAr(roleToEdit.label || "");
         setLabelEn(roleToEdit.label || "");
       }
 
-      // 2. معالجة الصلاحيات واستخراج الـ IDs وتحويلها إلى أرقام صريحة
+
       const rawPermissions =
         roleToEdit.permissions ||
         roleToEdit.permissionIds ||

@@ -6,7 +6,6 @@ export default function ConfirmModal({
   onCancel,
   isLoading,
 }) {
-  // احذفي t من هنا
 
   const { t } = useTranslation();
 

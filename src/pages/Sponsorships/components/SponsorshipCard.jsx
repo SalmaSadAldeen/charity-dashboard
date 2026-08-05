@@ -6,7 +6,7 @@ export default function SponsorshipCard({ sponsorship }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // أفاتار متناسق مع الثيم
+
   const getAvatarColor = (id) => {
     const palette = [
       "bg-[#735c00]/15 text-[#735c00]",
@@ -16,7 +16,7 @@ export default function SponsorshipCard({ sponsorship }) {
     return palette[(id || 0) % palette.length];
   };
 
-  // ألوان الحالات بناءً على الثيم الدافئ
+
   const getStatusStyle = (itemStatus) => {
     switch (itemStatus) {
       case "ACCEPTED":

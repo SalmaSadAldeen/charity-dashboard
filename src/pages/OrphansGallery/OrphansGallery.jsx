@@ -26,7 +26,7 @@ export default function OrphansGallery() {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
 
-  // التحقق من وضع اختيار يتيم لكفالة عبر الـ URL
+
   const selectMode = searchParams.get("mode") === "select";
   const targetSponsorshipId = searchParams.get("sponsorshipId");
 
@@ -45,14 +45,14 @@ export default function OrphansGallery() {
 
   const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
-  // 1. هل توجد بيانات سابقة في الـ Store تعرض حالياً؟
+
   const hasExistingItems = Array.isArray(items) && items.length > 0;
 
-  // 2. حالة تعقب ما إذا تم تحميل البيانات لمرة واحدة على الأقل خلال الجلسة الحالية
+
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingItems);
 
-  // طلب البيانات عند أول تحميل أو عند تغير الفلتر أو الصفحة أو اللغة أو وضع الاختيار
+
   useEffect(() => {
     if (!hasExistingItems) {
       setHasLoadedAtLeastOnce(false);
@@ -76,7 +76,7 @@ export default function OrphansGallery() {
     hasExistingItems,
   ]);
 
-  // عند تغيير الفلتر
+
   const handleFilterChange = (val) => {
     if (selectMode) return;
     setSupportedFilter(val);
@@ -90,7 +90,7 @@ export default function OrphansGallery() {
     );
   };
 
-  // عند تغيير الصفحة
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     dispatch(
@@ -102,7 +102,7 @@ export default function OrphansGallery() {
     );
   };
 
-  // دالة تأكيد اختيار اليتيم وربطه بالكفالة ثم العودة لواجهة الكفالات
+
   const handleConfirmSelection = async () => {
     if (!selectedOrphanId || !targetSponsorshipId) return;
     try {
@@ -125,7 +125,7 @@ export default function OrphansGallery() {
     { label: t("notSupported"), value: false, icon: <XCircle size={16} /> },
   ];
 
-  // الـ Skeleton يظهر فقط إذا كان يحمل ولم يتم التحميل لمرة واحدة أو لا توجد داتا سابقة
+
   const showSkeleton =
     isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingItems);
 

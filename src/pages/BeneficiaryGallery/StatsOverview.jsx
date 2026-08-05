@@ -10,7 +10,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 export default function StatsOverview({ stats }) {
   const { t } = useTranslation();
 
-  // مصفوفة تعتمد على ألوان الثيم الخاص بك
   const statItems = [
     {
       title: t("pendingRequests"),
@@ -25,7 +24,7 @@ export default function StatsOverview({ stats }) {
       icon: CheckCircle2,
       color: "text-tertiary",
       bg: "bg-green-50",
-    }, // يمكنك تغيير bg للون يناسبك
+    }, 
     {
       title: t("rejectedRequests"),
       value: stats.rejected_count,

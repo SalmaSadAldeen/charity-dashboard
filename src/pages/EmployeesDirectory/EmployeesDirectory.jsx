@@ -80,12 +80,10 @@ export default function EmployeesDirectory() {
     dispatch(setEmployee(emp));
   };
 
-  // السكيليتون يظهر فقط بعد التأخير المخصص إذا لم تكن البيانات القديمة موجودة
   const showSkeleton = isReallyLoading && !hasExistingItems;
 
   return (
     <div className="p-8 w-full max-w-7xl mx-auto space-y-6 relative">
-      {/* القسم الأول: الإحصائيات في الأعلى */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StatsCard
           title={t("totalDonors")}
@@ -105,7 +103,6 @@ export default function EmployeesDirectory() {
         />
       </div>
 
-      {/* الجدول يأخذ العرض كاملاً */}
       <div className="w-full">
         <div className="bg-[#ffffff] p-6 rounded-[2rem] shadow-sm border border-[#d0c6b0] min-h-[500px] flex flex-col justify-between">
           <div>
@@ -170,7 +167,6 @@ export default function EmployeesDirectory() {
         </div>
       </div>
 
-      {/* نافذة البروفايل الجانبية */}
       {selectedItem && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs transition-all">
           <div className="w-full max-w-md bg-[#fdfcfa] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 border-s border-[#d0c6b0]/40">

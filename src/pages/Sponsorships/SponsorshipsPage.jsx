@@ -18,16 +18,16 @@ export default function SponsorshipsPage() {
   const [currentStatus, setCurrentStatus] = useState("");
   const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
-  // 👈 التحقق مما إذا كانت البيانات موجودة مسبقاً في الـ Store لمنع الوميض عند العودة
+
   const hasExistingItems =
     Array.isArray(sponsorships) && sponsorships.length > 0;
 
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingItems);
 
-  // جلب البيانات عند أول تحميل أو عند تغير الفلتر أو اللغة
+
   useEffect(() => {
-    // إذا لم تكن البيانات موجودة مسبقاً، نجعل الحالة false لعرض السكليتون
+
     if (!hasExistingItems) {
       setHasLoadedAtLeastOnce(false);
     }
@@ -57,7 +57,7 @@ export default function SponsorshipsPage() {
     },
   ];
 
-  // 👈 الـ Skeleton يظهر فقط إذا كان يحمل ولا توجد بيانات سابقة أو لم يتم التحميل لمرة واحدة بعد
+
   const showSkeleton =
     isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingItems);
 

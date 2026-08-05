@@ -1,17 +1,17 @@
 export default function RequestsChart({ t, dataFromBackend }) {
-  // 1. استقبال النسب الخمسة من الباك إند مع وضع 0 كقيمة افتراضية
-  const eduPercent = dataFromBackend?.edu || 0; // تعليمي
-  const medPercent = dataFromBackend?.med || 0; // صحي (طبي)
-  const foodPercent = dataFromBackend?.food || 0; // غذائي
-  const houPercent = dataFromBackend?.hou || 0; // سكني
-  const projPercent = dataFromBackend?.proj || 0; // دعم مشاريع صغيرة
 
-  // 2. حساب نقاط التوقف التراكمية للخمسة أقسام (عقارب الساعة)
+  const eduPercent = dataFromBackend?.edu || 0;
+  const medPercent = dataFromBackend?.med || 0;
+  const foodPercent = dataFromBackend?.food || 0;
+  const houPercent = dataFromBackend?.hou || 0;
+  const projPercent = dataFromBackend?.proj || 0;
+
+
   const eduEnd = eduPercent;
   const medEnd = eduEnd + medPercent;
   const foodEnd = medEnd + foodPercent;
   const houEnd = foodEnd + houPercent;
-  // القسم الخامس (المشاريع) سيقفل الدائرة تلقائياً من نهاية الرابع وحتى 100%
+
   console.log("Data from backend:", dataFromBackend);
   return (
     <div className="bg-surface-lowest p-8 rounded-3xl border border-border shadow-sm flex flex-col items-center">
@@ -19,12 +19,10 @@ export default function RequestsChart({ t, dataFromBackend }) {
         {t("incomingRequests")}
       </h4>
 
-      {/* منطقة الدائرة الديناميكية الخماسية */}
       <div className="relative flex items-center justify-center mb-8">
         <div
           className="w-40 h-40 rounded-full flex items-center justify-center relative overflow-hidden"
           style={{
-            // هنا وزعنا الألوان الخمسة بناءً على الحسابات التراكمية الجديدة
             background: `conic-gradient(
               #e0ea88 0% ${eduEnd}%, 
               #3b674c ${eduEnd}% ${medEnd}%, 
@@ -34,7 +32,6 @@ export default function RequestsChart({ t, dataFromBackend }) {
             )`,
           }}
         >
-          {/* الحفرة البيضاء في المنتصف لعمل تأثير الـ Donut */}
           <div className="w-28 h-28 bg-surface-lowest rounded-full flex items-center justify-center z-10">
             <div className="text-center">
               <span className="text-3xl font-bold block text-on-surface-variant">
@@ -48,14 +45,13 @@ export default function RequestsChart({ t, dataFromBackend }) {
         </div>
       </div>
 
-      {/* قائمة النسب السفلى المحدثة لتشمل الـ 5 أنواع */}
       <div className="w-full space-y-3">
         {[
           { label: "edu", color: "bg-[#e0ea88]", val: `${eduPercent}%` },
           { label: "med", color: "bg-[#3b674c]", val: `${medPercent}%` },
-          { label: "food", color: "bg-[#fad564]", val: `${foodPercent}%` }, // تأكدي من لون الخلفية هنا
-          { label: "hou", color: "bg-primary", val: `${houPercent}%` }, // تم استخدام "hou"
-          { label: "proj", color: "bg-[#c29900]", val: `${projPercent}%` }, // غيرتها لـ proj لتطابق الـ key
+          { label: "food", color: "bg-[#fad564]", val: `${foodPercent}%` },
+          { label: "hou", color: "bg-primary", val: `${houPercent}%` },
+          { label: "proj", color: "bg-[#c29900]", val: `${projPercent}%` },
         ].map((item, i) => (
           <div key={i} className="flex justify-between items-center">
             <div className="flex items-center gap-2">

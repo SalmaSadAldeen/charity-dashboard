@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginStart, loginSuccess, loginFailure } from "@/store/authSlice";
-// هذا هو السطر الصحيح!
+
 import { API } from "@/services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +10,7 @@ export const useLogin = () => {
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state) => state.auth);
 
-  // تخزين الإيميل فقط ليظهر في حقل الإدخال تلقائياً
+
   const [email, setEmail] = useState(
     localStorage.getItem("rememberedEmail") || "",
   );

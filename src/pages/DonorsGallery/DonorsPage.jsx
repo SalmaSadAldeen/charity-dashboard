@@ -89,7 +89,6 @@ export default function DonorsPage() {
 
   const totalPages = pagination?.totalPages || pagination?.lastPage || 1;
 
-  // السكيليتون يظهر فقط بعد التأخير المخصص إذا لم تكن البيانات القديمة موجودة
   const showSkeleton = isReallyLoading && !hasExistingItems;
 
   return (

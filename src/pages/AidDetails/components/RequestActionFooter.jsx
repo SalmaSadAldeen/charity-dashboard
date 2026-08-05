@@ -1,7 +1,6 @@
 import { CheckCircle2, XCircle } from "lucide-react";
 
 export function RequestActionFooter({ currentStatus, t, onOpenModal }) {
-  // إظهار الأزرار فقط حصرياً عندما تكون الحالة PENDING
   if (currentStatus !== "PENDING") return null;
 
   return (

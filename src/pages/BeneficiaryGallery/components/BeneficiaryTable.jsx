@@ -80,7 +80,6 @@ export default function BeneficiaryTable({ data, isLoading, onRowClick }) {
         </thead>
         <tbody className="divide-y divide-border bg-white">
           {isLoading ? (
-            // 1. عرض الـ Skeleton حصراً أثناء التحميل بناءً على الـ prop القادم
             [...Array(5)].map((_, index) => (
               <tr key={index} className="animate-pulse">
                 <td className="p-4">
@@ -101,7 +100,6 @@ export default function BeneficiaryTable({ data, isLoading, onRowClick }) {
               </tr>
             ))
           ) : data && data.length > 0 ? (
-            // 2. عرض البيانات الحقيقية في حال توفرها
             data.map((item) => (
               <tr
                 key={item.id}
@@ -150,7 +148,6 @@ export default function BeneficiaryTable({ data, isLoading, onRowClick }) {
               </tr>
             ))
           ) : (
-            // 3. عرض رسالة "لا توجد بيانات" عند انتهاء التحميل وعدم وجود عناصر
             <tr>
               <td
                 colSpan="4"

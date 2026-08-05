@@ -8,7 +8,6 @@ export default function EmployeeProfile() {
   const details = useSelector((state) => state.employees.selectedDetails);
   const detailsStatus = useSelector((state) => state.employees.detailsStatus);
 
-  // نحتفظ بآخر بيانات تم عرضها حتى لا تختفي البطاقة أو ترج أثناء التحميل
   const [cachedDetails, setCachedDetails] = useState(null);
 
   useEffect(() => {
@@ -17,7 +16,6 @@ export default function EmployeeProfile() {
     }
   }, [details]);
 
-  // إذا لم يكن لدينا أي بيانات قديمة أو جديدة لعرضها
   if (!cachedDetails) return null;
 
   const isLoading = detailsStatus === "loading";

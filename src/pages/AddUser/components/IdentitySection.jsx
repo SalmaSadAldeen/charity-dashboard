@@ -1,5 +1,5 @@
-import { User } from "lucide-react"; // استيراد
-// IdentitySection.jsx
+import { User } from "lucide-react";
+
 export default function IdentitySection({
   formData,
   handleInputChange,
@@ -73,7 +73,7 @@ export default function IdentitySection({
             value="+963"
             onChange={handleInputChange}
             className="w-full p-4 border border-border rounded-2xl shadow-inner focus:border-secondary outline-none transition-all"
-            // placeholder="+966"
+
           />
           {/* {errors.countryCode && (
             <p className="text-error text-xs mt-1">{errors.countryCode}</p>
@@ -107,7 +107,7 @@ export default function IdentitySection({
             value={t("syria")}
             onChange={handleInputChange}
             className="w-full p-4 border border-border rounded-2xl shadow-inner focus:border-secondary outline-none transition-all"
-            // placeholder={t("saudiArabia")}
+
           />
           {/* {errors.countryName && (
             <p className="text-error text-xs mt-1">{errors.countryName}</p>

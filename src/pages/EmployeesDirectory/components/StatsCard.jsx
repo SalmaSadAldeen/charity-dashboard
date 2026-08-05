@@ -8,14 +8,13 @@ export default function StatsCard({
   bgColor,
   textColor,
   iconBg = "bg-white/20",
-  icon: Icon, // استقبال الأيقونة كـ Prop
+  icon: Icon, 
 }) {
   return (
     <Link
       to={link}
       className={`relative ${bgColor} ${textColor} p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group border border-white/10`}
     >
-      {/* تأثير خلفية خفيف للجمالية */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 transition-transform group-hover:scale-150" />
 
       <div className="relative z-10">

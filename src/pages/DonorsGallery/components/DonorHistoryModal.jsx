@@ -27,7 +27,7 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
 
   const hasExistingData = historyList.length > 0;
 
-  // السكيليتون يظهر فقط بعد التأخير المخصص إذا لم تكن البيانات القديمة موجودة
+
   const showSkeleton = isReallyLoading && !hasExistingData;
 
   const isEmpty = detailsStatus === "succeeded" && historyList.length === 0;

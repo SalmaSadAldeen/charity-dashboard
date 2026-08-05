@@ -6,12 +6,11 @@ export function RequestActionFooter({
   onOpenModal,
   onAccept,
 }) {
-  // إظهار الأزرار فقط حصرياً عندما تكون الحالة PENDING
+
   if (currentStatus !== "PENDING") return null;
 
   return (
     <div className="p-5 bg-white border-t border-border flex items-center justify-end gap-4 sticky bottom-0 shrink-0 rounded-b-3xl shadow-lg">
-      {/* زر الرفض: يفتح الموديل لإدخال الأسباب */}
       <button
         type="button"
         onClick={() => onOpenModal("reject")}
@@ -21,7 +20,6 @@ export function RequestActionFooter({
         <span>{t?.("reject_request") || t?.("reject") || "رفض الطلب"}</span>
       </button>
 
-      {/* زر القبول: ينتقل لواجهة اختيار اليتيم مباشرة */}
       <button
         type="button"
         onClick={onAccept}

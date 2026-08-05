@@ -12,13 +12,13 @@ import {
 export default function OrphanInfoGrid({ orphan,t,lang }) {
   const isRTL = lang === "ar";
 
-  // دالة ذكية لتنسيق التاريخ حسب اللغة (تنسيق اليوم/الشهر/السنة أو العكس تلقائياً)
+
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "";
 
-    // استخدام ar-EG للعربية (يعرض أرقام عربية مصرية/مشرقية واضحة) و en-GB للإنجليزية
+
     const locale = isRTL ? "ar-EG" : "en-GB";
 
     return new Intl.DateTimeFormat(locale, {

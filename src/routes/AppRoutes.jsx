@@ -5,7 +5,7 @@ import EmployeesDirectory from "@/pages/EmployeesDirectory/EmployeesDirectory";
 import AddUser from "@/pages/AddUser/AddUser";
 import LoginPage from "@/pages/Login/LoginPage";
 import { PrivateRoute } from "@/routes/PrivateRoute";
-import EmployeeProfile from "@/pages/EmployeesDirectory/components/EmployeeProfile"; // استيراد الصفحة الوسيطة
+import EmployeeProfile from "@/pages/EmployeesDirectory/components/EmployeeProfile";
 import AddOrphan from "@/pages/AddOrphan/AddOrphan";
 import OrphansGallery from "@/pages/OrphansGallery/OrphansGallery";
 import OrphanProfilePage from "@/pages/OrphanProfilePage/OrphanProfilePage";
@@ -23,11 +23,10 @@ import SponsorshipDetailsPage from "@/pages/SponsorshipDetails/SponsorshipDetail
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* 1. مسار تسجيل الدخول (خارج الداشبورد) */}
       <Route path="/login" element={<LoginPage />} />
-      {/* 2. المسار الرئيسي (إعادة توجيه للداشبورد أو اللوج إن) */}
+    
       <Route path="/" element={<Navigate to="/login" replace />} />
-      {/* 3. مسارات الداشبورد المحمية */}
+    
       <Route
         path="/dashboard"
         element={
@@ -53,7 +52,7 @@ export default function AppRoutes() {
         <Route path="beneficiaries/:id" element={<BeneficiaryDetails />} />
         <Route path="roles" element={<RolesPage />} />
         <Route path="roles/:id" element={<RoleDetailsPage />} />
-        // إذا كان مكتوباً هكذا:
+
         <Route
           path="sponsorships/:sponsorshipId"
           element={<SponsorshipDetailsPage />}

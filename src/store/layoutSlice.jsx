@@ -15,8 +15,7 @@ export const layoutSlice = createSlice({
     },
   },
 });
-// تصدير الأكشنز (Actions) لاستخدامها في الـ Hooks
+
 export const { setTab, setSearch } = layoutSlice.actions;
 
-// تصدير الـ Reducer لربطه بالستور الرئيسي
 export default layoutSlice.reducer;

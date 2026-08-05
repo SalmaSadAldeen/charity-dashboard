@@ -1,24 +1,24 @@
-// EmploymentSection.jsx
+
 import { useRef } from "react";
 import { Briefcase } from "lucide-react";
-import { FileUp } from "lucide-react"; // استيراد
+import { FileUp } from "lucide-react";
 export default function EmploymentSection({
   formData,
   setFormData,
   t,
   errors,
-  handleInputChange, // أضيفيها هنا
-  clearError, // وأضيفيها هنا
+  handleInputChange,
+  clearError,
 }) {
-  // نستخدم useRef للإشارة إلى حقل الملف المخفي
+
   const fileInputRef = useRef(null);
 
-  // دالة خاصة للتعامل مع تغير الملف فقط
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setFormData((prev) => ({ ...prev, personalPhoto: file }));
-      clearError("personalPhoto"); // ستعمل الآن لأننا صدرناها
+      clearError("personalPhoto");
     }
   };
 
@@ -61,7 +61,7 @@ export default function EmploymentSection({
                     src={formData.personalPhoto}
                     alt="Preview"
                     className="w-full h-full object-cover"
-                    // هذا الجزء هو الحل: عند حدوث أي خطأ في التحميل، نخفي الصورة ونظهر أيقونة بديلة
+
                     onError={(e) => {
                       e.target.style.display = "none";
                       e.target.nextSibling?.classList.remove("hidden");

@@ -51,7 +51,6 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
       className={`space-y-5 ${isRTL ? "text-right" : "text-left"}`}
       dir={isRTL ? "rtl" : "ltr"}
     >
-      {/* سبب الرفض */}
       {selectedDetails.status === "REJECTED" &&
         selectedDetails.rejectionReason && (
           <div className="p-4 bg-error/10 rounded-2xl border border-error/20 flex gap-3 items-start shadow-sm">
@@ -69,12 +68,9 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
           </div>
         )}
 
-      {/* البيانات العامة */}
       <div className="bg-surface-lowest p-6 rounded-3xl border border-border/60 shadow-sm flex flex-col justify-between gap-5">
-        {/* الجزء العلوي مقسوم مع ضبط قياسات البوردر والصورة بدقة بدون فراغات */}
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-3 flex-1 min-w-0">
-            {/* الفئة والفئة الفرعية جنباً إلى جنب */}
             <div className="flex flex-wrap items-center gap-2">
               {selectedDetails.category?.name && (
                 <span className="text-[11px] font-extrabold uppercase text-primary px-3 py-1 mb-2 bg-primary/10 rounded-xl border border-primary/20">
@@ -88,7 +84,6 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
               )}
             </div>
 
-            {/* عنوان الطلب (يختفي بالكامل إذا لم يكن موجوداً) */}
             {localizedTitle && (
               <div className="space-y-1">
                 <p className="text-[10px] font-extrabold text-on-surface-variant/70 uppercase tracking-wider">
@@ -101,7 +96,6 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
             )}
           </div>
 
-          {/* الصورة بملء البوردر تماماً بدون أي فراغات داخلية */}
           {showAidImage && (
             <div className="shrink-0">
               <div className="w-45 h-32 rounded-2xl overflow-hidden border border-border/80 bg-surface/50 shadow-sm">
@@ -115,7 +109,6 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
           )}
         </div>
 
-        {/* تفاصيل الطلب (تختفي تماماً إذا لم تكن موجودة) */}
         {localizedDetails && (
           <div className="space-y-1.5 bg-surface/50 p-4 rounded-2xl border border-border/60">
             <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider flex items-center gap-1.5">
@@ -128,7 +121,6 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
           </div>
         )}
 
-        {/* الوصف الإضافي (يختفي تماماً إذا لم يكن موجوداً) */}
         {localizedDescription && (
           <div className="space-y-1 w-full overflow-hidden bg-surface/30 p-4 rounded-2xl border border-border/60">
             <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
@@ -163,7 +155,6 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
         </div>
       </div>
 
-      {/* تفاصيل الفئة */}
       <AidCategoryDetails
         aidDetails={selectedDetails.aidDetails}
         categoryId={selectedDetails.category?.id}
@@ -171,7 +162,6 @@ export default function AidTabContent({ selectedDetails, t, lang }) {
         lang={lang}
       />
 
-      {/* نسبة المطابقة والتواريخ */}
       <div className="bg-surface-lowest p-6 rounded-3xl border border-border/60 shadow-sm space-y-4 flex flex-col justify-between">
         <div className="space-y-2">
           <div className="flex justify-between items-center">

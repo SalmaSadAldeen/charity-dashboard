@@ -16,7 +16,7 @@ export default function OrphanIdentitySection({
     "guardianName",
   ];
 
-  // الستايل الموحد لجميع الحقول
+
   const inputStyle = (fieldName) =>
     `w-full p-4 bg-white border-2 rounded-2xl shadow-inner outline-none transition-all duration-300 ${
       errors[fieldName]

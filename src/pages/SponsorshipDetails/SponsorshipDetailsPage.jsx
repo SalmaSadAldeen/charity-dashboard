@@ -42,10 +42,8 @@ export default function SponsorshipDetailsPage() {
   const { selectedDetails: donorHistoryData, detailsStatus: donorStatus } =
      useSelector((state) => state.donors);
 
-  // 1. التحقق مما إذا كانت تفاصيل هذه الكفالة محملة مسبقاً وتطابق نفس الـ ID الحالي
   const hasExistingSponsorship = sponsorship && String(sponsorship.id) === String(sponsorshipId);
   
-  // 2. حالة تعقب ما إذا تم تحميل التفاصيل لمرة واحدة على الأقل
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(hasExistingSponsorship);
 
   const isDetailsLoading = detailsStatus === "loading";
@@ -57,7 +55,6 @@ export default function SponsorshipDetailsPage() {
       sponsorshipId !== "undefined" &&
       !isNaN(sponsorshipId)
     ) {
-      // إذا لم تكن البيانات مطابقة، نصفر حالة التحميل لعرض السكليتون المناسب
       if (!hasExistingSponsorship) {
         setHasLoadedAtLeastOnce(false);
       }
@@ -73,7 +70,6 @@ export default function SponsorshipDetailsPage() {
     }
 
     return () => {
-      // ملاحظة: إذا أردتِ منع الوميض عند التنقل السريع، يمكنك إزالة الـ clear أو تركها بحذر مع الشروط الجديدة
       dispatch(clearSponsorshipDetails());
       dispatch(clearDonorDetails());
     };
@@ -129,7 +125,6 @@ export default function SponsorshipDetailsPage() {
     }
   };
 
-  // 👈 التعديل الجذري هنا: الـ Skeleton لا يظهر إلا إذا كان يحمل ولم يتم التحميل لمرة واحدة وليس لدينا داتا سابقة
   const showSkeleton = isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingSponsorship);
 
   if (!sponsorship && detailsStatus === "succeeded" && !isReallyLoading) {
@@ -146,7 +141,6 @@ export default function SponsorshipDetailsPage() {
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="space-y-6 w-full">
-        {/* Tabs */}
         <div className="flex border-b border-border gap-4 overflow-x-auto">
           <button
             onClick={() => setActiveTab("info")}
@@ -185,11 +179,9 @@ export default function SponsorshipDetailsPage() {
           </button>
         </div>
 
-        {/* Main Section */}
         <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
           <div className="relative min-h-[400px] flex flex-col">
             {showSkeleton ? (
-              /* Skeleton مطابق تماماً للشكل الحقيقي */
               <div className="animate-pulse space-y-6 py-2 w-full">
                 <div className="flex items-center justify-between border-b border-border pb-4">
                   <div className="h-6 bg-gray-200 rounded-lg w-1/4"></div>

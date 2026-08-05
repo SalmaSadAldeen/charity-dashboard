@@ -17,7 +17,6 @@ export default function RoleDetailsPage() {
 
   const { selectedDetails: role, status } = useSelector((state) => state.roles);
 
-  // التأكد من أن الـ role موجود ويطابق الـ ID الحالي تماماً
   const hasExistingRole = role && String(role.id) === String(id);
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingRole);
@@ -35,7 +34,6 @@ export default function RoleDetailsPage() {
     }
   }, [dispatch, id, lang, hasExistingRole]);
 
-  // الشرط الأدق: عرض السكليتون إذا كان هناك تحميل أو أن الـ role غير متوفر أو لا يطابق الـ ID
   const showSkeleton =
     isReallyLoading || !role || String(role.id) !== String(id);
 
@@ -60,7 +58,6 @@ export default function RoleDetailsPage() {
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* زر العودة */}
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 px-4 py-2 bg-surface-lowest text-on-surface rounded-xl shadow-sm border border-border/60 hover:bg-surface-container/50 transition cursor-pointer"
@@ -71,17 +68,14 @@ export default function RoleDetailsPage() {
           <span className="text-sm font-medium">{t("back") || "العودة"}</span>
         </button>
 
-        {/* بطاقة رأس الصفحة والمعلومات الأساسية */}
         <RoleDetailsHeader role={role} lang={lang} t={t} />
 
-        {/* قسم الصلاحيات */}
         <RolePermissionsCard
           permissions={role?.permissions}
           t={t}
           lang={lang}
         />
 
-        {/* قسم الموظفين المرتبطين */}
         <RoleEmployeesCard employees={role?.employees} t={t} lang={lang} />
       </div>
     </main>

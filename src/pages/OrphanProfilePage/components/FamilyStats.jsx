@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Eye } from "lucide-react";
-import ImageModal from "./ImageModal"; // استيراد المودال
+import ImageModal from "./ImageModal";
 export default function FamilyStats({ orphan ,t}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeUrl, setActiveUrl] = useState("");
@@ -8,22 +8,18 @@ export default function FamilyStats({ orphan ,t}) {
   const handleOpen = () => {
     if (!orphan.FamilyStatement) return;
 
-    // 1. تنظيف المسار
     let cleanPath = orphan.FamilyStatement.replace(/\\/g, "/").replace(
       /^uploads\//,
       "",
     );
     const fullUrl = `http://localhost:3000/uploads/${cleanPath}`;
 
-    // 2. الاختبار: هل هو صورة؟ (نختبر اللاحقة)
     const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(cleanPath);
 
     if (isImage) {
-      // إذا كانت صورة: افتحي المودال (كما هو شغال عندك)
       setActiveUrl(fullUrl);
       setIsModalOpen(true);
     } else {
-      // إذا كان ملفاً (PDF مثلاً): افتحيه في نافذة جديدة
       window.open(
         fullUrl,
         "_blank",

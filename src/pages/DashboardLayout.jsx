@@ -6,10 +6,10 @@ import { Toaster } from "react-hot-toast";
 
 export default function DashboardLayout() {
   const lang = useSelector((state) => state.language?.lang || "en");
-  // 2. يجب تعريف isRtl لأنك تستخدمينها في الـ dir
+
   const isRtl = lang === "ar";
 
-  // دالة الترجمة
+
   return (
     <div
       className="flex h-screen w-full font-sans overflow-hidden"

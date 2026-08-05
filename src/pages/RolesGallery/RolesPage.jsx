@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRoles, deleteRole, fetchRoleById } from "@/store/index"; // 👈 تأكدي من تضمين fetchRoleById هنا
+import { fetchRoles, deleteRole, fetchRoleById } from "@/store/index";
 import { useTranslation } from "@/hooks/useTranslation";
 import toast from "react-hot-toast";
 
@@ -23,7 +23,7 @@ export default function RolesPage() {
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingRoles);
 
-  // جلب الداتا عند أول تحميل أو عند تغير اللغة
+
   useEffect(() => {
     if (!hasExistingRoles) {
       setHasLoadedAtLeastOnce(false);
@@ -33,18 +33,18 @@ export default function RolesPage() {
     });
   }, [dispatch, lang, hasExistingRoles]);
 
-  // زر الإضافة (فتح مودال فارغ)
+
   const handleOpenAddModal = () => {
     setRoleToEdit(null);
     setIsModalOpen(true);
   };
 
-  // زر التعديل (فتح المودال فوراً وجلب الداتا الكاملة بالخلفية)
+
   const handleOpenEditRole = (role) => {
     setRoleToEdit(role);
     setIsModalOpen(true);
 
-    // 👈 استدعاء الـ endpoint الخاصة بجلب الدور بالـ ID لتعبئة اللغات والصلاحيات بدقة
+
     dispatch(fetchRoleById({ id: role.id })).then((res) => {
       if (res.payload?.data || res.payload) {
         setRoleToEdit(res.payload.data || res.payload);
@@ -57,7 +57,7 @@ export default function RolesPage() {
     setIsDeleteModalOpen(true);
   };
 
-  // تأكيد الحذف وإعادة جلب الداتا
+
   const handleConfirmDelete = async () => {
     if (!roleToDeleteId) return;
 

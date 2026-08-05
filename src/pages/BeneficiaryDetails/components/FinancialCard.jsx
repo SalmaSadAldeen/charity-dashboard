@@ -4,13 +4,11 @@ import { useTranslation } from "@/hooks/useTranslation";
 export default function FinancialCard({ data, parentData }) {
   const { t } = useTranslation();
 
-  // دالة ذكية لمعالجة الترجمة للحالة الاجتماعية بناءً على الجنس
   const getSocialStatusValue = () => {
     if (!data?.socialStatus) return t("N/A");
 
     const status = data.socialStatus.trim().toUpperCase();
 
-    // البحث عن الـ gender سواء كان في الـ data أو في الـ parentData الممرر من الخارج
     const rawGender = data?.gender || parentData?.gender || "";
     const gender = rawGender.trim().toUpperCase();
 
@@ -25,7 +23,6 @@ export default function FinancialCard({ data, parentData }) {
       possibleKeys = [`${status}_MALE`, `${status.toLowerCase()}_male`];
     }
 
-    // المفتاح العام كخيار احتياطي
     possibleKeys.push(status, status.toLowerCase());
 
     for (const key of possibleKeys) {
@@ -49,7 +46,6 @@ export default function FinancialCard({ data, parentData }) {
           {t("familyInfo")}
         </h3>
 
-        {/* توزيع الصفوف بالتساوي لملء الفراغ */}
         <div className="flex flex-col flex-grow justify-around">
           <DetailRow label={t("socialStatus")} value={getSocialStatusValue()} />
           <DetailRow
@@ -60,7 +56,6 @@ export default function FinancialCard({ data, parentData }) {
             label={t("monthlyIncome")}
             value={`${data?.monthlyIncome || 0} $`}
           />
-          {/* البيانات المضافة حديثاً */}
           <DetailRow
             label={t("isUnemployed")}
             value={data?.isUnemployed ? t("yes") : t("no")}

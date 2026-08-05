@@ -45,7 +45,6 @@ export function ProfilePage() {
     }
   };
 
-  // السكيليتون يظهر فقط بعد التأخير المخصص إذا لم تكن البيانات القديمة موجودة
   const showSkeleton = (isReallyLoading && !hasExistingProfile) || !hasLoadedAtLeastOnce || !profileData;
 
   if (status === "failed" && !profileData) {
@@ -96,7 +95,6 @@ export function ProfilePage() {
           )}
         </div>
 
-        {/* القسم الثاني: تفاصيل الحساب والمعلومات */}
         <div className="lg:col-span-8 xl:col-span-8 w-full">
           {showSkeleton ? (
             <div className="bg-surface-lowest rounded-3xl p-8 min-h-[420px] border border-border/60 shadow-sm flex flex-col gap-8 animate-pulse">

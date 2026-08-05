@@ -4,19 +4,16 @@ export default function ImageModal({ isOpen, onClose, imageUrl ,t}) {
 
   return (
     <>
-      {/* الـ Overlay */}
       <div
         className="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-[2px] transition-opacity"
         onClick={onClose}
       />
 
-      {/* اللوحة الجانبية مع دعم RTL */}
       <div
         dir="rtl"
         className="fixed top-0 right-0 h-full w-full max-w-md bg-white border-s border-gray-200 shadow-[0_0_50px_-12px_rgba(0,0,0,0.2)] z-[9999] p-6 flex flex-col animate-in slide-in-from-right duration-300 rounded-s-3xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* الهيدر */}
         <div className="flex justify-between items-center mb-6">
           <h4 className="font-black text-lg text-gray-800">
             {t("previewImage")}
@@ -29,7 +26,6 @@ export default function ImageModal({ isOpen, onClose, imageUrl ,t}) {
           </button>
         </div>
 
-        {/* منطقة الصورة */}
         <div className="flex-grow flex items-center justify-center bg-gray-50 border border-dashed border-gray-200 rounded-3xl overflow-hidden p-2">
           {imageUrl ? (
             <img

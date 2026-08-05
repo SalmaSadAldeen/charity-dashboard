@@ -1,11 +1,11 @@
 export const translations = {
-  // ==========================================
-  // 🇬🇧 ENGLISH TRANSLATIONS
-  // ==========================================
+
+
+
   en: {
     rolesCount: "Custom Roles ",
     securityStatussecured: "Account is fully secured",
-    // --- 1. General & Navigation ---
+
     logoSubtitle: "Charity Management System",
     coreOps: "Core Operations",
     sysControl: "System Control",
@@ -13,7 +13,7 @@ export const translations = {
     logout: "Secure Logout",
     close: "Close",
 
-    // --- 2. Dashboard & Analytics ---
+
     dashboard: "General Dashboard",
     dashboardTitle: "Global Association Analytics",
     dashboardSubtitle: "Performance overview and resource allocation metrics.",
@@ -33,7 +33,7 @@ export const translations = {
     addNewRole: "Add New Role",
     editRoleAndPermissions: "Edit Role & Permissions",
 
-    // --- 3. Categories & Types ---
+
     total: "Total",
     edu: "Educational",
     fin: "Financial",
@@ -42,7 +42,7 @@ export const translations = {
     hou: "Housing",
     proj: "Projects",
 
-    // --- 4. Login & Authentication ---
+
     email: "Email Address",
     securePassword: "Secure Password",
     keepMeLoggedIn: "Keep me logged in",
@@ -93,7 +93,7 @@ export const translations = {
     previous_address: "Previous Address",
     talent: "Talent",
     is_supported: "Is Supported",
-    // --- 5. Users & Employees Management ---
+
     addNewSystemUser: "Add New System User",
     primaryUserIdentity: "Primary User Identity",
     firstName: "First Name",
@@ -131,7 +131,7 @@ export const translations = {
       "Are you sure you want to delete this role? This action cannot be undone.",
     cancel: "Cancel",
 
-    // --- Role Modal Fields & Actions ---
+
     roleNameAr: "Role Name (Arabic)",
     roleNameEn: "Role Name (English)",
     roleNameArPlaceholder: "e.g. System Supervisor",
@@ -140,7 +140,7 @@ export const translations = {
     updateRole: "Update Role",
     saveRole: "Save Role",
 
-    // --- 6. Beneficiaries & Help Requests ---
+
     beneficiaries: "Beneficiaries Management",
     beneficiariesList: "Beneficiaries List",
     manageAndReviewBeneficiaries:
@@ -172,7 +172,7 @@ export const translations = {
     noEmployeesAssigned: "No employees assigned to this role currently",
     noPermissions: "No associated permissions",
     permissions: "Associated Permissions",
-    // Panel & Tabs
+
     requestDetails: "Request Details",
     request_details_panel: "Request Details Panel",
     personal_info_tab: "Personal Info",
@@ -182,7 +182,7 @@ export const translations = {
     loading_data: "Loading data...",
     error_loading_data: "Error loading data",
 
-    // --- 7. Orphans & Sponsorships ---
+
     orphans: "Orphans & Sponsorships",
     orphansList: "Orphan Records",
     orphansDescription: "Manage and track registered orphans records.",
@@ -193,13 +193,13 @@ export const translations = {
     uploadFamilyStatement: "Upload Family Statement",
     guaranteedPhone: "Guaranteed Phone",
 
-    // --- 8. Donors & Campaigns ---
+
     donors: "Donors Management",
     campaigns: "Campaigns & Projects",
     totalDonors: "Total Donors",
     totalBeneficiaries: "Total Beneficiaries",
 
-    // --- 9. Fields, Labels & Common Props ---
+
     fatherName: "Father's Name",
     motherName: "Mother's Name",
     guardianName: "Guardian Name",
@@ -232,7 +232,7 @@ export const translations = {
     currentPhoto: "Current Photo",
     joinedAt: "Joined At",
 
-    // --- 10. Statuses & Enums ---
+
     PENDING: "Pending",
     ACCEPTED: "Accepted",
     REJECTED: "Rejected",
@@ -242,7 +242,7 @@ export const translations = {
     rejected: "Rejected",
     cancelled: "Cancelled",
 
-    // --- Sponsorships Translations ---
+
     sponsorships: "Sponsorships Management",
     sponsorshipsList: "Sponsorship Requests List",
     sponsorshipsDescription:
@@ -290,7 +290,7 @@ export const translations = {
     sponsorStatus: "Sponsor Status",
     joinDate: "Join Date",
 
-    // --- 11. Category Specific Fields ---
+
     academicAchievement: "Academic Level",
     institutionName: "Institution / University",
     academicYear: "Academic Year",
@@ -311,7 +311,7 @@ export const translations = {
     delete: "Delete",
     back: "back",
     protectedRoleTooltip: "Protected system role cannot be deleted",
-    // --- 12. General UI & Actions ---
+
     search: "Search...",
     view_profile: "View Profile",
     view_details: "View details",
@@ -333,7 +333,7 @@ export const translations = {
     ar: "Arabic",
     en: "English",
 
-    // --- 13. Validations & Feedback ---
+
     note: "Note",
     phoneMustBe10Digits: "Phone number must be 10 digits",
     mustBeGreaterThanZero: "Value must be greater than zero",
@@ -378,11 +378,11 @@ export const translations = {
     rolesAndPermissions: "Roles & Permissions",
   },
 
-  // ==========================================
-  // 🇸🇦 ARABIC TRANSLATIONS
-  // ==========================================
+
+
+
   ar: {
-    // --- 1. General & Navigation ---
+
     logoSubtitle: "نظام إدارة الجمعيات الخيرية",
     coreOps: "العمليات الأساسية",
     sysControl: "إدارة النظام والتحكم",
@@ -390,7 +390,7 @@ export const translations = {
     logout: "تسجيل الخروج الآمن",
     close: "إغلاق",
     accountInfo: "معلومات الحساب الشخصية",
-    // --- 2. Dashboard & Analytics ---
+
     dashboard: "لوحة الإحصائيات العامة",
     dashboardTitle: "تحليلات الجمعية العالمية",
     dashboardSubtitle: "نظرة عامة على الأداء ومقاييس تخصيص الموارد.",
@@ -405,7 +405,7 @@ export const translations = {
     yearly: "سنوي",
     incomingRequests: "الطلبات الواردة",
     permissionsAndRoles: "الادوار",
-    // --- 3. Categories & Types ---
+
     total: "إجمالي",
     edu: "تعليمية",
     fin: "مالية",
@@ -414,7 +414,7 @@ export const translations = {
     hou: "سكني",
     proj: "مشاريع",
 
-    // --- 4. Login & Authentication ---
+
     email: "البريد الإلكتروني",
     securePassword: "كلمة المرور الآمنة",
     keepMeLoggedIn: "ابقني مسجل الدخول",
@@ -424,7 +424,7 @@ export const translations = {
     charityOSAccess: "نظام CharityOS - وصول إداري",
     authorizedCredentialsNote: "يرجى إدخال بيانات الاعتماد المعتمدة.",
 
-    // --- 5. Users & Employees Management ---
+
     addNewSystemUser: "إضافة مستخدم نظام جديد",
     primaryUserIdentity: "معلومات الهوية الأساسية",
     firstName: "الاسم الأول",
@@ -460,7 +460,7 @@ export const translations = {
     employee: "الموظف",
     jobRole: "الدور الوظيفي",
 
-    // --- Role Modal Fields & Actions ---
+
     roleNameAr: "اسم الدور (عربي)",
     roleNameEn: "اسم الدور (إنجليزي)",
     roleNameArPlaceholder: "مثال: مشرف النظام",
@@ -470,7 +470,7 @@ export const translations = {
     saveRole: "حفظ الدور",
     editRoleAndPermissions: "تعديل الدور والصلاحيات",
 
-    // --- 6. Beneficiaries & Help Requests ---
+
     beneficiaries: "إدارة شؤون المستفيدين",
     beneficiariesList: "قائمة المستفيدين",
     manageAndReviewBeneficiaries:
@@ -503,7 +503,7 @@ export const translations = {
     cancel: "إلغاء",
     roleLinkedError: "لا يمكن حذف هذا الدور لأنه مرتبط بموظفين حالياً",
     roleDeleteSuccess: "تم حذف الدور بنجاح",
-    // Panel & Tabs
+
     requestDetails: "تفاصيل الطلب",
     request_details_panel: "لوحة تفاصيل الطلب",
     personal_info_tab: "البيانات الشخصية",
@@ -523,7 +523,7 @@ export const translations = {
     joinDate: "تاريخ الانضمام",
     back: "السابق",
 
-    // --- 7. Orphans & Sponsorships ---
+
     orphans: "شؤون الأيتام والكفالات",
     orphansList: "سجل الأيتام",
     orphansDescription: "تصفح وإدارة بيانات الأيتام المسجلين.",
@@ -537,7 +537,7 @@ export const translations = {
     rolesManagementTitle: "إدارة الأدوار والصلاحيات",
     rolesManagementSubtitle: "إدارة أدوار النظام وتخصيص الصلاحيات للموظفين",
     addNewRole: "إضافة دور جديد",
-    // --- 8. Donors & Campaigns ---
+
 
     donors: "إدارة شؤون المتبرعين",
     campaigns: "إدارة الحملات والمشاريع",
@@ -545,7 +545,7 @@ export const translations = {
     totalBeneficiaries: "إجمالي المستفيدين",
     rolesCount: " أدوار مخصصة  ",
     securityStatussecured: "الحساب محمي وآمن بالكامل",
-    // --- 9. Fields, Labels & Common Props ---
+
     fatherName: "اسم الأب",
     motherName: "اسم الأم",
     guardianName: "اسم الوصي",
@@ -579,7 +579,7 @@ export const translations = {
     currentPhoto: "الصورة الحالية",
     joinedAt: "تاريخ الانضمام",
 
-    // --- Sponsorships Translations ---
+
     sponsorships: "إدارة الكفالات",
     sponsorshipsList: "قائمة طلبات الكفالات",
     sponsorshipsDescription: "إدارة وعرض جميع طلبات الكفالة في النظام.",
@@ -644,7 +644,7 @@ export const translations = {
     edit: "تعديل",
     delete: "حذف",
     protectedRoleTooltip: "دور محمي من النظام لا يمكن حذفه",
-    // --- 10. Statuses & Enums ---
+
 
     pending: "قيد الانتظار",
     accepted: "مقبول",
@@ -677,7 +677,7 @@ export const translations = {
     employed: "يعمل",
     isUnemployed: "هل هو عاطل عن العمل؟",
 
-    // --- 11. Category Specific Fields ---
+
     academicAchievement: "المستوى التعليمي",
     institutionName: "اسم المؤسسة / الجامعة",
     academicYear: "السنة الدراسية",
@@ -691,7 +691,7 @@ export const translations = {
     housingSpecifications: "مواصفات السكن",
     reasonForLock: "سبب الإغلاق / القفل",
 
-    // --- 12. General UI & Actions ---
+
     search: "بحث...",
     view_profile: "عرض التفاصيل",
     view_details: "عرض التفاصيل",
@@ -720,7 +720,7 @@ export const translations = {
     loadingHistory: "جاري تحميل السجل...",
     noFinancialRecords: "لا توجد حركات مالية مسجلة لهذا المتبرع حالياً",
 
-    // --- 13. Validations & Feedback ---
+
     note: "ملاحظة",
     phoneMustBe10Digits: "رقم الهاتف يجب أن يتكون من 10 أرقام",
     mustBeGreaterThanZero: "يجب أن تكون القيمة أكبر من صفر",

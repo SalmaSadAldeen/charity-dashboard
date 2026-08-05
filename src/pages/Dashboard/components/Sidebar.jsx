@@ -6,10 +6,8 @@ export default function Sidebar() {
   const isRtl = lang === "ar";
   const { pathname } = useLocation();
 
-  // منطق: إذا كنا في صفحة التعديل، لا نعتبر زر الأيتام "نشطاً"
   const isEditing = pathname.includes("/edit");
 
-  // تعريف المجموعات خارج الـ map لتحسين الأداء
   const pathGroups = {
     orphans: [
       "/dashboard/orphans",
@@ -111,7 +109,6 @@ export default function Sidebar() {
             {items.map((item) => {
               const isOrphansLink = item.id === "orphans";
 
-              // المنطق: هل الرابط الحالي جزء من مجموعة هذا العنصر؟
               let isActive = false;
               if (item.id === "dashboard") {
                 isActive = pathname === "/dashboard";

@@ -2,7 +2,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useLogin } from "../../hooks/useLogin";
 import LoginHeader from "./components/LoginHeader";
 import InputField from "./components/InputField";
-// import RememberMeToggle from "./components/RememberMeToggle";
 
 const LoginPage = () => {
   const { t, lang } = useTranslation();
@@ -12,11 +11,9 @@ const LoginPage = () => {
     password,
     setPassword,
     showPassword,
-    // rememberMe,
     isLoading,
     error,
     togglePasswordVisibility,
-    // toggleRememberMe,
     handleLoginSubmit,
   } = useLogin();
 

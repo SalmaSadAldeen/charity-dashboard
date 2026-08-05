@@ -3,15 +3,12 @@ import { Sparkles, KeyRound, LogOut } from "lucide-react";
 export function ProfileHero({ profileData, t, }) {
   return (
     <div className="lg:col-span-5 xl:col-span-4 bg-surface-lowest rounded-3xl border border-border/80 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden relative group">
-      {/* غلاف الكارد العلوي المتدرج */}
       <div className="h-36 w-full bg-gradient-to-r from-primary/30 via-primary/10 to-primary/20 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-slate-900/[0.04] bg-[bottom_1px_center]" />
         <div className="absolute -top-12 -left-12 w-36 h-36 bg-primary/20 rounded-full blur-2xl" />
       </div>
 
-      {/* محتوى كارد البروفايل */}
       <div className="px-6 pb-6 relative flex flex-col items-center text-center gap-5 -mt-20">
-        {/* الصورة الشخصية */}
         <div className="relative group/avatar">
           <div className="absolute -inset-1 bg-gradient-to-r from-primary to-primary/40 rounded-3xl blur-md opacity-30 group-hover/avatar:opacity-75 transition duration-500" />
           <img
@@ -21,7 +18,6 @@ export function ProfileHero({ profileData, t, }) {
           />
         </div>
 
-        {/* الاسم ونوع الحساب */}
         <div className="flex flex-col items-center gap-2 w-full">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black tracking-wide uppercase shadow-2xs">
             <Sparkles className="w-3.5 h-3.5 shrink-0" />
@@ -35,7 +31,6 @@ export function ProfileHero({ profileData, t, }) {
           </h1>
         </div>
 
-        {/* مؤشر عدد الصلاحيات الممنوحة (باللون الأخضر المطابق للحالة الأمنية) */}
         <div className="w-full pt-1">
           <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center gap-2">
             <KeyRound className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -48,7 +43,6 @@ export function ProfileHero({ profileData, t, }) {
 
         <hr className="w-full border-border/60 my-1" />
 
-        {/* زر تسجيل الخروج */}
         <button
           onClick={() => {}}
           className="flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-surface hover:bg-error/10 text-slate-700 hover:text-error text-sm font-bold transition-all duration-200 border border-border hover:border-error/30 shadow-xs hover:shadow-sm w-full cursor-pointer active:scale-95 group/btn"

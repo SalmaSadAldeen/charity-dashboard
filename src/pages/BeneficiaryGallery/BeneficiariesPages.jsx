@@ -28,7 +28,6 @@ export default function BeneficiariesPage() {
   const ITEMS_PER_PAGE = 5;
   const navigate = useNavigate();
 
-  // التحقق هل توجد عناصر مخزنة مسبقاً في الـ Store
   const hasExistingItems = Array.isArray(beneficiaries) && beneficiaries.length > 0;
   const isReallyLoading = useDelayedLoading(status === "loading", 500);
 
@@ -46,7 +45,6 @@ export default function BeneficiariesPage() {
     );
   }, [currentStatus, currentPage, lang, dispatch]);
 
-  // الحل الجذري: السكليتون لا يظهر أبداً إذا كانت هناك عناصر موجودة مسبقاً (حتى لو غيرت الفلتر أو الصفحة، تبقى الداتا القديمة ثابتة حتى تأتي الجديدة بدون اهتزاز أو سكليتون)
   const showSkeleton = isReallyLoading && !hasExistingItems;
 
   const handleFilterChange = (val) => {

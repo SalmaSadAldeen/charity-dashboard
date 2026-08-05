@@ -15,7 +15,6 @@ export default function RolesTable({
   return (
     <div className="w-full overflow-hidden rounded-2xl border border-border shadow-sm relative bg-surface-lowest backdrop-blur-md flex flex-col">
       <table className="w-full border-collapse table-fixed">
-        {/* Header ثابت دائماً لا يتأثر بأي حالة */}
         <thead className="bg-[#f9f7f4] border-b border-border">
           <tr className="text-on-surface-variant/90 text-sm">
             <th className="py-4 px-6 font-semibold w-20 text-start">
@@ -35,7 +34,6 @@ export default function RolesTable({
 
         <tbody className="divide-y divide-border/40 bg-white">
           {isLoading ? (
-            /* 1. أولاً: السكليتون داخل الجدول مباشرة بنفس ألوان باقي الواجهات */
             [...Array(5)].map((_, index) => (
               <tr key={`skeleton-${index}`} className="animate-pulse">
                 <td className="py-4 px-6">
@@ -54,7 +52,6 @@ export default function RolesTable({
               </tr>
             ))
           ) : isEmpty ? (
-            /* 2. ثانياً: إذا انتهى التحميل ولم يتم العثور على بيانات */
             <tr>
               <td
                 colSpan="4"
@@ -65,7 +62,6 @@ export default function RolesTable({
               </td>
             </tr>
           ) : (
-            /* 3. ثالثاً: عرض الداتا الحقيقية */
             roles.map((role) => {
               const isProtected = role.id <= 7;
 

@@ -6,8 +6,6 @@ import { requestsService } from "@/services/requestsService";
 import { donorService } from "@/services/donorService";
 import { sponsorshipsService } from "@/services/sponsorshipsService.jsx";
 
-// <--- 1. استيراد خدمة المتبرعين
-// استيراد الخدمة الجديدة
 export const createGenericActions = (resource) => ({
   fetchItems: createAsyncThunk(
     `${resource}/fetchAll`,
@@ -23,13 +21,12 @@ export const createGenericActions = (resource) => ({
             )
           ).data;
 
-        // داخل createGenericActions
         if (resource === "orphans")
           return (
             await orphanService.getOrphans(
               params.page || 1,
               params.limit || 10,
-              params.supported, // تمرير قيمة الفلتر
+              params.supported,
             )
           ).data;
         if (resource === "beneficiaries") {
@@ -37,7 +34,7 @@ export const createGenericActions = (resource) => ({
             await beneficiaryService.getBeneficiaries(
               params.page || 1,
               params.limit || 10,
-              params.status, // نمرر الـ status مباشرة
+              params.status,
             )
           ).data;
         }
@@ -54,7 +51,7 @@ export const createGenericActions = (resource) => ({
             await donorService.getDonors(
               params.page || 1,
               params.limit || 10,
-              params.isSponsor, // التصحيح هنا ليمرر قيمة الفلتر الصحيحة
+              params.isSponsor,
             )
           ).data;
         }
@@ -66,11 +63,8 @@ export const createGenericActions = (resource) => ({
         }
 
         if (resource === "sponsorships") {
-          return (
-            await sponsorshipsService.fetchSponsorships(
-              params.status, // تمرير الحالة مثل PENDING, ACCEPTED
-            )
-          ).data;
+          return (await sponsorshipsService.fetchSponsorships(params.status))
+            .data;
         }
         throw new Error(`Fetch action not defined for ${resource}`);
       } catch (err) {
@@ -79,14 +73,11 @@ export const createGenericActions = (resource) => ({
     },
   ),
 
-  // في genericSlice.jsx
   fetchItemById: createAsyncThunk(
     `${resource}/fetchOne`,
     async ({ id }, { rejectWithValue }) => {
-      // استقبال id و lang
       try {
         if (resource === "employees") {
-          // إرسال الطلب، الـ Interceptor سيلتقط اللغة المحدثة تلقائياً
           return (await adminService.fetchEmployeeById(id)).data;
         }
         if (resource === "orphans") {
@@ -96,31 +87,29 @@ export const createGenericActions = (resource) => ({
           return (await beneficiaryService.fetchBeneficiaryById(id)).data;
         }
         if (resource === "helpRequests") {
-          return (await requestsService.fetchHelpRequestById(id)).data; // تأكدي من وجود هذه الدالة في requestsService
+          return (await requestsService.fetchHelpRequestById(id)).data;
         }
 
         if (resource === "donors") {
-          // إذا أرسلنا النوع history، نجلب التقرير المالي للعام الحالي
           if (id.type === "history") {
             return (await donorService.fetchDonorHistory(id.donorId)).data;
           }
-          // إذا أرسلنا النوع sponsorships، نجلب تاريخ الكفالات الكامل
+
           if (id.type === "sponsorships") {
             return (
               await sponsorshipsService.fetchDonorSponsorshipHistory(id.donorId)
             ).data;
           }
-          // وإلا نجلب بيانات المتبرع العادية (إذا تم إرسال الـ id كقيمة مباشرة)
+
           const actualId = typeof id === "object" ? id.donorId : id;
           return (await donorService.fetchDonorHistory(actualId)).data;
         }
 
         if (resource === "roles") {
-          // <--- أضيفي هذه
           return (await adminService.getRoleById(id)).data;
         }
         if (resource === "sponsorships") {
-          return (await sponsorshipsService.fetchSponsorshipById(id)).data; // تأكدي من توفر الدالة بالخدمة إن وجدت
+          return (await sponsorshipsService.fetchSponsorshipById(id)).data;
         }
 
         throw new Error(`Fetch single action not defined for ${resource}`);
@@ -140,7 +129,6 @@ export const createGenericActions = (resource) => ({
         else if (resource === "orphans")
           response = await orphanService.addOrphan(data);
         else if (resource === "roles")
-          // <--- أضيفي هذه
           response = await adminService.addRole(data);
         else throw new Error(`Add action not defined for ${resource}`);
         return response.data;
@@ -150,7 +138,6 @@ export const createGenericActions = (resource) => ({
     },
   ),
 
-  // في ملف الـ slice، عدلي دالة deleteItem:
   deleteItem: createAsyncThunk(
     `${resource}/delete`,
     async (id, { rejectWithValue }) => {
@@ -161,11 +148,9 @@ export const createGenericActions = (resource) => ({
         else if (resource === "orphans")
           response = await orphanService.deleteOrphan(id);
         else if (resource === "roles")
-          // <--- أضيفي هذه
           response = await adminService.deleteRole(id);
         else throw new Error(`Delete action not defined for ${resource}`);
 
-        // هنا التعديل: نرجع الاستجابة كاملة (response.data) بدلاً من id فقط
         return { id, message: response.data.message };
       } catch (err) {
         return rejectWithValue(err.response?.data?.message || err.message);
@@ -176,7 +161,6 @@ export const createGenericActions = (resource) => ({
     `${resource}/update`,
     async (arg, { rejectWithValue }) => {
       try {
-        // استخراج الـ id والـ data بدقة تامة بغض النظر عن طريقة إرسالهما
         const id =
           arg?.id !== undefined
             ? arg.id
@@ -193,12 +177,10 @@ export const createGenericActions = (resource) => ({
         } else if (resource === "orphans") {
           response = await orphanService.updateOrphan(id, data);
         } else if (resource === "roles") {
-          response = await adminService.updateRole(id, data); // 👈 هنا سيصل الـ id الصحيح تماماً ولن يكون undefined أبدًا
+          response = await adminService.updateRole(id, data);
         } else if (resource === "beneficiaries") {
           response = await beneficiaryService.updateBeneficiary(id, data);
         } else if (resource === "sponsorships") {
-          // --- التعديل هنا خصيصاً لطلبات الكفالة ---
-          // بناء الـ FormData تماماً كما تتطلب الأند بوينت الصعبة
           const formData = new FormData();
           formData.append("status", data.status);
 
@@ -213,7 +195,6 @@ export const createGenericActions = (resource) => ({
             );
           }
 
-          // استدعاء الخدمة الخاصة بالكفالات لتنفيذ PATCH باستخدام FormData
           response = await sponsorshipsService.updateSponsorshipStatus(
             id,
             formData,
@@ -229,8 +210,6 @@ export const createGenericActions = (resource) => ({
     },
   ),
 
-  // أضف هذا داخل createGenericActions أو كـ Thunk مستقل:
-  // داخل createGenericActions:
   updateItemStatus: createAsyncThunk(
     `${resource}/updateStatus`,
     async ({ id, data }, { rejectWithValue }) => {
@@ -265,7 +244,6 @@ export const createGenericActions = (resource) => ({
             formData,
           );
 
-          // تأكدي من التعامل مع الرد سواء كان يحتوي على .data أو كان هو نفسه الرد
           return response?.data || response;
         } else {
           throw new Error(`Update status action not defined for ${resource}`);
@@ -306,7 +284,7 @@ export const createGenericSlice = (resource) => {
         items: [],
         status: "idle",
         selectedItem: null,
-        selectedDetails: null, // <--- أضيفي هذا
+        selectedDetails: null,
         detailsStatus: "idle",
         pagination: { currentPage: 1, lastPage: 1 },
         error: null,
@@ -326,9 +304,8 @@ export const createGenericSlice = (resource) => {
 
       extraReducers: (builder) => {
         builder
-          // --- حالات الجلب ---
+
           .addCase(fetchItems.pending, (state) => {
-            // ✅ التعديل هنا: منع تصفير الحالة إذا كانت الداتا موجودة أصلاً (لمنع الرفة)
             state.status = state.items.length > 0 ? "succeeded" : "loading";
             state.error = null;
           })
@@ -341,19 +318,15 @@ export const createGenericSlice = (resource) => {
               return;
             }
 
-            // 1. تحديد البيانات الخام (المصفوفة):
-            // إذا كان الـ payload نفسه مصفوفة نأخذه، وإلا نبحث عن مفتاح 'data'
             const itemsData = Array.isArray(payload)
               ? payload
               : payload?.data || [];
 
-            // 2. تحويل البيانات (تحويل الـ id إلى رقم):
             state.items = itemsData.map((item) => ({
               ...item,
               id: Number(item.id || item.donorId),
             }));
 
-            // 3. تحديث الـ pagination (فقط إذا وجد meta في الـ payload):
             const meta = payload?.meta;
             if (meta) {
               state.pagination = {
@@ -370,12 +343,10 @@ export const createGenericSlice = (resource) => {
             state.error = action.payload;
           })
 
-          // --- حالات الحذف ---
           .addCase(deleteItem.pending, (state) => {
             state.status = "loading";
           })
           .addCase(deleteItem.fulfilled, (state, action) => {
-            // بما أننا نرجع {id, message} من الـ Thunk، نستخدم action.payload.id
             state.items = state.items.filter(
               (item) => item.id !== action.payload.id,
             );
@@ -388,7 +359,6 @@ export const createGenericSlice = (resource) => {
             state.error = action.payload;
           })
 
-          // --- حالات الإضافة ---
           .addCase(addItem.pending, (state) => {
             state.status = "loading";
           })
@@ -401,12 +371,10 @@ export const createGenericSlice = (resource) => {
             state.error = action.payload;
           })
 
-          // --- حالات التحديث ---
           .addCase(updateItem.pending, (state) => {
             state.status = "loading";
           })
           .addCase(updateItem.fulfilled, (state, action) => {
-            // دعم الاحتمالين: سواء كان الرد مغلفاً بـ data أو مراجعاً للكائن مباشرة
             const updatedItem = action.payload?.data || action.payload;
 
             if (updatedItem && updatedItem.id) {
@@ -426,14 +394,13 @@ export const createGenericSlice = (resource) => {
             state.error = action.payload;
           })
 
-          // --- حالات الجلب المفرد ---
           .addCase(fetchItemById.pending, (state) => {
-            // ✅ التعديل هنا: منع تصفير selectedDetails إذا كانت موجودة مسبقاً لمنع الرفة
-            state.detailsStatus = state.selectedDetails ? "succeeded" : "loading";
-            // ❌ تم إزالة السطر الذي كان يفرغ البيانات: state.selectedDetails = null;
+            state.detailsStatus = state.selectedDetails
+              ? "succeeded"
+              : "loading";
           })
           .addCase(fetchItemById.fulfilled, (state, action) => {
-            state.selectedDetails = action.payload?.data || action.payload; // خزنّا في الـ Details
+            state.selectedDetails = action.payload?.data || action.payload;
             state.detailsStatus = "succeeded";
           })
           .addCase(fetchItemById.rejected, (state, action) => {
@@ -446,10 +413,8 @@ export const createGenericSlice = (resource) => {
           .addCase(updateItemStatus.fulfilled, (state, action) => {
             const updated = action.payload?.data || action.payload;
 
-            // حماية تامة للتأكد من أن items مصفوفة صالحة وليست undefined
             if (Array.isArray(state.items)) {
               state.items = state.items.map((item) => {
-                // مطابقة الـ ID بحذر (سواء كان ID مباشر أو داخل كائن فرعي)
                 const itemId = item.id;
                 const updatedId = updated?.id;
                 const orphanId = updated?.orphan?.id;
@@ -464,7 +429,6 @@ export const createGenericSlice = (resource) => {
               });
             }
 
-            // تحديث التفاصيل المحددة إذا كانت مطابقة
             if (
               state.selectedDetails?.id === updated?.id ||
               state.selectedDetails?.id === updated?.orphan?.id

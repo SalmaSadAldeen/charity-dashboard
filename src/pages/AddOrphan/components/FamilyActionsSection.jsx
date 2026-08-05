@@ -1,12 +1,12 @@
 import { FileText, Upload } from "lucide-react";
-import { useRef } from "react"; // 1. استيراد useRef
+import { useRef } from "react";
 
 export default function FamilyActionsSection({
   formData,
   handleInputChange,
   t,
 }) {
-  // 2. تعريف المرجع للتحكم في الحقل المخفي
+
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {

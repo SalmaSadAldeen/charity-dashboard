@@ -40,7 +40,6 @@ export const RequestAttachmentsCard = ({ mediaUrls, t, lang }) => {
 
   const images = attachments.filter((item) => item.isImage);
 
-  // لوجيك التنزيل الفعلي على اللابتوب
   const handleDownload = async (e, url, fileName) => {
     e.stopPropagation();
     try {
@@ -59,7 +58,6 @@ export const RequestAttachmentsCard = ({ mediaUrls, t, lang }) => {
     }
   };
 
-  // التنقل بالمعرض (يمين/يسار) بدالة وحدة مختصرة
   const handleNavigate = (e, direction) => {
     e.stopPropagation();
     setSelectedIndex((prev) => 
@@ -85,7 +83,6 @@ export const RequestAttachmentsCard = ({ mediaUrls, t, lang }) => {
         </span>
       </div>
 
-      {/* شبكة المرفقات */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         {attachments.map((att, index) => {
           const imgIndex = images.findIndex((img) => img.fullUrl === att.fullUrl);
@@ -135,7 +132,6 @@ export const RequestAttachmentsCard = ({ mediaUrls, t, lang }) => {
         })}
       </div>
 
-      {/* معاينة الصورة المكبّرة */}
       {activeImage && (
         <div className="relative mt-5 bg-surface-lowest rounded-3xl p-4 sm:p-5 shadow-xl border border-border/80 space-y-4 animate-in fade-in duration-300">
           <div className="flex items-center justify-between pb-3 border-b border-border/60">

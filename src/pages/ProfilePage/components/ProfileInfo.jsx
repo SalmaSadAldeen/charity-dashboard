@@ -11,9 +11,7 @@ import {
 export function ProfileInfo({ profileData, t, formatDate }) {
   return (
     <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
-      {/* كارد معلومات الحساب */}
       <div className="bg-surface-lowest rounded-3xl p-6 sm:p-8 shadow-md hover:shadow-lg transition-all duration-300 border border-border/80 flex flex-col gap-6">
-        {/* عنوان القسم */}
         <div className="flex items-center justify-between pb-4 border-b border-border/60">
           <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-3">
             <div className="p-2.5 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-2xs shrink-0">
@@ -25,9 +23,7 @@ export function ProfileInfo({ profileData, t, formatDate }) {
           </h3>
         </div>
 
-        {/* شبكة البطاقات */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* الاسم الأول */}
           <div className="p-4 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 hover:border-primary/30 transition-all duration-200 flex flex-col justify-center gap-1.5 shadow-2xs group/item">
             <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider truncate group-hover/item:text-primary transition-colors">
               {t("firstName") || "الاسم الأول"}
@@ -37,7 +33,6 @@ export function ProfileInfo({ profileData, t, formatDate }) {
             </span>
           </div>
 
-          {/* اسم العائلة */}
           <div className="p-4 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 hover:border-primary/30 transition-all duration-200 flex flex-col justify-center gap-1.5 shadow-2xs group/item">
             <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider truncate group-hover/item:text-primary transition-colors">
               {t("lastName") || "اسم العائلة"}
@@ -47,7 +42,6 @@ export function ProfileInfo({ profileData, t, formatDate }) {
             </span>
           </div>
 
-          {/* الجنس */}
           <div className="p-4 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 hover:border-primary/30 transition-all duration-200 flex flex-col justify-center gap-1.5 shadow-2xs group/item">
             <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5 truncate group-hover/item:text-primary transition-colors">
               <UserCheck className="w-3.5 h-3.5 text-primary shrink-0" />
@@ -58,7 +52,6 @@ export function ProfileInfo({ profileData, t, formatDate }) {
             </span>
           </div>
 
-          {/* تاريخ الميلاد (تم تكبير خط التاريخ قليلاً وجعله أوضح) */}
           <div className="p-4 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 hover:border-primary/30 transition-all duration-200 flex flex-col justify-center gap-1.5 shadow-2xs group/item">
             <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5 truncate group-hover/item:text-primary transition-colors">
               <Calendar className="w-3.5 h-3.5 text-primary shrink-0" />
@@ -74,7 +67,6 @@ export function ProfileInfo({ profileData, t, formatDate }) {
             </span>
           </div>
 
-          {/* البريد الإلكتروني */}
           <div className="p-4 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 hover:border-primary/30 transition-all duration-200 flex flex-col justify-center gap-1.5 sm:col-span-2 shadow-2xs group/item">
             <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5 truncate group-hover/item:text-primary transition-colors">
               <Mail className="w-3.5 h-3.5 text-primary shrink-0" />
@@ -90,7 +82,6 @@ export function ProfileInfo({ profileData, t, formatDate }) {
             </span>
           </div>
 
-          {/* رقم الهاتف */}
           {profileData.number && (
             <div className="p-4 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 hover:border-primary/30 transition-all duration-200 flex flex-col justify-center gap-1.5 sm:col-span-2 shadow-2xs group/item">
               <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5 truncate group-hover/item:text-primary transition-colors">
@@ -109,7 +100,6 @@ export function ProfileInfo({ profileData, t, formatDate }) {
           )}
         </div>
 
-        {/* الصلاحيات والأدوار والحالة الأمنية */}
         <div className="flex flex-col gap-5 pt-6 border-t border-border/60">
           <div className="flex items-center justify-between">
             <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-3">
@@ -122,7 +112,6 @@ export function ProfileInfo({ profileData, t, formatDate }) {
             </h3>
           </div>
           <div className="flex flex-col gap-5 pt-6 border-t border-border/60">
-            {/* شارات الصلاحيات */}
             <div className="flex flex-wrap items-center gap-2.5">
               {profileData.roles && profileData.roles.length > 0 ? (
                 profileData.roles.map((role) => (
@@ -141,7 +130,6 @@ export function ProfileInfo({ profileData, t, formatDate }) {
               )}
             </div>
 
-            {/* شريط الحالة الأمنية الثابت */}
             <div className="pt-2 flex items-center justify-center">
               <div className="w-full p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-black tracking-wide flex items-center justify-center gap-2.5 shadow-2xs">
                 <Lock className="w-4 h-4 text-emerald-600 shrink-0" />

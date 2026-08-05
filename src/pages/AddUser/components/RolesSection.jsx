@@ -1,29 +1,14 @@
-// RolesSection.jsx
 import { ShieldCheck } from "lucide-react";
-import { fetchRoles } from "@/store/index";
-// داخل ملف RolesSection.jsx
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-// تأكدي أن هذا هو مسار التصدير الصحيح// استيراد
+
+
 export default function RolesSection({
   roles,
   formData,
   toggleRole,
   t,
   errors,
-  lang, // أضيفي lang هنا
+  lang,
 }) {
-  //console.log("Roles from Redux in Edit:", roles);
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   // إذا كانت المصفوفة فارغة، نجبر الـ Slice على جلبها مرة أخرى
-  //   if (!roles || roles.length === 0) {
-  //     //console.log("Roles are empty, fetching from server...");
-  //     dispatch(fetchRoles());
-  //   }
-  // }, [dispatch]); // سيعيد الجلب فقط إذا تغيرت الـ roles وكانت فارغة
-  // const roles = useSelector((state) => state.roles.items); // يجب أن يكون 'state.roles'
-
   if (!roles || roles.length === 0) {
     return <div className="p-4">{t("loadingRoles")}...</div>;
   }
@@ -38,7 +23,6 @@ export default function RolesSection({
         {" "}
         {Array.isArray(roles) &&
           roles.map((role) => {
-            // role.id هنا هو رقم بالفعل!
             const isSelected = formData?.roleIds?.includes(role.id);
             return (
               <button
