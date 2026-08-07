@@ -11,10 +11,12 @@ export const adminService = {
   updateEmployee: (id, data) => API.patch(`/employee/${id}`, data),
 
   getDashboardStats: () => API.get("/admin/dashboard/summary"),
-  getDistributionCharts: (view = "monthly") =>
-    API.get(`/admin/dashboard/charts/distributions?view=${view}`),
-  getRequestsCharts: () => API.get(`/admin/dashboard/charts/requests`),
+  getDistributionCharts: (period = "monthly") =>
+    API.get(`/api/admin/dashboard/charts/distributions?period=${period}`),
+  getRequestsCharts: () => API.get(`/api/admin/dashboard/charts/requests`),
 
+  getSponsorshipsStats: () => API.get("/api/admin/dashboard/sponsorships"),
+  getOrphansStats: () => API.get("/api/admin/dashboard/orphans"),
   getProfile: () => API.get("/api/profile"),
 
   getRoles: () => API.get("/roles").then((res) => res.data.data),
@@ -30,4 +32,6 @@ export const adminService = {
   getPermissions: () => {
     return API.get("/roles/permissions");
   },
+
+  logout: () => API.post("/auth/logout"),
 };

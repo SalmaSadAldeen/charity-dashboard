@@ -10,6 +10,7 @@ import { fetchOrphanById } from "@/store/index";
 import { useGenericDelete } from "@/hooks/useGenericDelete";
 import ConfirmModal from "@/pages/EmployeesDirectory/components/ConfirmModal";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
+import OrphanReportModal from "./components/OrphanReportModal";
 
 export default function OrphanProfilePage() {
   const { t, lang } = useTranslation();
@@ -22,10 +23,9 @@ export default function OrphanProfilePage() {
   const { selectedDetails: orphan, status } = useSelector(
     (state) => state.orphans,
   );
-
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   const hasExistingOrphan = orphan && String(orphan.id) === String(id);
-
 
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingOrphan);
@@ -34,7 +34,6 @@ export default function OrphanProfilePage() {
 
   useEffect(() => {
     if (id) {
-
       if (!hasExistingOrphan) {
         setHasLoadedAtLeastOnce(false);
       }
@@ -45,12 +44,20 @@ export default function OrphanProfilePage() {
     }
   }, [id, lang, dispatch, hasExistingOrphan]);
 
-
   const showSkeleton =
     isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingOrphan);
 
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+      {/* زر إصدار التقرير السنوي */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => setIsReportModalOpen(true)}
+          className="bg-green-700 hover:bg-green-800 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-sm flex items-center gap-2"
+        >
+          📄 إصدار التقرير السنوي
+        </button>
+      </div>{" "}
       {/* 1. رأس الملف الشخصي */}
       {showSkeleton ? (
         <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-40 flex items-center justify-between animate-pulse w-full">
@@ -74,7 +81,6 @@ export default function OrphanProfilePage() {
           t={t}
         />
       ) : null}
-
       {/* 2. الأقسام السفلية */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
@@ -99,7 +105,6 @@ export default function OrphanProfilePage() {
           ) : null}
         </div>
       </div>
-
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         onConfirm={async () => {
@@ -110,6 +115,13 @@ export default function OrphanProfilePage() {
         }}
         onCancel={() => setIsDeleteModalOpen(false)}
         isLoading={isDeleting}
+      />
+      <OrphanReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        orphan={orphan}
+        t={t}
+        lang={lang}
       />
     </div>
   );

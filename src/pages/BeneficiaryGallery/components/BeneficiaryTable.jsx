@@ -147,7 +147,8 @@ export default function BeneficiaryTable({ data, isLoading, onRowClick }) {
                 </td>
               </tr>
             ))
-          ) : (
+          ) : !isLoading && data && data.length === 0 ? (
+            /* 3. رسالة لا توجد بيانات تظهر فقط بعد انتهاء التحميل إذا كانت القائمة فارغة حقاً */
             <tr>
               <td
                 colSpan="4"
@@ -159,7 +160,7 @@ export default function BeneficiaryTable({ data, isLoading, onRowClick }) {
                     : "No data available")}
               </td>
             </tr>
-          )}
+          ) : null}
         </tbody>
       </table>
     </div>

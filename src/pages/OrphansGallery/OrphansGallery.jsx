@@ -5,6 +5,7 @@ import { OrphanCard } from "@/pages/OrphansGallery/components/OrphanCard";
 import { useTranslation } from "@/hooks/useTranslation";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
+import { fetchOrphansStats } from "@/store/dashboardSlice"; // تأكدي أن مسار الـ slice صحيح لديكِ
 import {
   Plus,
   ChevronLeft,
@@ -19,14 +20,15 @@ import {
   updateSponsorshipStatus,
   fetchSponsorships,
 } from "@/store/index";
-
+import OrphansStatsCard from "./components/OrphansStatsCard";
 export default function OrphansGallery() {
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-
-
+  const { orphansStats } = useSelector(
+    (state) => state.dashboard || state.orphans,
+  );
   const selectMode = searchParams.get("mode") === "select";
   const targetSponsorshipId = searchParams.get("sponsorshipId");
 
@@ -45,13 +47,10 @@ export default function OrphansGallery() {
 
   const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
-
   const hasExistingItems = Array.isArray(items) && items.length > 0;
-
 
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingItems);
-
 
   useEffect(() => {
     if (!hasExistingItems) {
@@ -75,8 +74,9 @@ export default function OrphansGallery() {
     selectMode,
     hasExistingItems,
   ]);
-
-
+  useEffect(() => {
+    dispatch(fetchOrphansStats());
+  }, [dispatch]);
   const handleFilterChange = (val) => {
     if (selectMode) return;
     setSupportedFilter(val);
@@ -90,7 +90,6 @@ export default function OrphansGallery() {
     );
   };
 
-
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     dispatch(
@@ -101,7 +100,6 @@ export default function OrphansGallery() {
       }),
     );
   };
-
 
   const handleConfirmSelection = async () => {
     if (!selectedOrphanId || !targetSponsorshipId) return;
@@ -124,7 +122,6 @@ export default function OrphansGallery() {
     { label: t("isSupported"), value: true, icon: <CheckCircle size={16} /> },
     { label: t("notSupported"), value: false, icon: <XCircle size={16} /> },
   ];
-
 
   const showSkeleton =
     isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingItems);
@@ -179,6 +176,13 @@ export default function OrphansGallery() {
             <Plus size={20} /> {t("addOrphan")}
           </button>
         )}
+      </div>
+      <div className="mb-6">
+        <OrphansStatsCard
+          t={t}
+          sponsored={orphansStats?.sponsored || 0}
+          notSponsored={orphansStats?.not_sponsored || 0}
+        />
       </div>
 
       {/* شريط الفلترة */}

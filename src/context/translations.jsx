@@ -1,7 +1,4 @@
 export const translations = {
-
-
-
   en: {
     rolesCount: "Custom Roles ",
     securityStatussecured: "Account is fully secured",
@@ -12,7 +9,6 @@ export const translations = {
     account: "Account",
     logout: "Secure Logout",
     close: "Close",
-
 
     dashboard: "General Dashboard",
     dashboardTitle: "Global Association Analytics",
@@ -33,15 +29,15 @@ export const translations = {
     addNewRole: "Add New Role",
     editRoleAndPermissions: "Edit Role & Permissions",
 
-
     total: "Total",
-    edu: "Educational",
+
     fin: "Financial",
+
+    edu: "Educational",
     med: "Medical",
     food: "Food",
     hou: "Housing",
     proj: "Projects",
-
 
     email: "Email Address",
     securePassword: "Secure Password",
@@ -69,6 +65,10 @@ export const translations = {
     cancellation_source: "Cancellation Source",
     rejection_reason: "Rejection Reason",
     created_at: "Created At",
+    orphansSponsorshipOverview: "Orphans Sponsorship Status",
+    totalOrphans: "Total Orphans",
+    sponsored: "Sponsored",
+    notSponsored: "Not Sponsored",
 
     donor_info: "Donor Information",
     donor_name: "Donor Name",
@@ -131,7 +131,6 @@ export const translations = {
       "Are you sure you want to delete this role? This action cannot be undone.",
     cancel: "Cancel",
 
-
     roleNameAr: "Role Name (Arabic)",
     roleNameEn: "Role Name (English)",
     roleNameArPlaceholder: "e.g. System Supervisor",
@@ -139,7 +138,6 @@ export const translations = {
     availablePermissions: "Available Permissions",
     updateRole: "Update Role",
     saveRole: "Save Role",
-
 
     beneficiaries: "Beneficiaries Management",
     beneficiariesList: "Beneficiaries List",
@@ -182,7 +180,6 @@ export const translations = {
     loading_data: "Loading data...",
     error_loading_data: "Error loading data",
 
-
     orphans: "Orphans & Sponsorships",
     orphansList: "Orphan Records",
     orphansDescription: "Manage and track registered orphans records.",
@@ -193,12 +190,10 @@ export const translations = {
     uploadFamilyStatement: "Upload Family Statement",
     guaranteedPhone: "Guaranteed Phone",
 
-
     donors: "Donors Management",
     campaigns: "Campaigns & Projects",
     totalDonors: "Total Donors",
     totalBeneficiaries: "Total Beneficiaries",
-
 
     fatherName: "Father's Name",
     motherName: "Mother's Name",
@@ -232,7 +227,6 @@ export const translations = {
     currentPhoto: "Current Photo",
     joinedAt: "Joined At",
 
-
     PENDING: "Pending",
     ACCEPTED: "Accepted",
     REJECTED: "Rejected",
@@ -241,7 +235,6 @@ export const translations = {
     accepted: "Accepted",
     rejected: "Rejected",
     cancelled: "Cancelled",
-
 
     sponsorships: "Sponsorships Management",
     sponsorshipsList: "Sponsorship Requests List",
@@ -259,7 +252,7 @@ export const translations = {
     filterCancelled: "Cancelled",
     noSponsorships: "No sponsorship requests available at the moment",
     loadingSponsorships: "Loading sponsorship requests...",
-
+    monthly: "monthly",
     FOOD_BASKET: "Food Basket",
     BABY_MILK: "Baby Milk",
     MEDICINE_INSURANCE: "Medicine Insurance",
@@ -270,7 +263,8 @@ export const translations = {
     DIPLOMA: "DIPLOMA",
     BACHELOR: "BACHELOR",
     MASTER: "MASTER",
-
+    totalSponsorship: "totalSponsorship",
+    sponsorshipsStatistics: "Sponsorships Statistics",
     SINGLE: "Single",
     MARRIED: "Married",
     WIDOWED: "Widowed",
@@ -289,7 +283,6 @@ export const translations = {
     contactInfo: "Contact Info",
     sponsorStatus: "Sponsor Status",
     joinDate: "Join Date",
-
 
     academicAchievement: "Academic Level",
     institutionName: "Institution / University",
@@ -332,7 +325,6 @@ export const translations = {
       "The record will be deleted permanently, are you sure?",
     ar: "Arabic",
     en: "English",
-
 
     note: "Note",
     phoneMustBe10Digits: "Phone number must be 10 digits",
@@ -378,11 +370,7 @@ export const translations = {
     rolesAndPermissions: "Roles & Permissions",
   },
 
-
-
-
   ar: {
-
     logoSubtitle: "نظام إدارة الجمعيات الخيرية",
     coreOps: "العمليات الأساسية",
     sysControl: "إدارة النظام والتحكم",
@@ -414,7 +402,6 @@ export const translations = {
     hou: "سكني",
     proj: "مشاريع",
 
-
     email: "البريد الإلكتروني",
     securePassword: "كلمة المرور الآمنة",
     keepMeLoggedIn: "ابقني مسجل الدخول",
@@ -423,7 +410,6 @@ export const translations = {
     loginFooterNote: "الوصول مقيد. يرجى التواصل مع مدير النظام.",
     charityOSAccess: "نظام CharityOS - وصول إداري",
     authorizedCredentialsNote: "يرجى إدخال بيانات الاعتماد المعتمدة.",
-
 
     addNewSystemUser: "إضافة مستخدم نظام جديد",
     primaryUserIdentity: "معلومات الهوية الأساسية",
@@ -452,14 +438,14 @@ export const translations = {
     saveChanges: "حفظ التعديلات",
     editProfile: "تعديل الملف",
     Profile: " البروفايل",
-
+    monthly: "شهري",
+    totalSponsorship: "إجمالي الكفالات",
     youAreEditingEmployeeInfo: "أنت تعدل معلومات الموظف",
     employeesRecord: "سجل الموظفين",
     addEmployee: "إضافة موظف",
     employees: "إدارة شؤون الموظفين",
     employee: "الموظف",
     jobRole: "الدور الوظيفي",
-
 
     roleNameAr: "اسم الدور (عربي)",
     roleNameEn: "اسم الدور (إنجليزي)",
@@ -469,7 +455,6 @@ export const translations = {
     updateRole: "تحديث الدور",
     saveRole: "حفظ الدور",
     editRoleAndPermissions: "تعديل الدور والصلاحيات",
-
 
     beneficiaries: "إدارة شؤون المستفيدين",
     beneficiariesList: "قائمة المستفيدين",
@@ -523,7 +508,6 @@ export const translations = {
     joinDate: "تاريخ الانضمام",
     back: "السابق",
 
-
     orphans: "شؤون الأيتام والكفالات",
     orphansList: "سجل الأيتام",
     orphansDescription: "تصفح وإدارة بيانات الأيتام المسجلين.",
@@ -537,7 +521,6 @@ export const translations = {
     rolesManagementTitle: "إدارة الأدوار والصلاحيات",
     rolesManagementSubtitle: "إدارة أدوار النظام وتخصيص الصلاحيات للموظفين",
     addNewRole: "إضافة دور جديد",
-
 
     donors: "إدارة شؤون المتبرعين",
     campaigns: "إدارة الحملات والمشاريع",
@@ -578,7 +561,6 @@ export const translations = {
     additionalDetails: "تفاصيل إضافية",
     currentPhoto: "الصورة الحالية",
     joinedAt: "تاريخ الانضمام",
-
 
     sponsorships: "إدارة الكفالات",
     sponsorshipsList: "قائمة طلبات الكفالات",
@@ -645,7 +627,6 @@ export const translations = {
     delete: "حذف",
     protectedRoleTooltip: "دور محمي من النظام لا يمكن حذفه",
 
-
     pending: "قيد الانتظار",
     accepted: "مقبول",
     rejected: "مرفوض",
@@ -677,7 +658,6 @@ export const translations = {
     employed: "يعمل",
     isUnemployed: "هل هو عاطل عن العمل؟",
 
-
     academicAchievement: "المستوى التعليمي",
     institutionName: "اسم المؤسسة / الجامعة",
     academicYear: "السنة الدراسية",
@@ -691,7 +671,6 @@ export const translations = {
     housingSpecifications: "مواصفات السكن",
     reasonForLock: "سبب الإغلاق / القفل",
 
-
     search: "بحث...",
     view_profile: "عرض التفاصيل",
     view_details: "عرض التفاصيل",
@@ -701,7 +680,7 @@ export const translations = {
     showing: "عرض",
     from: "من",
     all: "الكل",
-
+    sponsorshipsStatistics: "إحصائيات الكفالات",
     days: "يوم",
     years: "سنة",
     closeDetails: "إغلاق التفاصيل",
@@ -719,8 +698,10 @@ export const translations = {
     dateTime: "التاريخ والوقت",
     loadingHistory: "جاري تحميل السجل...",
     noFinancialRecords: "لا توجد حركات مالية مسجلة لهذا المتبرع حالياً",
-
-
+    orphansSponsorshipOverview: "حالة كفالة الأيتام",
+    totalOrphans: "إجمالي الأيتام",
+    sponsored: "مكفول",
+    notSponsored: "غير مكفول",
     note: "ملاحظة",
     phoneMustBe10Digits: "رقم الهاتف يجب أن يتكون من 10 أرقام",
     mustBeGreaterThanZero: "يجب أن تكون القيمة أكبر من صفر",

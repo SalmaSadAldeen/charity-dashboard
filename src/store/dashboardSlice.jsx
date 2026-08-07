@@ -12,15 +12,32 @@ export const fetchDashboardStats = createAsyncThunk(
 
 export const fetchCharts = createAsyncThunk(
   "dashboard/fetchCharts",
-  async (view) => {
-    const response = await adminService.getDistributionCharts(view);
+  async (period) => {
+    const response = await adminService.getDistributionCharts(period);
     return response.data;
   },
 );
+
 export const fetchRequestsCharts = createAsyncThunk(
   "dashboard/fetchRequests",
   async () => {
     const response = await adminService.getRequestsCharts();
+    return response.data;
+  },
+);
+
+export const fetchSponsorshipsStats = createAsyncThunk(
+  "dashboard/fetchSponsorshipsStats",
+  async () => {
+    const response = await adminService.getSponsorshipsStats();
+    return response.data;
+  },
+);
+
+export const fetchOrphansStats = createAsyncThunk(
+  "dashboard/fetchOrphansStats",
+  async () => {
+    const response = await adminService.getOrphansStats();
     return response.data;
   },
 );
@@ -32,6 +49,7 @@ export const fetchBeneficiaryStats = createAsyncThunk(
     return response.data;
   },
 );
+
 const initialState = {
   stats: null,
   charts: [],
@@ -39,6 +57,8 @@ const initialState = {
   error: null,
   beneficiariesStats: null,
   requestsCharts: [],
+  sponsorshipsStats: null,
+  orphansStats: null,
 };
 
 const dashboardSlice = createSlice({
@@ -52,7 +72,7 @@ const dashboardSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-
+      // Dashboard Stats
       .addCase(fetchDashboardStats.pending, (state) => {
         state.isLoading = true;
       })
@@ -60,14 +80,32 @@ const dashboardSlice = createSlice({
         state.isLoading = false;
         state.stats = action.payload;
       })
-      .addCase(fetchRequestsCharts.fulfilled, (state, action) => {
+      .addCase(fetchDashboardStats.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      })
 
+      // Requests Charts
+      .addCase(fetchRequestsCharts.fulfilled, (state, action) => {
         state.requestsCharts = action.payload;
       })
 
+      // Distribution Charts
       .addCase(fetchCharts.fulfilled, (state, action) => {
         state.charts = action.payload;
       })
+
+      // 🌟 Sponsorships Stats (הتم إضافتها هنا)
+      .addCase(fetchSponsorshipsStats.fulfilled, (state, action) => {
+        state.sponsorshipsStats = action.payload;
+      })
+
+      // 🌟 Orphans Stats (تم إضافتها هنا)
+      .addCase(fetchOrphansStats.fulfilled, (state, action) => {
+        state.orphansStats = action.payload;
+      })
+
+      // Beneficiary Stats
       .addCase(fetchBeneficiaryStats.fulfilled, (state, action) => {
         state.beneficiariesStats = action.payload;
       })

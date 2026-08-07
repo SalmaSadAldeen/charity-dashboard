@@ -6,7 +6,8 @@ import SponsorshipCard from "./components/SponsorshipCard";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import { Clock, CheckCircle, XCircle, LayoutGrid } from "lucide-react";
-
+import SponsorshipsStatsCard from "./components/SponsorshipsStatsCard";
+import { fetchSponsorshipsStats } from "@/store/dashboardSlice"; // أو المكان الصحيح
 export default function SponsorshipsPage() {
   const dispatch = useDispatch();
   const { t, lang } = useTranslation();
@@ -14,10 +15,10 @@ export default function SponsorshipsPage() {
   const { items: sponsorships, status } = useSelector(
     (state) => state.sponsorships,
   );
+  const { sponsorshipsStats } = useSelector((state) => state.dashboard);
 
   const [currentStatus, setCurrentStatus] = useState("");
   const isReallyLoading = useDelayedLoading(status === "loading", 100);
-
 
   const hasExistingItems =
     Array.isArray(sponsorships) && sponsorships.length > 0;
@@ -25,9 +26,7 @@ export default function SponsorshipsPage() {
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingItems);
 
-
   useEffect(() => {
-
     if (!hasExistingItems) {
       setHasLoadedAtLeastOnce(false);
     }
@@ -40,7 +39,9 @@ export default function SponsorshipsPage() {
   const handleFilterChange = (val) => {
     setCurrentStatus(val);
   };
-
+  useEffect(() => {
+    dispatch(fetchSponsorshipsStats());
+  }, [dispatch]);
   const filters = [
     { label: t("all") || "الكل", value: "", icon: <LayoutGrid size={16} /> },
     {
@@ -56,7 +57,6 @@ export default function SponsorshipsPage() {
       icon: <XCircle size={16} />,
     },
   ];
-
 
   const showSkeleton =
     isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingItems);
@@ -74,7 +74,9 @@ export default function SponsorshipsPage() {
           {t("sponsorshipsDescription")}
         </p>
       </div>
-
+      <div className="mb-6">
+        <SponsorshipsStatsCard stats={sponsorshipsStats} t={t} />{" "}
+      </div>
       <FilterBar
         filters={filters}
         active={currentStatus}

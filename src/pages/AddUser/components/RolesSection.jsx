@@ -1,6 +1,5 @@
 import { ShieldCheck } from "lucide-react";
 
-
 export default function RolesSection({
   roles,
   formData,
@@ -35,7 +34,7 @@ export default function RolesSection({
                     : "border-[#e5e1da] bg-surface-lowest hover:border-primary/50"
                 }`}
               >
-                {lang === "ar" ? role.label : role.name}{" "}
+                {role.label || role.name}{" "}
               </button>
             );
           })}

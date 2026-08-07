@@ -1,5 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { adminService } from "@/services/adminService";
 
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await adminService.logout();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Logout failed");
+    }
+  },
+);
 const initialState = {
   user: null,
   isAuthenticated: false,
@@ -11,6 +23,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    // دال الـ Login تبعتك مثل ما هي تماماً بدون أي تغيير
     loginStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -24,13 +37,23 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
-    logout: (state) => {
-      state.user = null;
-      state.isAuthenticated = false;
-    },
+    // شلنا الـ logout العادية لأن الـ Thunk تحت صار يقوم بالمهمة لحاله!
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(logoutUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } =
-  authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure } = authSlice.actions;
 export default authSlice.reducer;

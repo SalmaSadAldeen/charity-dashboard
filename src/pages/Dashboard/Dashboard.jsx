@@ -11,24 +11,28 @@ import {
 } from "@/store/dashboardSlice";
 
 export default function Dashboard() {
-  const [view, setView] = useState("weekly");
+  const [period, setPeriod] = useState("monthly"); // 👈 استخدام period بدلاً من view
   const dispatch = useDispatch();
 
   const { t, lang } = useTranslation();
-  const { stats, charts } = useSelector((state) => state.dashboard);
-
+  const { stats, charts, requestsCharts } = useSelector(
+    (state) => state.dashboard,
+  );
   useEffect(() => {
     dispatch(fetchDashboardStats());
-    dispatch(fetchCharts("monthly"));
     dispatch(fetchRequestsCharts());
-  }, [dispatch]);
+  }, [dispatch, lang]); // أضفنا lang هنا ليعيد الجلب عند تغيير اللغة
+
+  // 👈 جلب بيانات الرسوم البيانية عند تغير الـ period أو تغير اللغة
+  useEffect(() => {
+    dispatch(fetchCharts(period));
+  }, [dispatch, period, lang]); // أضفنا lang هنا أيضاً
 
   return (
     <main
       dir={lang === "ar" ? "rtl" : "ltr"}
       className="p-8 bg-surface-container text-on-surface-variant min-h-screen"
     >
-      {/* العنوان */}
       <div className="mb-8">
         <h2 className="text-[32px] font-bold text-on-surface-variant mb-1">
           {t("dashboardTitle")}
@@ -38,9 +42,8 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* 1. التوزيع الجديد للإحصائيات: كارد التبرعات بياخد 3 أعمدة من أصل 4، وجنبه كارد صغير ليكون التوزيع متوازن */}
+      {/* الكاردات العليا */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* بطاقة إجمالي التبرعات (عريضة ومرتبة بس مو واخدة كل الشاشة) */}
         <div className="lg:col-span-3 bg-primary-container p-6 rounded-3xl shadow-sm text-primary relative overflow-hidden border border-white/30 flex flex-col justify-between">
           <span className="material-symbols-outlined absolute right-4 -bottom-4 text-[120px] opacity-10 pointer-events-none select-none">
             payments
@@ -62,7 +65,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* الكارد الصغير الأول بجانب التبرعات */}
         <div className="lg:col-span-1">
           <StatCard
             icon="task_alt"
@@ -76,7 +78,6 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* الكاردين الباقيين تحت بالصدارة */}
         <div className="lg:col-span-2">
           <StatCard
             icon="category"
@@ -100,21 +101,26 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 2. الرسوم البيانية: فرض ارتفاع موحد بالـ flex وforced min-h لحتى يتعبو من جوا ويصيرو قد بعض تماماً */}
+      {/* الرسوم البيانية */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         <div className="bg-surface-lowest p-3 rounded-3xl shadow-sm border border-border flex flex-col h-[480px]">
           <div className="flex-1 w-full h-full flex flex-col [&>div]:h-full [&>div]:flex-1">
             <DonationChart
-              view={view}
-              setView={setView}
+              period={period}
+              setPeriod={setPeriod}
               currentData={charts || []}
               t={t}
+              lang={lang}
             />
           </div>
         </div>
         <div className="bg-surface-lowest p-3 rounded-3xl shadow-sm border border-border flex flex-col h-[480px]">
           <div className="flex-1 w-full h-full flex flex-col [&>div]:h-full [&>div]:flex-1">
-            <RequestsChart t={t} dataFromBackend={stats?.requests_data} />
+            <RequestsChart
+              t={t}
+              dataFromBackend={requestsCharts || []}
+              lang={lang}
+            />
           </div>
         </div>
       </div>
