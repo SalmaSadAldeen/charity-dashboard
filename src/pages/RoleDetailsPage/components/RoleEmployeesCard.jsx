@@ -29,9 +29,7 @@ export default function RoleEmployeesCard({ employees, t }) {
                 <p className="text-sm font-semibold text-on-surface group-hover:text-primary transition-colors">
                   {emp.firstName} {emp.lastName}
                 </p>
-                <p className="text-xs text-on-surface-variant/60 font-mono mt-0.5">
-                  ID: {emp.userId}
-                </p>
+               
               </div>
             </div>
           ))

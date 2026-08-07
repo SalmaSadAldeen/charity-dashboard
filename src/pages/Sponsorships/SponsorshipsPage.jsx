@@ -5,21 +5,36 @@ import { useTranslation } from "@/hooks/useTranslation";
 import SponsorshipCard from "./components/SponsorshipCard";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
-import { Clock, CheckCircle, XCircle, LayoutGrid } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import {
+  Clock,
+  CheckCircle,
+  XCircle,
+  LayoutGrid,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import SponsorshipsStatsCard from "./components/SponsorshipsStatsCard";
-import { fetchSponsorshipsStats } from "@/store/dashboardSlice"; // أو المكان الصحيح
+import { fetchSponsorshipsStats } from "@/store/dashboardSlice";
+
+const ITEMS_PER_PAGE = 2;
+
 export default function SponsorshipsPage() {
   const dispatch = useDispatch();
   const { t, lang } = useTranslation();
 
-  const { items: sponsorships, status } = useSelector(
-    (state) => state.sponsorships,
-  );
+  const {
+    items: sponsorships,
+    status,
+    pagination,
+  } = useSelector((state) => state.sponsorships);
   const { sponsorshipsStats } = useSelector((state) => state.dashboard);
 
-  const [currentStatus, setCurrentStatus] = useState("");
-  const isReallyLoading = useDelayedLoading(status === "loading", 100);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentStatus = searchParams.get("status") || "";
+  const currentPage = Number(searchParams.get("page")) || 1;
 
+  const isReallyLoading = useDelayedLoading(status === "loading", 100);
   const hasExistingItems =
     Array.isArray(sponsorships) && sponsorships.length > 0;
 
@@ -31,17 +46,38 @@ export default function SponsorshipsPage() {
       setHasLoadedAtLeastOnce(false);
     }
 
-    dispatch(fetchSponsorships({ status: currentStatus })).then(() => {
+    dispatch(
+      fetchSponsorships({
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+        status: currentStatus,
+      }),
+    ).then(() => {
       setHasLoadedAtLeastOnce(true);
     });
-  }, [lang, currentStatus, dispatch]);
+  }, [lang, currentStatus, currentPage, dispatch]);
 
   const handleFilterChange = (val) => {
-    setCurrentStatus(val);
+    const params = new URLSearchParams(searchParams);
+    if (val) {
+      params.set("status", val);
+    } else {
+      params.delete("status");
+    }
+    params.set("page", "1");
+    setSearchParams(params);
   };
+
+  const handlePageChange = (newPage) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(newPage));
+    setSearchParams(params);
+  };
+
   useEffect(() => {
     dispatch(fetchSponsorshipsStats());
   }, [dispatch]);
+
   const filters = [
     { label: t("all") || "الكل", value: "", icon: <LayoutGrid size={16} /> },
     {
@@ -60,6 +96,12 @@ export default function SponsorshipsPage() {
 
   const showSkeleton =
     isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingItems);
+
+  const lastPage =
+    pagination?.lastPage ||
+    pagination?.totalPages ||
+    pagination?.last_page ||
+    1;
 
   return (
     <div
@@ -84,7 +126,7 @@ export default function SponsorshipsPage() {
       />
 
       {/* منطقة عرض الكاردات مع التحكم الكامل بمراحل الظهور */}
-      <div className="relative min-h-[300px] flex flex-col">
+      <div className="relative min-h-[300px] flex flex-col justify-between">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {showSkeleton ? (
             /* 1. حالة التحميل الأولى عندما لا توجد أي بيانات سابقة */
@@ -142,6 +184,39 @@ export default function SponsorshipsPage() {
             </div>
           ) : null}
         </div>
+
+        {/* الـ Pagination */}
+        {!showSkeleton && lastPage > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-10">
+            <button
+              disabled={currentPage === 1 || showSkeleton}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="p-3 rounded-xl bg-white border border-gray-200 hover:border-primary text-primary disabled:opacity-30 transition-all shadow-sm cursor-pointer"
+            >
+              {lang === "ar" ? (
+                <ChevronRight size={20} />
+              ) : (
+                <ChevronLeft size={20} />
+              )}
+            </button>
+
+            <span className="font-bold text-sm text-gray-600 bg-white px-6 py-2 rounded-xl border border-gray-200 shadow-sm">
+              {currentPage} / {lastPage}
+            </span>
+
+            <button
+              disabled={currentPage === lastPage || showSkeleton}
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="p-3 rounded-xl bg-white border border-gray-200 hover:border-primary text-primary disabled:opacity-30 transition-all shadow-sm cursor-pointer"
+            >
+              {lang === "ar" ? (
+                <ChevronLeft size={20} />
+              ) : (
+                <ChevronRight size={20} />
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

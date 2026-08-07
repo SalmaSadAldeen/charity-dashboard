@@ -28,9 +28,7 @@ export default function RoleDetailsHeader({ role, lang, t }) {
             </span>
           </div>
           <div>
-            <span className="text-xs font-semibold text-primary px-3 py-1 bg-primary-container/40  rounded-full border border-primary/20">
-              ID: {role.id}
-            </span>
+            
             <h1 className="text-2xl font-extrabold text-on-surface mt-4 tracking-wide">
               {displayLabel}
             </h1>

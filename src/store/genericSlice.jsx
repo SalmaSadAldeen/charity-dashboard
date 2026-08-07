@@ -63,8 +63,13 @@ export const createGenericActions = (resource) => ({
         }
 
         if (resource === "sponsorships") {
-          return (await sponsorshipsService.fetchSponsorships(params.status))
-            .data;
+          return (
+            await sponsorshipsService.fetchSponsorships(
+              params.page || 1,
+              params.limit || 10,
+              params.status,
+            )
+          ).data;
         }
         throw new Error(`Fetch action not defined for ${resource}`);
       } catch (err) {

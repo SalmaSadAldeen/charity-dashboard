@@ -368,6 +368,16 @@ export const translations = {
     confirm_and_send: "Confirm & Send",
     accountInfo: "accountInfo",
     rolesAndPermissions: "Roles & Permissions",
+    donorSponsorshipHistory: "Donor Sponsorship History",
+    donorSponsorshipHistorySubtitle:
+      "Detailed view of all sponsorships linked to this donor",
+    sponsorshipStatus: "Sponsorship Status",
+    startDate: "Start Date",
+    cancellationSource: "Cancellation Source",
+    noDonorHistoryFound: "No previous sponsorship history found for this donor",
+    active: "Active",
+    donorInfoSubtitle: "Contact information and donor profile details",
+    phone: "Phone Number",
   },
 
   ar: {
@@ -378,6 +388,11 @@ export const translations = {
     logout: "تسجيل الخروج الآمن",
     close: "إغلاق",
     accountInfo: "معلومات الحساب الشخصية",
+    donor_info: "معلومات المتبرع",
+    donorInfoSubtitle: "معلومات الاتصال والملف الشخصي للمتبرع",
+    donor_name: "اسم المتبرع",
+    phone: "رقم الهاتف",
+    email: "البريد الإلكتروني",
 
     dashboard: "لوحة الإحصائيات العامة",
     dashboardTitle: "تحليلات الجمعية العالمية",
@@ -402,7 +417,6 @@ export const translations = {
     hou: "سكني",
     proj: "مشاريع",
 
-    email: "البريد الإلكتروني",
     securePassword: "كلمة المرور الآمنة",
     keepMeLoggedIn: "ابقني مسجل الدخول",
     accessing: "جاري الدخول...",
@@ -587,8 +601,6 @@ export const translations = {
     rejection_reason: "سبب الرفض",
     created_at: "تاريخ الإنشاء",
 
-    donor_info: "معلومات المتبرع",
-    donor_name: "اسم المتبرع",
     donor_id: "رقم تعريفي المتبرع",
 
     orphan_info: "معلومات اليتيم",
@@ -738,5 +750,13 @@ export const translations = {
     rejection_reason_en: "سبب الرفض (إنجليزي)",
     sending: "جاري الإرسال...",
     confirm_and_send: "تأكيد وإرسال",
+    donorSponsorshipHistory: "سجل كفالات المتبرع",
+    donorSponsorshipHistorySubtitle:
+      "عرض تفصيلي لكافة الكفالات المالية المرتبطة بهذا المتبرع",
+    sponsorshipStatus: "حالة الكفالة",
+    startDate: "تاريخ البدء",
+    cancellationSource: "مصدر الإلغاء",
+    noDonorHistoryFound: "لا يوجد سجل كفالات سابق لهذا المتبرع",
+    active: "نشطة",
   },
 };

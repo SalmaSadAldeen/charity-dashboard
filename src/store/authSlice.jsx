@@ -15,6 +15,7 @@ export const logoutUser = createAsyncThunk(
 const initialState = {
   user: null,
   isAuthenticated: false,
+  userType: null,
   isLoading: false,
   error: null,
 };
@@ -22,6 +23,7 @@ const initialState = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
+
   reducers: {
     // دال الـ Login تبعتك مثل ما هي تماماً بدون أي تغيير
     loginStart: (state) => {
@@ -32,9 +34,11 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.isAuthenticated = true;
       state.user = action.payload;
+      state.userType = action.payload?.userType;
     },
     loginFailure: (state, action) => {
       state.isLoading = false;
+
       state.error = action.payload;
     },
     // شلنا الـ logout العادية لأن الـ Thunk تحت صار يقوم بالمهمة لحاله!

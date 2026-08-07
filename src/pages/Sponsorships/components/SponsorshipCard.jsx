@@ -1,4 +1,4 @@
-import { Eye, Calendar, DollarSign, User, HeartHandshake } from "lucide-react";
+import { Eye, DollarSign, User, HeartHandshake } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useNavigate } from "react-router-dom";
 
@@ -47,9 +47,7 @@ export default function SponsorshipCard({ sponsorship }) {
           >
             {sponsorship.donor?.firstName?.charAt(0) || "S"}
           </div>
-          <span className="text-xs font-bold text-on-surface-variant/50">
-            ID: #{sponsorship.id}
-          </span>
+          
         </div>
 
         {/* تفاصيل الكفيل والمكفول */}
@@ -89,14 +87,7 @@ export default function SponsorshipCard({ sponsorship }) {
             <DollarSign size={16} />
             <span>{sponsorship.monthlyAmount}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-on-surface-variant/60 font-medium">
-            <Calendar size={15} />
-            <span>
-              {sponsorship.startDate
-                ? new Date(sponsorship.startDate).toLocaleDateString()
-                : "-"}
-            </span>
-          </div>
+        
         </div>
 
         {/* الجزء السفلي: الحالة وزر العرض */}

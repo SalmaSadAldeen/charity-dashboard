@@ -1,10 +1,10 @@
 import { API } from "./api";
 
 export const sponsorshipsService = {
-
-  fetchSponsorships: (status) =>
-    API.get(`/api/admin/sponsorships${status ? `?status=${status}` : ""}`),
-
+  fetchSponsorships: (page, limit, status = "") =>
+    API.get(
+      `/api/admin/sponsorships?page=${page}&limit=${limit}${status ? `&status=${status}` : ""}`,
+    ),
 
   fetchSponsorshipById: (id) => API.get(`/api/admin/sponsorships/${id}`),
 
@@ -16,7 +16,6 @@ export const sponsorshipsService = {
       headers: {
         "Content-Type": "multipart/form-data",
         accept: "application/json",
-
       },
     });
   },

@@ -10,7 +10,6 @@ export const useLogin = () => {
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state) => state.auth);
 
-
   const [email, setEmail] = useState(
     localStorage.getItem("rememberedEmail") || "",
   );
@@ -25,14 +24,18 @@ export const useLogin = () => {
 
     try {
       const response = await API.post("/auth/login", { email, password });
-      const { accessToken, user } = response.data;
+      const { accessToken, user, userType } = response.data;
 
       localStorage.setItem("token", accessToken);
 
       localStorage.setItem("rememberedEmail", email);
 
-      dispatch(loginSuccess(user));
-
+      dispatch(
+        loginSuccess({
+          ...user,
+          userType: userType,
+        }),
+      );
       navigate("/dashboard/employees");
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Login Failed";

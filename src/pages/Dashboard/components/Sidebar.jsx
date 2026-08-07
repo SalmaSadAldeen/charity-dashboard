@@ -1,24 +1,27 @@
 import { useTranslation } from "@/hooks/useTranslation";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useRef } from "react";
 import { logoutUser } from "@/store/authSlice";
-import { useRef } from "react";
 
 export default function Sidebar() {
   const { t, lang } = useTranslation();
   const isRtl = lang === "ar";
   const { pathname } = useLocation();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+
+  const { userType } = useSelector((state) => state.auth);
+  console.log("Full Auth State:", userType);
+
+  // اطبعي هدول بالكونسول وشوفي شو عم يطلع معك
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const isLockedRef = useRef(false);
+
   const handleConfirmLogout = () => {
     if (isLockedRef.current) return;
     isLockedRef.current = true;
 
-    // تفعيل قفل الحراسة لكي لا يتدخل الـ PrivateRoute ويطردك
     localStorage.setItem("isLoggingOut", "true");
     setIsLoggingOut(true);
 
@@ -33,6 +36,7 @@ export default function Sidebar() {
       }
     }, 2000);
   };
+
   const isEditing = pathname.includes("/edit");
 
   const pathGroups = {
@@ -123,54 +127,69 @@ export default function Sidebar() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-          {Object.entries(menuItems).map(([key, items]) => (
-            <div key={key} className="mb-6">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/30 mb-2 px-3">
-                {key === "operational"
-                  ? t("coreOps")
-                  : key === "administrative"
-                    ? t("sysControl")
-                    : t("account")}
-              </p>
+          {Object.entries(menuItems).map(([key, items]) => {
+            // تصفية عناصر القائمة لإخفاء البروفايل حصراً إذا كان المستخدم ADMIN
+            const filteredItems = items.filter((item) => {
+              if (userType === "ADMIN" && item.id === "profile") {
+                return false;
+              }
+              return true;
+            });
 
-              {items.map((item) => {
-                const isOrphansLink = item.id === "orphans";
+            // إذا أصبحت القائمة فارغة بعد التصفية (مثل قسم الحساب للأدمن)، لا تعرض القسم أبداً
+            if (filteredItems.length === 0) {
+              return null;
+            }
 
-                let isActive = false;
-                if (item.id === "dashboard") {
-                  isActive = pathname === "/dashboard";
-                } else {
-                  const group = pathGroups[item.id] || [item.path];
-                  isActive = group.some((p) => pathname.startsWith(p));
-                }
+            return (
+              <div key={key} className="mb-6">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-white/30 mb-2 px-3">
+                  {key === "operational"
+                    ? t("coreOps")
+                    : key === "administrative"
+                      ? t("sysControl")
+                      : t("account")}
+                </p>
 
-                const active = isOrphansLink && isEditing ? false : isActive;
+                {filteredItems.map((item) => {
+                  const isOrphansLink = item.id === "orphans";
 
-                return (
-                  <NavLink
-                    key={item.id}
-                    to={item.path}
-                    end={item.id === "dashboard"}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 mb-1 
-                    ${active ? "bg-surface-lowest/10 shadow-lg text-white" : "hover:bg-surface-lowest/5 text-[#e9ebef]"}`}
-                    style={{
-                      borderRight:
-                        active && isRtl ? `4px solid #fad564` : "none",
-                      borderLeft:
-                        active && !isRtl ? `4px solid #fad564` : "none",
-                    }}
-                  >
-                    <span className="material-symbols-outlined text-xl">
-                      {item.icon}
-                    </span>
-                    <span className="flex-1 text-start whitespace-nowrap">
-                      {item.name}
-                    </span>
-                  </NavLink>
-                );
-              })}
-            </div>
-          ))}
+                  let isActive = false;
+                  if (item.id === "dashboard") {
+                    isActive = pathname === "/dashboard";
+                  } else {
+                    const group = pathGroups[item.id] || [item.path];
+                    isActive = group.some((p) => pathname.startsWith(p));
+                  }
+
+                  const active = isOrphansLink && isEditing ? false : isActive;
+
+                  return (
+                    <NavLink
+                      key={item.id}
+                      to={item.path}
+                      end={item.id === "dashboard"}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 mb-1 
+                      ${active ? "bg-surface-lowest/10 shadow-lg text-white" : "hover:bg-surface-lowest/5 text-[#e9ebef]"}`}
+                      style={{
+                        borderRight:
+                          active && isRtl ? `4px solid #fad564` : "none",
+                        borderLeft:
+                          active && !isRtl ? `4px solid #fad564` : "none",
+                      }}
+                    >
+                      <span className="material-symbols-outlined text-xl">
+                        {item.icon}
+                      </span>
+                      <span className="flex-1 text-start whitespace-nowrap">
+                        {item.name}
+                      </span>
+                    </NavLink>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
 
         {/* زر تسجيل الخروج */}
@@ -189,7 +208,7 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* نافذة التأكيد (المودال يبقى ثابتاً وواجهتك بالخلفية سليمة) */}
+      {/* نافذة التأكيد */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fadeIn">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl flex flex-col gap-4 text-center">
@@ -217,7 +236,6 @@ export default function Sidebar() {
                 {isLoggingOut ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>{isRtl ? "جاري..." : "Loading..."}</span>
                   </>
                 ) : (
                   <span>{isRtl ? "تأكيد" : "Confirm"}</span>

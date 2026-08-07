@@ -46,7 +46,8 @@ export default function SponsorshipDetailsCard({ sponsorship, t }) {
           {t(status)}
         </span>
       </div>
-      <div className="max-w-xl">
+      <div className="w-full">
+        {" "}
         <DonorInfoCard donor={sponsorship?.donor} t={t} />
       </div>
       <div className="space-y-6">

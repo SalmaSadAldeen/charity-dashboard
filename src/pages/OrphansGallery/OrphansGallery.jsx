@@ -38,12 +38,13 @@ export default function OrphansGallery() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedOrphanId, setSelectedOrphanId] = useState(null);
 
-  const ITEMS_PER_PAGE = 8;
+  const ITEMS_PER_PAGE = 2;
   const {
     items = [],
     pagination,
     status,
   } = useSelector((state) => state.orphans);
+  const [currentStatus, setCurrentStatus] = useState("");
 
   const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
@@ -110,7 +111,13 @@ export default function OrphansGallery() {
           data: { status: "ACCEPTED", orphanId: Number(selectedOrphanId) },
         }),
       ).unwrap();
-      await dispatch(fetchSponsorships({ status: "" }));
+      await dispatch(
+        fetchSponsorships({
+          page: currentPage,
+          limit: ITEMS_PER_PAGE,
+          status: currentStatus,
+        }),
+      );
       navigate("/dashboard/sponsorships");
     } catch (error) {
       console.error("خطأ أثناء ربط الكفالة باليتيم:", error);

@@ -2,7 +2,6 @@ import { ArrowLeft, Flame } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 
 export default function HelpRequestDetailsHeader({
-  id,
   isRtl,
   isUrgent,
   currentStatus,
@@ -26,11 +25,7 @@ export default function HelpRequestDetailsHeader({
               t?.("requestDetails") ||
               "تفاصيل الطلب"}
           </h2>
-          {id && (
-            <span className="text-xs font-bold text-gray-400 font-mono mt-0.5">
-              #{id}
-            </span>
-          )}
+        
         </div>
       </div>
 
