@@ -179,6 +179,15 @@ export const translations = {
     urgent: "Urgent",
     loading_data: "Loading data...",
     error_loading_data: "Error loading data",
+    logout_title: "Logout",
+    logout_confirmation_message:
+      "Are you sure you want to log out of the system?",
+
+    processing: "Processing...",
+    confirm_acceptance_title: "Confirm Acceptance",
+    confirm_acceptance_message:
+      "Are you sure you want to accept this beneficiary request?",
+    confirm_acceptance: "Confirm Acceptance",
 
     orphans: "Orphans & Sponsorships",
     orphansList: "Orphan Records",
@@ -189,6 +198,7 @@ export const translations = {
     notSupported: "Not Supported",
     uploadFamilyStatement: "Upload Family Statement",
     guaranteedPhone: "Guaranteed Phone",
+    annual_report: "annual_report 📄 ",
 
     donors: "Donors Management",
     campaigns: "Campaigns & Projects",
@@ -226,6 +236,24 @@ export const translations = {
     additionalDetails: "Additional Details",
     currentPhoto: "Current Photo",
     joinedAt: "Joined At",
+
+    annual_report_preview: "Annual Report Preview (AR / EN)",
+    arabic_version: "Arabic Version",
+    english_version: "English Version",
+    charity_foundation: "Athar  Association",
+    foundation_en: "جمعية أثر",
+    annual_orphan_report: "Annual Orphan Report",
+
+    date_of_birth: "Date of Birth",
+    detailed_information: "Detailed Information",
+    class_name: "Class",
+    health_status: "Health Status",
+
+    confirm_and_send_report: "Confirm and Send Annual Report",
+    generating_and_sending_images: "Generating and sending images...",
+    report_sent_success: "Annual report (AR / EN) sent successfully!",
+    report_send_failed: "Failed to send report",
+    error_sending_report: "An error occurred while sending the report",
 
     PENDING: "Pending",
     ACCEPTED: "Accepted",
@@ -609,6 +637,7 @@ export const translations = {
     mother_name: "اسم الأم",
     birth_date: "تاريخ الميلاد",
     class_grade: "الصف الدراسي",
+    annual_report: " التقرير السنوي 📄 ",
     diseases: "الأمراض",
     family_statement: "الإقرار العائلي",
     siblings_number: "عدد الإخوة والأخوات",
@@ -621,7 +650,14 @@ export const translations = {
     is_supported: "مكفول حالياً",
     yes: "نعم",
     no: "لا",
-
+    logout_title: "تسجيل الخروج",
+    logout_confirmation_message:
+      "هل أنت متأكد أنك تريد تسجيل الخروج من النظام؟",
+    confirm: "تأكيد",
+    processing: "جاري المعالجة...",
+    confirm_acceptance_title: "تأكيد قبول الطلب",
+    confirm_acceptance_message: "هل أنت متأكد من قبول طلب هذا المستفيد؟",
+    confirm_acceptance: "تأكيد القبول",
     ACCEPTED: "مقبول",
     PENDING: "قيد الانتظار",
     REJECTED: "مرفوض",
@@ -683,11 +719,28 @@ export const translations = {
     housingSpecifications: "مواصفات السكن",
     reasonForLock: "سبب الإغلاق / القفل",
 
+    annual_report_preview: "معاينة التقرير السنوي (عربي / إنجليزي)",
+    arabic_version: "النسخة العربية",
+    english_version: "English Version",
+    charity_foundation: "جمعية أثر ",
+
+    foundation_en: "Athar Association  ",
+    annual_orphan_report: "استمارة اليتيم السنوية",
+
+    detailed_information: "معلومات تفصيلية",
+    class_name: "الصف الدراسي",
+    health_status: "الحالة الصحية",
+
+    confirm_and_send_report: "تأكيد وإرسال التقرير السنوي",
+    generating_and_sending_images: "جاري توليد وإرسال الصورتين...",
+    report_sent_success: "تم إرسال التقرير السنوي (عربي / إنجليزي) نجاحاً!",
+    report_send_failed: "فشل إرسال التقرير",
+    error_sending_report: "حدث خطأ أثناء إرسال التقرير",
+
     search: "بحث...",
     view_profile: "عرض التفاصيل",
     view_details: "عرض التفاصيل",
 
-    confirm: "تأكيد",
     noData: "لا توجد بيانات لعرضها",
     showing: "عرض",
     from: "من",

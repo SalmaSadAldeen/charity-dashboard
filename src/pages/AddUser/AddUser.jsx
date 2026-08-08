@@ -14,7 +14,6 @@ export default function AddUser() {
   const dispatch = useDispatch();
   const roles = useSelector((state) => state.roles.items);
 
-
   const {
     formData,
     setFormData,
@@ -28,16 +27,11 @@ export default function AddUser() {
     navigate("/dashboard/employees");
   });
 
-
-
   const rolesStatus = useSelector((state) => state.roles.status);
-
   useEffect(() => {
-
-    if (rolesStatus === "idle") {
-      dispatch(fetchRoles());
-    }
-  }, [dispatch, rolesStatus],lang);
+    // إعادة جلب الأدوار فوراً عند تغير اللغة
+    dispatch(fetchRoles());
+  }, [dispatch, lang]);
   return (
     <div
       className={`p-8 bg-surface-container min-h-screen ${lang === "ar" ? "rtl" : "ltr"}`}

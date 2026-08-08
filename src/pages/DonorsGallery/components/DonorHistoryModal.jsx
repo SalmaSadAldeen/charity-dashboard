@@ -27,7 +27,6 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
 
   const hasExistingData = historyList.length > 0;
 
-
   const showSkeleton = isReallyLoading && !hasExistingData;
 
   const isEmpty = detailsStatus === "succeeded" && historyList.length === 0;

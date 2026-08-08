@@ -18,16 +18,10 @@ export default function EditUser({ employeeId, onClose }) {
   const employee = useSelector((state) =>
     state.employees.items.find((e) => e.id === employeeId),
   );
-
-  useEffect(
-    () => {
-      if (rolesStatus === "idle") {
-        dispatch(fetchRoles());
-      }
-    },
-    [dispatch, rolesStatus],
-    lang,
-  );
+  useEffect(() => {
+    // إعادة جلب الأدوار فوراً عند تغير اللغة
+    dispatch(fetchRoles());
+  }, [dispatch, lang]);
   const initialData = useMemo(() => {
     if (!employee) return null;
     return {

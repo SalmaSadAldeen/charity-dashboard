@@ -19,4 +19,12 @@ export const sponsorshipsService = {
       },
     });
   },
+  sendAnnualReport: (sponsorshipId, formData) =>
+    API.post(
+      `/api/admin/sponsorships/${sponsorshipId}/annual-reports`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    ),
 };

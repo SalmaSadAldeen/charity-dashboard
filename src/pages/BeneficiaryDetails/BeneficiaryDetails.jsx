@@ -171,7 +171,10 @@ export default function BeneficiaryDetails() {
       />
 
       {modalConfig.isOpen && modalConfig.type === "accept" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+          dir={t("dir") || "rtl"}
+        >
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-border space-y-6 animate-in fade-in zoom-in duration-200">
             <div className="flex items-center gap-4 border-b border-border pb-4">
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
@@ -179,12 +182,10 @@ export default function BeneficiaryDetails() {
               </div>
               <div>
                 <h3 className="text-base font-black text-slate-900">
-                  {lang === "ar" ? "تأكيد قبول الطلب" : "Confirm Acceptance"}
+                  {t("confirm_acceptance_title")}
                 </h3>
                 <p className="text-xs text-slate-500 font-medium mt-0.5">
-                  {lang === "ar"
-                    ? "هل أنت متأكد من قبول طلب هذا المستفيد؟"
-                    : "Are you sure you want to accept this beneficiary request?"}
+                  {t("confirm_acceptance_message")}
                 </p>
               </div>
             </div>
@@ -195,7 +196,7 @@ export default function BeneficiaryDetails() {
                 onClick={() => setModalConfig({ isOpen: false, type: null })}
                 className="flex-1 py-3 px-4 rounded-2xl border border-border bg-slate-50 text-slate-700 hover:bg-slate-100 font-black text-sm transition-all"
               >
-                {lang === "ar" ? "إلغاء" : "Cancel"}
+                {t("cancel")}
               </button>
               <button
                 type="button"
@@ -204,12 +205,8 @@ export default function BeneficiaryDetails() {
                 className="flex-1 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm transition-all shadow-md disabled:opacity-50"
               >
                 {status === "loading"
-                  ? lang === "ar"
-                    ? "جاري المعالجة..."
-                    : "Processing..."
-                  : lang === "ar"
-                    ? "تأكيد القبول"
-                    : "Confirm"}
+                  ? t("processing")
+                  : t("confirm_acceptance")}
               </button>
             </div>
           </div>

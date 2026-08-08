@@ -55,7 +55,7 @@ export default function OrphanProfilePage() {
           onClick={() => setIsReportModalOpen(true)}
           className="bg-green-700 hover:bg-green-800 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-sm flex items-center gap-2"
         >
-          📄 إصدار التقرير السنوي
+          {t("annual_report")}
         </button>
       </div>{" "}
       {/* 1. رأس الملف الشخصي */}
@@ -120,6 +120,7 @@ export default function OrphanProfilePage() {
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
         orphan={orphan}
+        sponsorshipId={orphan?.sponsorshipId} // <-- أضيفي هذا السطر هنا
         t={t}
         lang={lang}
       />

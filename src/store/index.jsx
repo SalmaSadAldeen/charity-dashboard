@@ -100,8 +100,8 @@ export const {
 export const {
   fetchItems: fetchSponsorships,
   fetchItemById: fetchSponsorshipById,
-
   updateItemStatus: updateSponsorshipStatus,
+  sendAnnualReport: sendAnnualReportAction,
 } = sponsorshipsSlice.actions;
 
 export const store = configureStore({

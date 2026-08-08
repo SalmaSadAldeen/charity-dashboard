@@ -162,6 +162,7 @@ export const createGenericActions = (resource) => ({
       }
     },
   ),
+
   updateItem: createAsyncThunk(
     `${resource}/update`,
     async (arg, { rejectWithValue }) => {
@@ -173,8 +174,6 @@ export const createGenericActions = (resource) => ({
               ? arg?._id
               : arg;
         const data = arg?.data !== undefined ? arg.data : arg;
-
-        console.log(`🛠️ [Generic Update - ${resource}] ID:`, id, "Data:", data);
 
         let response;
         if (resource === "employees") {
@@ -220,11 +219,6 @@ export const createGenericActions = (resource) => ({
     async ({ id, data }, { rejectWithValue }) => {
       try {
         let response;
-        console.log(
-          `🟢 [Thunk Start] Current Resource is: "${resource}", ID:`,
-          id,
-        );
-
         if (resource === "helpRequests") {
           response = await requestsService.updateRequestStatus(id, data);
         } else if (resource === "beneficiaries" || resource === "beneficiary") {
@@ -254,10 +248,26 @@ export const createGenericActions = (resource) => ({
           throw new Error(`Update status action not defined for ${resource}`);
         }
 
-        console.log(`✅ [Thunk Success] Response:`, response.data);
         return response.data;
       } catch (err) {
-        console.error(`❌ [Thunk Error Catch]:`, err);
+        return rejectWithValue(err.response?.data?.message || err.message);
+      }
+    },
+  ),
+
+  sendAnnualReport: createAsyncThunk(
+    `${resource}/sendAnnualReport`,
+    async ({ sponsorshipId, formData }, { rejectWithValue }) => {
+      try {
+        if (resource !== "sponsorships") {
+          throw new Error("Action only defined for sponsorships");
+        }
+        const response = await sponsorshipsService.sendAnnualReport(
+          sponsorshipId,
+          formData,
+        );
+        return response?.data || response;
+      } catch (err) {
         return rejectWithValue(err.response?.data?.message || err.message);
       }
     },
@@ -272,6 +282,7 @@ export const createGenericSlice = (resource) => {
     addItem,
     fetchItemById,
     updateItemStatus,
+    sendAnnualReport,
   } = createGenericActions(resource);
 
   return {
@@ -282,6 +293,7 @@ export const createGenericSlice = (resource) => {
       addItem,
       fetchItemById,
       updateItemStatus,
+      sendAnnualReport,
     },
     slice: createSlice({
       name: resource,
@@ -309,7 +321,7 @@ export const createGenericSlice = (resource) => {
 
       extraReducers: (builder) => {
         builder
-
+          // --- fetchItems ---
           .addCase(fetchItems.pending, (state) => {
             state.status = state.items.length > 0 ? "succeeded" : "loading";
             state.error = null;
@@ -348,6 +360,7 @@ export const createGenericSlice = (resource) => {
             state.error = action.payload;
           })
 
+          // --- deleteItem ---
           .addCase(deleteItem.pending, (state) => {
             state.status = "loading";
           })
@@ -364,6 +377,7 @@ export const createGenericSlice = (resource) => {
             state.error = action.payload;
           })
 
+          // --- addItem ---
           .addCase(addItem.pending, (state) => {
             state.status = "loading";
           })
@@ -376,6 +390,7 @@ export const createGenericSlice = (resource) => {
             state.error = action.payload;
           })
 
+          // --- updateItem ---
           .addCase(updateItem.pending, (state) => {
             state.status = "loading";
           })
@@ -399,6 +414,7 @@ export const createGenericSlice = (resource) => {
             state.error = action.payload;
           })
 
+          // --- fetchItemById ---
           .addCase(fetchItemById.pending, (state) => {
             state.detailsStatus = state.selectedDetails
               ? "succeeded"
@@ -412,6 +428,8 @@ export const createGenericSlice = (resource) => {
             state.detailsStatus = "failed";
             state.error = action.payload;
           })
+
+          // --- updateItemStatus ---
           .addCase(updateItemStatus.pending, (state) => {
             state.status = "loading";
           })
@@ -444,6 +462,18 @@ export const createGenericSlice = (resource) => {
             state.status = "succeeded";
           })
           .addCase(updateItemStatus.rejected, (state, action) => {
+            state.status = "failed";
+            state.error = action.payload;
+          })
+
+          // --- sendAnnualReport (تمت إضافتها هنا لتكتمل الدورة) ---
+          .addCase(sendAnnualReport.pending, (state) => {
+            state.status = "loading";
+          })
+          .addCase(sendAnnualReport.fulfilled, (state) => {
+            state.status = "succeeded";
+          })
+          .addCase(sendAnnualReport.rejected, (state, action) => {
             state.status = "failed";
             state.error = action.payload;
           });

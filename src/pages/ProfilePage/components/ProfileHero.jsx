@@ -87,15 +87,16 @@ export function ProfileHero({ profileData, t, lang }) {
 
       {/* نافذة التأكيد */}
       {showLogoutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fadeIn">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fadeIn"
+          dir={t("dir") || "rtl"}
+        >
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl flex flex-col gap-4 text-center">
             <h3 className="text-lg font-bold text-slate-900">
-              {isRtl ? "تسجيل الخروج" : "Logout"}
+              {t("logout_title")}
             </h3>
             <p className="text-sm text-slate-600">
-              {isRtl
-                ? "هل أنت متأكد أنك تريد تسجيل الخروج من النظام؟"
-                : "Are you sure you want to log out of the system?"}
+              {t("logout_confirmation_message")}
             </p>
             <div className="flex gap-3 mt-2">
               <button
@@ -103,7 +104,7 @@ export function ProfileHero({ profileData, t, lang }) {
                 disabled={isLoggingOut}
                 className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold transition-colors cursor-pointer disabled:opacity-50"
               >
-                {isRtl ? "إلغاء" : "Cancel"}
+                {t("cancel")}
               </button>
               <button
                 onClick={handleConfirmLogout}
@@ -111,12 +112,9 @@ export function ProfileHero({ profileData, t, lang }) {
                 className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold transition-colors cursor-pointer disabled:opacity-75 flex items-center justify-center gap-2"
               >
                 {isLoggingOut ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>{isRtl ? "جاري..." : "Loading..."}</span>
-                  </>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
-                  <span>{isRtl ? "تأكيد" : "Confirm"}</span>
+                  <span>{t("confirm")}</span>
                 )}
               </button>
             </div>
