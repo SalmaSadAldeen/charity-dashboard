@@ -170,7 +170,7 @@ export const translations = {
     noEmployeesAssigned: "No employees assigned to this role currently",
     noPermissions: "No associated permissions",
     permissions: "Associated Permissions",
-
+targetedCompletedCases:"targeted Completed Cases",
     requestDetails: "Request Details",
     request_details_panel: "Request Details Panel",
     personal_info_tab: "Personal Info",
@@ -475,6 +475,7 @@ export const translations = {
     accessLevel: "مستوى الوصول واختيار الصلاحيات",
     grantedRoles: "الأدوار الممنوحة",
     noRole: "بدون دور",
+    targetedCompletedCases:"الحالات ",
     confirmAndSave: "تأكيد وحفظ",
     saving: "جاري الحفظ...",
     saveChanges: "حفظ التعديلات",

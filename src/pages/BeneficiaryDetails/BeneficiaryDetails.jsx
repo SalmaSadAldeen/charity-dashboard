@@ -12,13 +12,14 @@ import RejectionNote from "@/pages/BeneficiaryDetails/components/RejectionNote";
 import { RejectActionModal } from "./components/RejectActionModal";
 import { CheckCircle2 } from "lucide-react";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
+import { hasPermission } from "@/utils/permissions";
 
 export default function BeneficiaryDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
-
+const { roles } = useSelector((state) => state.auth);
   const { selectedDetails: beneficiary, detailsStatus: status } = useSelector(
     (state) => state.beneficiaries,
   );
@@ -145,20 +146,22 @@ export default function BeneficiaryDetails() {
         <DocumentsCard data={beneficiary.beneficiary} />
       </div>
 
-      <RequestActionFooter
-        currentStatus={beneficiary.beneficiary?.status}
-        t={t}
-        onOpenModal={(type) => {
-          if (type === "reject") {
-            setRejectData({
-              status: "REJECTED",
-              rejectionReason: { ar: "", en: "" },
-            });
-          }
-          setModalConfig({ isOpen: true, type });
-        }}
-        onAccept={() => setModalConfig({ isOpen: true, type: "accept" })}
-      />
+      {hasPermission(roles, "status:beneficiaries") && (
+        <RequestActionFooter
+          currentStatus={beneficiary.beneficiary?.status}
+          t={t}
+          onOpenModal={(type) => {
+            if (type === "reject") {
+              setRejectData({
+                status: "REJECTED",
+                rejectionReason: { ar: "", en: "" },
+              });
+            }
+            setModalConfig({ isOpen: true, type });
+          }}
+          onAccept={() => setModalConfig({ isOpen: true, type: "accept" })}
+        />
+      )}
 
       <RejectActionModal
         isOpen={modalConfig.isOpen && modalConfig.type === "reject"}

@@ -24,16 +24,19 @@ export const useLogin = () => {
 
     try {
       const response = await API.post("/auth/login", { email, password });
-      const { accessToken, user, userType } = response.data;
+      const { accessToken, user, userType, roles } = response.data;
 
       localStorage.setItem("token", accessToken);
-
+      localStorage.setItem("userType", userType);
+      localStorage.setItem("roles", JSON.stringify(roles)); // هنا انحفظت الـ roles والـ permissions جواتها
+      localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("rememberedEmail", email);
 
       dispatch(
         loginSuccess({
           ...user,
           userType: userType,
+          roles: roles,
         }),
       );
       navigate("/dashboard/employees");

@@ -5,7 +5,7 @@ import { OrphanCard } from "@/pages/OrphansGallery/components/OrphanCard";
 import { useTranslation } from "@/hooks/useTranslation";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
-import { fetchOrphansStats } from "@/store/dashboardSlice"; // تأكدي أن مسار الـ slice صحيح لديكِ
+import { fetchOrphansStats } from "@/store/dashboardSlice";
 import {
   Plus,
   ChevronLeft,
@@ -21,21 +21,31 @@ import {
   fetchSponsorships,
 } from "@/store/index";
 import OrphansStatsCard from "./components/OrphansStatsCard";
+import { hasPermission } from "@/utils/permissions";
 export default function OrphansGallery() {
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { roles } = useSelector((state) => state.auth);
   const { orphansStats } = useSelector(
     (state) => state.dashboard || state.orphans,
   );
+
   const selectMode = searchParams.get("mode") === "select";
   const targetSponsorshipId = searchParams.get("sponsorshipId");
 
-  const [supportedFilter, setSupportedFilter] = useState(
-    selectMode ? false : null,
-  );
-  const [currentPage, setCurrentPage] = useState(1);
+  // 1. نقرأ الفلتر ورقم الصفحة من الرابط (ولو مافي بنحط قيم افتراضية)
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const supportedParam = searchParams.get("supported");
+  const supportedFilter = selectMode
+    ? false
+    : supportedParam === "true"
+      ? true
+      : supportedParam === "false"
+        ? false
+        : null;
+
   const [selectedOrphanId, setSelectedOrphanId] = useState(null);
 
   const ITEMS_PER_PAGE = 2;
@@ -67,39 +77,44 @@ export default function OrphansGallery() {
     ).then(() => {
       setHasLoadedAtLeastOnce(true);
     });
-  }, [
-    dispatch,
-    lang,
-    supportedFilter,
-    currentPage,
-    selectMode,
-    hasExistingItems,
-  ]);
+  }, [dispatch, lang, supportedFilter, currentPage, selectMode]);
+
   useEffect(() => {
     dispatch(fetchOrphansStats());
   }, [dispatch]);
+
+  // 2. لما يغير الفلتر، بنحدث الـ URL وبنحط بقلبو الفلتر الجديد ومنصفر الصفحة لـ 1 مع الحفاظ على وضع الselect إن وجد
   const handleFilterChange = (val) => {
     if (selectMode) return;
-    setSupportedFilter(val);
-    setCurrentPage(1);
-    dispatch(
-      fetchOrphans({
-        page: 1,
-        limit: ITEMS_PER_PAGE,
-        supported: val,
-      }),
-    );
+
+    const newParams = { page: 1 };
+    if (val !== null && val !== undefined) {
+      newParams.supported = String(val);
+    }
+    if (selectMode) {
+      newParams.mode = "select";
+      if (targetSponsorshipId) newParams.sponsorshipId = targetSponsorshipId;
+    }
+
+    setSearchParams(newParams);
   };
 
+  // 3. بنحدث رقم الصفحة بالـ URL مع المحافظة على الفلتر الحالي
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    dispatch(
-      fetchOrphans({
-        page: newPage,
-        limit: ITEMS_PER_PAGE,
-        supported: selectMode ? false : supportedFilter,
-      }),
-    );
+    const newParams = { page: newPage };
+    if (
+      supportedParam !== null &&
+      supportedParam !== undefined &&
+      supportedParam !== ""
+    ) {
+      newParams.supported = supportedParam;
+    }
+    if (selectMode) {
+      newParams.mode = "select";
+      if (targetSponsorshipId) newParams.sponsorshipId = targetSponsorshipId;
+    }
+
+    setSearchParams(newParams);
   };
 
   const handleConfirmSelection = async () => {
@@ -175,7 +190,7 @@ export default function OrphansGallery() {
           </p>
         </div>
 
-        {!selectMode && (
+        {!selectMode && hasPermission(roles, "create:orphans") && (
           <button
             onClick={() => navigate("/dashboard/add-orphan")}
             className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl font-bold hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all active:scale-95 cursor-pointer"

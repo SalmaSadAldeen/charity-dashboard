@@ -11,6 +11,7 @@ import { RequestActionModal } from "./components/RequestActionModal";
 import { RequestActionFooter } from "./components/RequestActionFooter";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
+import { hasPermission } from "@/utils/permissions";
 
 import { fetchHelpRequestById, updateHelpRequestStatus } from "@/store/index";
 
@@ -23,6 +24,7 @@ export default function HelpRequestDetailsPage() {
   const { selectedDetails, detailsStatus } = useSelector(
     (state) => state.helpRequests,
   );
+  const { roles } = useSelector((state) => state.auth);
 
   const isReallyLoading = useDelayedLoading(detailsStatus === "loading", 400);
 
@@ -245,11 +247,14 @@ export default function HelpRequestDetailsPage() {
           </div>
 
           {/* Footer Action Bar */}
-          <RequestActionFooter
-            currentStatus={currentStatus}
-            t={t}
-            onOpenModal={(type) => setModalConfig({ isOpen: true, type })}
-          />
+
+          {hasPermission(roles, "status:aid_requests") && (
+            <RequestActionFooter
+              currentStatus={currentStatus}
+              t={t}
+              onOpenModal={(type) => setModalConfig({ isOpen: true, type })}
+            />
+          )}
         </section>
       </div>
 

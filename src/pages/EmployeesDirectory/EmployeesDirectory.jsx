@@ -17,6 +17,7 @@ import {
   fetchEmployeeById,
 } from "@/store/index";
 import { Users, HeartHandshake } from "lucide-react";
+import { hasPermission } from "@/utils/permissions";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -24,7 +25,7 @@ export default function EmployeesDirectory() {
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const { roles } = useSelector((state) => state.auth); // عدلي هذا السطر ليجلب الـ roles
   const [currentPage, setCurrentPage] = useState(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -110,12 +111,15 @@ export default function EmployeesDirectory() {
               <h2 className="text-2xl font-bold text-[#4d4636]">
                 {t("employeesRecord")}
               </h2>
-              <button
-                onClick={() => navigate("/dashboard/add-user")}
-                className="flex items-center gap-2 bg-[#f5ede0] border border-[#d0c6b0] text-[#735c00] px-6 py-2.5 rounded-xl hover:bg-[#735c00] hover:text-[#ffffff] transition-all shadow-2xs font-bold cursor-pointer"
-              >
-                <Plus size={20} /> {t("addEmployee")}
-              </button>
+
+              {hasPermission(roles, "create:employees") && (
+                <button
+                  onClick={() => navigate("/dashboard/add-user")}
+                  className="flex items-center gap-2 bg-[#f5ede0] border border-[#d0c6b0] text-[#735c00] px-6 py-2.5 rounded-xl hover:bg-[#735c00] hover:text-[#ffffff] transition-all shadow-2xs font-bold cursor-pointer"
+                >
+                  <Plus size={20} /> {t("addEmployee")}
+                </button>
+              )}
             </div>
 
             <div className="relative min-h-[300px] flex flex-col">

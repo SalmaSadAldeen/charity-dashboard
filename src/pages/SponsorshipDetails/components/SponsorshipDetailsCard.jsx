@@ -37,7 +37,7 @@ export default function SponsorshipDetailsCard({ sponsorship, t }) {
     <div className="bg-surface-lowest p-6 rounded-3xl border border-border shadow-sm space-y-6">
       <div className="flex justify-between items-center border-b pb-4">
         <h2 className="text-xl font-bold text-on-surface-variant">
-          {t("sponsorship_details")} #{sponsorship.id}
+          {t("sponsorship_details")}
         </h2>
         <span
           className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${badge.bg}`}

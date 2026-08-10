@@ -16,6 +16,8 @@ import OrphanInfoCard from "./components/OrphanInfoCard";
 import DonorSponsorshipHistoryTable from "./components/DonorSponsorshipHistoryTable";
 import { RequestActionFooter } from "./components/RequestActionFooter";
 import { RejectActionModal } from "../BeneficiaryDetails/components/RejectActionModal";
+import { ArrowLeft, ArrowRight } from "lucide-react"; // أضفنا أيقونات الأسهم
+import { hasPermission } from "@/utils/permissions";
 
 export default function SponsorshipDetailsPage() {
   const { sponsorshipId } = useParams();
@@ -23,6 +25,7 @@ export default function SponsorshipDetailsPage() {
   const dispatch = useDispatch();
   const { t, lang } = useTranslation();
   const [selectedOrphanId, setSelectedOrphanId] = useState(null);
+  const { roles } = useSelector((state) => state.auth);
 
   const [activeTab, setActiveTab] = useState("info");
 
@@ -40,11 +43,14 @@ export default function SponsorshipDetailsPage() {
   );
 
   const { selectedDetails: donorHistoryData, detailsStatus: donorStatus } =
-     useSelector((state) => state.donors);
+    useSelector((state) => state.donors);
 
-  const hasExistingSponsorship = sponsorship && String(sponsorship.id) === String(sponsorshipId);
-  
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(hasExistingSponsorship);
+  const hasExistingSponsorship =
+    sponsorship && String(sponsorship.id) === String(sponsorshipId);
+
+  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] = useState(
+    hasExistingSponsorship,
+  );
 
   const isDetailsLoading = detailsStatus === "loading";
   const isReallyLoading = useDelayedLoading(isDetailsLoading, 100);
@@ -125,7 +131,8 @@ export default function SponsorshipDetailsPage() {
     }
   };
 
-  const showSkeleton = isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingSponsorship);
+  const showSkeleton =
+    isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingSponsorship);
 
   if (!sponsorship && detailsStatus === "succeeded" && !isReallyLoading) {
     return (
@@ -134,13 +141,24 @@ export default function SponsorshipDetailsPage() {
       </div>
     );
   }
-
   return (
     <div
       className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative"
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="space-y-6 w-full">
+        {/* زر الرجوع فوق التبويبات مباشرة (حسب الـ dir: عربي يمين، إنجليزي يسار تلقائياً بدون فذلكة) */}
+        <div className="flex justify-start">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-xl font-bold transition-all shadow-sm cursor-pointer text-xs shrink-0"
+          >
+            {lang === "ar" ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}
+            <span>{lang === "ar" ? "رجوع" : "Back"}</span>
+          </button>
+        </div>
+
+        {/* شريط التبويبات */}
         <div className="flex border-b border-border gap-4 overflow-x-auto">
           <button
             onClick={() => setActiveTab("info")}
@@ -241,24 +259,26 @@ export default function SponsorshipDetailsPage() {
         </section>
       </div>
 
-      <RequestActionFooter
-        currentStatus={sponsorship?.status}
-        t={t}
-        onOpenModal={(type) => {
-          if (type === "reject") {
-            setRejectData({
-              status: "REJECTED",
-              rejectionReason: { ar: "", en: "" },
-            });
-            setModalConfig({ isOpen: true, type: "reject" });
-          }
-        }}
-        onAccept={() => {
-          navigate(
-            `/dashboard/orphans?mode=select&sponsorshipId=${sponsorshipId}`,
-          );
-        }}
-      />
+      {hasPermission(roles, "status:sponsorships") && (
+        <RequestActionFooter
+          currentStatus={sponsorship?.status}
+          t={t}
+          onOpenModal={(type) => {
+            if (type === "reject") {
+              setRejectData({
+                status: "REJECTED",
+                rejectionReason: { ar: "", en: "" },
+              });
+              setModalConfig({ isOpen: true, type: "reject" });
+            }
+          }}
+          onAccept={() => {
+            navigate(
+              `/dashboard/orphans?mode=select&sponsorshipId=${sponsorshipId}`,
+            );
+          }}
+        />
+      )}
 
       <RejectActionModal
         isOpen={modalConfig.isOpen && modalConfig.type === "reject"}

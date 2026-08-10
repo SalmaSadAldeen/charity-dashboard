@@ -11,7 +11,9 @@ import { useGenericDelete } from "@/hooks/useGenericDelete";
 import ConfirmModal from "@/pages/EmployeesDirectory/components/ConfirmModal";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import OrphanReportModal from "./components/OrphanReportModal";
+import { hasPermission } from "@/utils/permissions";
 
+import { ArrowLeft, ArrowRight } from "lucide-react"; // أضفنا أيقونات الأسهم
 export default function OrphanProfilePage() {
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ export default function OrphanProfilePage() {
   const dispatch = useDispatch();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { handleDelete, isLoading: isDeleting } = useGenericDelete("orphan");
+  const { roles } = useSelector((state) => state.auth);
 
   const { selectedDetails: orphan, status } = useSelector(
     (state) => state.orphans,
@@ -42,7 +45,7 @@ export default function OrphanProfilePage() {
         setHasLoadedAtLeastOnce(true);
       });
     }
-  }, [id, lang, dispatch, hasExistingOrphan]);
+  }, [id, lang, dispatch]);
 
   const showSkeleton =
     isReallyLoading && (!hasLoadedAtLeastOnce || !hasExistingOrphan);
@@ -50,14 +53,24 @@ export default function OrphanProfilePage() {
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* زر إصدار التقرير السنوي */}
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
         <button
-          onClick={() => setIsReportModalOpen(true)}
-          className="bg-green-700 hover:bg-green-800 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-sm flex items-center gap-2"
+          onClick={() => navigate(-1)} // بيرجعك للصفحة السابقة بكل سلاسة وبنفس الفلتر أو الصفحة اللي كنتِ فيها
+          className="flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-xl font-bold transition-all shadow-sm cursor-pointer"
         >
-          {t("annual_report")}
+          {lang === "ar" ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
+          <span>{lang === "ar" ? "رجوع" : "Back"}</span>
         </button>
-      </div>{" "}
+
+        {hasPermission(roles, "create:annual_reports") && (
+          <button
+            onClick={() => setIsReportModalOpen(true)}
+            className="bg-green-700 hover:bg-green-800 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-sm flex items-center gap-2 cursor-pointer"
+          >
+            {t("annual_report")}
+          </button>
+        )}
+      </div>
       {/* 1. رأس الملف الشخصي */}
       {showSkeleton ? (
         <div className="bg-surface-lowest p-6 rounded-[2rem] border border-border/60 h-40 flex items-center justify-between animate-pulse w-full">

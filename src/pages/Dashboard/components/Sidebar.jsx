@@ -3,14 +3,14 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useRef } from "react";
 import { logoutUser } from "@/store/authSlice";
-
+import { hasPermission } from "@/utils/permissions";
 export default function Sidebar() {
   const { t, lang } = useTranslation();
   const isRtl = lang === "ar";
   const { pathname } = useLocation();
   const dispatch = useDispatch();
 
-  const { userType } = useSelector((state) => state.auth);
+  const { userType, roles } = useSelector((state) => state.auth);
   console.log("Full Auth State:", userType);
 
   // اطبعي هدول بالكونسول وشوفي شو عم يطلع معك
@@ -38,19 +38,20 @@ export default function Sidebar() {
   };
 
   const isEditing = pathname.includes("/edit");
-
   const pathGroups = {
     orphans: [
       "/dashboard/orphans",
       "/dashboard/orphan/details",
       "/dashboard/add-orphan",
-      "/dashboard/orphans/edit",
+      "/dashboard/orphan/edit",
     ],
     beneficiaries: ["/dashboard/beneficiaries"],
-    requests: ["/dashboard/requests"],
+    requests: [
+      "/dashboard/requests", // صفحة عرض الطلبات الأساسية
+      "/dashboard/help-requests", // مسار صفحة تفاصيل الطلب (لأنها تبدأ بهذا)
+    ],
     roles: ["/dashboard/roles"],
   };
-
   const menuItems = {
     operational: [
       {
@@ -64,24 +65,28 @@ export default function Sidebar() {
         name: t("requests"),
         icon: "volunteer_activism",
         path: "/dashboard/requests",
+        permission: "read:aid_requests",
       },
       {
         id: "beneficiaries",
         name: t("beneficiaries"),
         icon: "groups",
         path: "/dashboard/beneficiaries",
+        permission: "read:beneficiaries",
       },
       {
         id: "orphans",
         name: t("orphans"),
         icon: "child_care",
         path: "/dashboard/orphans",
+        permission: "read:orphans",
       },
       {
         id: "sponsorships",
         name: t("sponsorships"),
         icon: "child_care",
         path: "/dashboard/sponsorships",
+        permission: "read:sponsorships",
       },
     ],
     administrative: [
@@ -90,18 +95,21 @@ export default function Sidebar() {
         name: t("donors"),
         icon: "favorite",
         path: "/dashboard/donors",
+        permission: "read:donors",
       },
       {
         id: "employees",
         name: t("employees"),
         icon: "badge",
         path: "/dashboard/employees",
+        permission: "read:employees",
       },
       {
         id: "roles",
         name: t("rolesAndPermissions") || "الأدوار والصلاحيات",
         icon: "admin_panel_settings",
         path: "/dashboard/roles",
+        permission: "read:roles",
       },
     ],
     account: [
@@ -113,7 +121,7 @@ export default function Sidebar() {
       },
     ],
   };
-
+  console.log(hasPermission(roles, "read:orphans"));
   return (
     <>
       <aside
@@ -128,11 +136,18 @@ export default function Sidebar() {
 
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
           {Object.entries(menuItems).map(([key, items]) => {
-            // تصفية عناصر القائمة لإخفاء البروفايل حصراً إذا كان المستخدم ADMIN
+            // تصفية عناصر القائمة حسب الصلاحيات وحسب استثناء البروفايل للأدمن
             const filteredItems = items.filter((item) => {
+              // 1. الشرط القديم: إخفاء البروفايل حصراً إذا كان المستخدم ADMIN
               if (userType === "ADMIN" && item.id === "profile") {
                 return false;
               }
+
+              // 2. الشرط الجديد: التحقق من وجود الصلاحية (read) إذا كانت متوفرة في العنصر
+              if (item.permission) {
+                return hasPermission(roles, item.permission);
+              }
+
               return true;
             });
 

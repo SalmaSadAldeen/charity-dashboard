@@ -13,7 +13,6 @@ export default function RolesPage() {
   const dispatch = useDispatch();
   const { t, lang } = useTranslation();
   const { items: roles, status } = useSelector((state) => state.roles);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [roleToEdit, setRoleToEdit] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -23,7 +22,6 @@ export default function RolesPage() {
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingRoles);
 
-
   useEffect(() => {
     if (!hasExistingRoles) {
       setHasLoadedAtLeastOnce(false);
@@ -31,19 +29,16 @@ export default function RolesPage() {
     dispatch(fetchRoles()).then(() => {
       setHasLoadedAtLeastOnce(true);
     });
-  }, [dispatch, lang, hasExistingRoles]);
-
+  }, [dispatch, lang]);
 
   const handleOpenAddModal = () => {
     setRoleToEdit(null);
     setIsModalOpen(true);
   };
 
-
   const handleOpenEditRole = (role) => {
     setRoleToEdit(role);
     setIsModalOpen(true);
-
 
     dispatch(fetchRoleById({ id: role.id })).then((res) => {
       if (res.payload?.data || res.payload) {
@@ -56,7 +51,6 @@ export default function RolesPage() {
     setRoleToDeleteId(id);
     setIsDeleteModalOpen(true);
   };
-
 
   const handleConfirmDelete = async () => {
     if (!roleToDeleteId) return;

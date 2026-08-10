@@ -1,7 +1,7 @@
 import { Edit2, Trash2 } from "lucide-react";
-
-export default function OrphanHeader({ orphan, onEdit, onDelete ,t}) {
-
+import { hasPermission } from "@/utils/permissions";
+import { useSelector } from "react-redux";
+export default function OrphanHeader({ orphan, onEdit, onDelete, t }) {
   const calculateAge = (birthDate) => {
     const birth = new Date(birthDate);
     const today = new Date();
@@ -14,6 +14,7 @@ export default function OrphanHeader({ orphan, onEdit, onDelete ,t}) {
       age--;
     return age;
   };
+  const { roles } = useSelector((state) => state.auth);
 
   return (
     <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_-5px_rgba(0,0,0,0.05)] flex justify-between items-center">
@@ -41,18 +42,23 @@ export default function OrphanHeader({ orphan, onEdit, onDelete ,t}) {
 
       {/* القسم الأيمن: الأزرار */}
       <div className="flex gap-3">
-        <button
-          onClick={onEdit}
-          className="flex items-center gap-2 px-6 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-2xl font-bold transition-all"
-        >
-          <Edit2 size={18} /> {t("edit")}
-        </button>
-        <button
-          onClick={onDelete}
-          className="flex items-center gap-2 px-6 py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-2xl font-bold transition-all"
-        >
-          <Trash2 size={18} /> {t("delete")}
-        </button>
+        {hasPermission(roles, "update:orphans") && (
+          <button
+            onClick={onEdit}
+            className="flex items-center gap-2 px-6 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-2xl font-bold transition-all"
+          >
+            <Edit2 size={18} /> {t("edit")}
+          </button>
+        )}
+
+        {hasPermission(roles, "delete:orphans") && (
+          <button
+            onClick={onDelete}
+            className="flex items-center gap-2 px-6 py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-2xl font-bold transition-all"
+          >
+            <Trash2 size={18} /> {t("delete")}
+          </button>
+        )}
       </div>
     </div>
   );

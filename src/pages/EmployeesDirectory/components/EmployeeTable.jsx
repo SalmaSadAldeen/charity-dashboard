@@ -1,4 +1,6 @@
 import { Edit2, Trash2 } from "lucide-react";
+import { hasPermission } from "@/utils/permissions";
+import { useSelector } from "react-redux";
 
 export default function EmployeeTable({
   data,
@@ -12,7 +14,7 @@ export default function EmployeeTable({
 }) {
   const isLoading = status === "loading";
   const isEmpty = !data || data.length === 0;
-
+  const { roles } = useSelector((state) => state.auth); // عدلي هذا السطر ليجلب الـ roles
   const getAvatarColor = (id) => {
     const palette = [
       "bg-[#f5ede0] text-[#735c00] border-[#d0c6b0]",
@@ -21,6 +23,10 @@ export default function EmployeeTable({
     ];
     return palette[(id || 0) % palette.length];
   };
+
+  const canUpdateAny = hasPermission(roles, "update:employees");
+  const canDeleteAny = hasPermission(roles, "delete:employees");
+  const showActionsColumn = canUpdateAny || canDeleteAny;
 
   return (
     <div className="bg-[#ffffff] rounded-[2rem] border border-[#d0c6b0] shadow-sm overflow-hidden transition-all duration-300">
@@ -33,9 +39,11 @@ export default function EmployeeTable({
             <th className="py-4 px-6 text-right uppercase tracking-wider w-[50%]">
               {t("jobRole")}
             </th>
-            <th className="py-4 px-6 text-center uppercase tracking-wider w-[20%]">
-              {t("actions")}
-            </th>
+            {showActionsColumn && (
+              <th className="py-4 px-6 text-center uppercase tracking-wider w-[20%]">
+                {t("actions") || "الإجراءات"}
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="divide-y divide-[#e6e0d5]">
@@ -57,12 +65,14 @@ export default function EmployeeTable({
                     <div className="h-6 bg-gray-200 rounded-lg w-16"></div>
                   </div>
                 </td>
-                <td className="py-4 px-6 align-middle">
-                  <div className="flex justify-center items-center gap-2">
-                    <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
-                    <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
-                  </div>
-                </td>
+                {showActionsColumn && (
+                  <td className="py-4 px-6 align-middle">
+                    <div className="flex justify-center items-center gap-2">
+                      <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
+                      <div className="w-9 h-9 bg-gray-200 rounded-xl"></div>
+                    </div>
+                  </td>
+                )}
               </tr>
             ))
           ) : isEmpty ? (
@@ -134,32 +144,37 @@ export default function EmployeeTable({
                       })}
                     </div>
                   </td>
+                  {showActionsColumn && (
+                    <td className="py-4 px-6 align-middle">
+                      <div className="flex justify-center items-center gap-2">
+                        {hasPermission(roles, "update:employees") && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEdit(e, item);
+                            }}
+                            className="p-2.5 bg-[#f9f7f4] border border-[#d0c6b0] text-[#735c00] rounded-xl hover:bg-[#735c00] hover:text-[#ffffff] transition-colors shadow-2xs"
+                            title={t("edit") || "تعديل"}
+                          >
+                            <Edit2 size={15} />
+                          </button>
+                        )}
 
-                  {/* عمود الأزرار */}
-                  <td className="py-4 px-6 align-middle">
-                    <div className="flex justify-center items-center gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEdit(e, item);
-                        }}
-                        className="p-2.5 bg-[#f9f7f4] border border-[#d0c6b0] text-[#735c00] rounded-xl hover:bg-[#735c00] hover:text-[#ffffff] transition-colors shadow-2xs"
-                        title={t("edit") || "تعديل"}
-                      >
-                        <Edit2 size={15} />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteRequest(item.id);
-                        }}
-                        className="p-2.5 bg-[#d93025]/10 border border-[#d93025]/30 text-[#d93025] rounded-xl hover:bg-[#d93025] hover:text-[#ffffff] transition-colors shadow-2xs"
-                        title={t("delete") || "حذف"}
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </td>
+                        {hasPermission(roles, "delete:employees") && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDeleteRequest(item.id);
+                            }}
+                            className="p-2.5 bg-[#d93025]/10 border border-[#d93025]/30 text-[#d93025] rounded-xl hover:bg-[#d93025] hover:text-[#ffffff] transition-colors shadow-2xs"
+                            title={t("delete") || "حذف"}
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               );
             })
