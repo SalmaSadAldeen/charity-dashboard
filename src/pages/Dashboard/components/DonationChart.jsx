@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 export default function DonationChart({ period, setPeriod, currentData, t }) {
   const dataToRender = Array.isArray(currentData) ? currentData : [];
 
-  // حساب أعلى مبلغ لمعرفة النسبة المئوية لارتفاع العمود بشكل صحيح
   const maxAmount = Math.max(
     ...dataToRender.map((item) => item.amount || 0),
     1,

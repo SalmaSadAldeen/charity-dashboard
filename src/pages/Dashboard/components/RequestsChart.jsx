@@ -4,10 +4,8 @@ export default function RequestsChart({ t, dataFromBackend, lang }) {
   const data = Array.isArray(dataFromBackend) ? dataFromBackend : [];
   const [activeTooltip, setActiveTooltip] = useState(null);
 
-  // 1. حساب المجموع الكلي للطلبات
   const totalRequests = data.reduce((acc, curr) => acc + (curr.count || 0), 0);
 
-  // الألوان الثابتة والمتناسقة
   const hexColors = ["#e0ea88", "#3b674c", "#fad564", "#735c00", "#c29900"];
   const tailwindColors = [
     "bg-[#e0ea88]",

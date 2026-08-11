@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { useDispatch } from "react-redux";
 import { sendAnnualReportAction } from "@/store/index";
-import toast from "react-hot-toast"; // استيراد مكتبة السناك بار/التوست
+import toast from "react-hot-toast";
 
 export function useOrphanReport({ sponsorshipId, orphan, onClose, t }) {
   const reportArRef = useRef();
@@ -60,12 +60,10 @@ export function useOrphanReport({ sponsorshipId, orphan, onClose, t }) {
       );
 
       if (sendAnnualReportAction.fulfilled.match(resultAction)) {
-        // 1. أول ما ينجح الطلب: نسكر المودال فوراً وبدون أي زر إضافي
         if (typeof onClose === "function") {
           onClose();
         }
 
-        // 2. نظهر السناك بار (Toast) اللطيف اللي بيطلع و بيختفي لحاله
         toast.success(t("report_sent_success"), {
           position: "top-center",
           duration: 4000,
@@ -75,7 +73,6 @@ export function useOrphanReport({ sponsorshipId, orphan, onClose, t }) {
       }
     } catch (error) {
       console.error(t("report_send_failed"), error);
-      // حتى أخطاء الـ Catch فيكِ تحوليها لـ toast مشان تبعدي عن الـ alert نهائياً
       toast.error(error.message || t("error_sending_report"), {
         position: "top-center",
       });

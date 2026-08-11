@@ -3,41 +3,47 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
-import { fetchHelpRequestsStats } from "@/store/dashboardSlice";
-import StatsOverview from "@/pages/BeneficiaryGallery/StatsOverview";
+import { fetchSponsorshipFundCoverages } from "@/store/index";
+import { fetchSponsorshipFundSummary } from "@/store/dashboardSlice";
+import SponsorshipFundStats from "./components/SponsorshipFundStats";
 
 import {
-  Clock,
+  Activity,
   CheckCircle,
   XCircle,
+  AlertCircle,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { fetchHelpRequests } from "@/store/index";
 
-import HelpRequestsTable from "./components/HelpRequestsTable";
+import SponsorshipCoveragesTable from "./components/SponsorshipCoveragesTable";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
 
 const ITEMS_PER_PAGE = 5;
 
-export default function HelpRequestsPage() {
+export default function SponsorshipCoveragesPage() {
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { helpRequestsStats } = useSelector((state) => state.dashboard);
+
+  const { sponsorshipFundSummary } = useSelector((state) => state.dashboard);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get("status") || null;
   const currentPage = Number(searchParams.get("page")) || 1;
 
   const { items, status, pagination } = useSelector(
-    (state) => state.helpRequests,
+    (state) =>
+      state.sponsorshipFundCoverages || {
+        items: [],
+        status: "idle",
+        pagination: {},
+      },
   );
 
   const hasExistingItems = Array.isArray(items) && items.length > 0;
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingItems);
-
   const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
   useEffect(() => {
@@ -46,7 +52,7 @@ export default function HelpRequestsPage() {
     }
 
     dispatch(
-      fetchHelpRequests({
+      fetchSponsorshipFundCoverages({
         status: statusFilter || "",
         page: currentPage,
         limit: ITEMS_PER_PAGE,
@@ -57,7 +63,7 @@ export default function HelpRequestsPage() {
   }, [statusFilter, currentPage, lang, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchHelpRequestsStats());
+    dispatch(fetchSponsorshipFundSummary());
   }, [dispatch]);
 
   const handleFilterChange = (val) => {
@@ -78,41 +84,51 @@ export default function HelpRequestsPage() {
   };
 
   const filters = [
-    { label: t("all"), value: null },
+    { label: t("all"), value: null, icon: <Activity size={16} /> },
+    { label: t("ACTIVE"), value: "ACTIVE", icon: <CheckCircle size={16} /> },
     {
-      label: t("ACCEPTED"),
-      value: "ACCEPTED",
+      label: t("COMPLETED"),
+      value: "COMPLETED",
       icon: <CheckCircle size={16} />,
     },
-    { label: t("PENDING"), value: "PENDING", icon: <Clock size={16} /> },
-    { label: t("REJECTED"), value: "REJECTED", icon: <XCircle size={16} /> },
-    { label: t("cancel"), value: "CANCELLED", icon: <XCircle size={16} /> },
+    {
+      label: t("STOPPED_NEW_SPONSOR"),
+      value: "STOPPED_NEW_SPONSOR",
+      icon: <XCircle size={16} />,
+    },
+    {
+      label: t("STOPPED_INSUFFICIENT_FUNDS"),
+      value: "STOPPED_INSUFFICIENT_FUNDS",
+      icon: <AlertCircle size={16} />,
+    },
   ];
 
   const showSkeleton = isReallyLoading && !hasExistingItems;
+
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative">
-      {/* 1. Header */}
-      <header className="flex justify-between items-end border-b border-border pb-6">
-        <div>
-          <h2 className="text-3xl font-black text-on-surface-variant tracking-tight">
-            {t("helpRequests")}
-          </h2>
-          <p className="text-gray-500 font-medium mt-1.5 text-sm">
-            {t("manageRequestsDescription")}
-          </p>
-        </div>
+    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-5 animate-in fade-in duration-500">
+      {/* 1. Header (خلفية فاتحة ومرتبة، وبدون فراغ كبير للأعلى) */}
+      <header className="flex flex-col gap-1 bg-white/60 backdrop-blur-md px-6 py-4 rounded-2xl border border-border/50 shadow-xs">
+        <h2 className="text-2xl font-black text-on-surface-variant tracking-tight">
+          {t("sponsorshipFundCoverages")}
+        </h2>
+        <p className="text-gray-500 font-medium text-xs">
+          {t("manageCoveragesDescription")}
+        </p>
       </header>
-      {helpRequestsStats && (
+
+      {/* Stats Overview */}
+      {sponsorshipFundSummary && (
         <section>
-          <StatsOverview stats={helpRequestsStats} />
+          <SponsorshipFundStats stats={sponsorshipFundSummary} />
         </section>
       )}
 
-      {/* 2. Main Section */}
+      {/* 2. Main Section (Table Card containing Filter Bar inside) */}
       <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
-        <div>
-          <div className="mb-8">
+        <div className="space-y-6">
+          {/* Filter Bar داخل الإطار الرئيسي */}
+          <div >
             <FilterBar
               filters={filters}
               active={statusFilter}
@@ -120,15 +136,12 @@ export default function HelpRequestsPage() {
             />
           </div>
 
-          {/* الجدول يعرض الهيد الحقيقي فوراً، والسكيليتون في الصفوف تحته */}
           <div className="relative min-h-[300px] flex flex-col">
-            <HelpRequestsTable
+            <SponsorshipCoveragesTable
               data={items}
               status={showSkeleton ? "loading" : status}
-              onRowClick={(req) =>
-                navigate(
-                  `/dashboard/help-requests/${req.id}?${searchParams.toString()}`,
-                )
+              onOrphanClick={(orphanId) =>
+                navigate(`/dashboard/orphan/details/${orphanId}`)
               }
             />
           </div>

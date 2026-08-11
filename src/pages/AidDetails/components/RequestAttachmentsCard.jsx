@@ -26,7 +26,6 @@ export const RequestAttachmentsCard = ({ mediaUrls, t, lang }) => {
     );
   }
 
-  // تجهيز المرفقات ومعالجة المسارات بأسلوب مختصر ونظيف
   const attachments = mediaUrls.map((rawUrl) => {
     const cleanPath = rawUrl.replace(/\\/g, "/").replace(/^uploads\//, "");
     return {

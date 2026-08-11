@@ -20,13 +20,16 @@ import RolesPage from "@/pages/RolesGallery/RolesPage";
 import RoleDetailsPage from "@/pages/RoleDetailsPage/RoleDetailsPage";
 import SponsorshipsPage from "@/pages/Sponsorships/SponsorshipsPage";
 import SponsorshipDetailsPage from "@/pages/SponsorshipDetails/SponsorshipDetailsPage";
+import SponsorshipCoveragesPage from "@/pages/SponsorshipCoverages/SponsorshipCoveragesPage";
+import SponsorshipSupportsPage from "@/pages/SponsorshipSupports/SponsorshipSupportsPage";
+
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-    
+
       <Route path="/" element={<Navigate to="/login" replace />} />
-    
+
       <Route
         path="/dashboard"
         element={
@@ -52,6 +55,14 @@ export default function AppRoutes() {
         <Route path="beneficiaries/:id" element={<BeneficiaryDetails />} />
         <Route path="roles" element={<RolesPage />} />
         <Route path="roles/:id" element={<RoleDetailsPage />} />
+        <Route
+          path="sponsorship-supports"
+          element={<SponsorshipSupportsPage />}
+        />
+        <Route
+          path="sponsorship-coverages"
+          element={<SponsorshipCoveragesPage />}
+        />
 
         <Route
           path="sponsorships/:sponsorshipId"

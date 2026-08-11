@@ -1,43 +1,35 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
-import { fetchHelpRequestsStats } from "@/store/dashboardSlice";
-import StatsOverview from "@/pages/BeneficiaryGallery/StatsOverview";
+import { fetchSponsorshipFundSupports } from "@/store/index";
+import SponsorshipSupportsTable from "./components/SponsorshipSupportsTable";
 
-import {
-  Clock,
-  CheckCircle,
-  XCircle,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import { fetchHelpRequests } from "@/store/index";
-
-import HelpRequestsTable from "./components/HelpRequestsTable";
-import FilterBar from "@/pages/Dashboard/components/FilterBar";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const ITEMS_PER_PAGE = 5;
 
-export default function HelpRequestsPage() {
+export default function SponsorshipSupportsPage() {
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { helpRequestsStats } = useSelector((state) => state.dashboard);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const statusFilter = searchParams.get("status") || null;
   const currentPage = Number(searchParams.get("page")) || 1;
 
   const { items, status, pagination } = useSelector(
-    (state) => state.helpRequests,
+    (state) =>
+      state.sponsorshipFundSupports || {
+        items: [],
+        status: "idle",
+        pagination: {},
+      },
   );
 
   const hasExistingItems = Array.isArray(items) && items.length > 0;
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingItems);
-
   const isReallyLoading = useDelayedLoading(status === "loading", 100);
 
   useEffect(() => {
@@ -46,30 +38,14 @@ export default function HelpRequestsPage() {
     }
 
     dispatch(
-      fetchHelpRequests({
-        status: statusFilter || "",
+      fetchSponsorshipFundSupports({
         page: currentPage,
         limit: ITEMS_PER_PAGE,
       }),
     ).then(() => {
       setHasLoadedAtLeastOnce(true);
     });
-  }, [statusFilter, currentPage, lang, dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchHelpRequestsStats());
-  }, [dispatch]);
-
-  const handleFilterChange = (val) => {
-    const params = new URLSearchParams(searchParams);
-    if (val) {
-      params.set("status", val);
-    } else {
-      params.delete("status");
-    }
-    params.set("page", "1");
-    setSearchParams(params);
-  };
+  }, [currentPage, lang, dispatch]);
 
   const handlePageChange = (newPage) => {
     const params = new URLSearchParams(searchParams);
@@ -77,58 +53,29 @@ export default function HelpRequestsPage() {
     setSearchParams(params);
   };
 
-  const filters = [
-    { label: t("all"), value: null },
-    {
-      label: t("ACCEPTED"),
-      value: "ACCEPTED",
-      icon: <CheckCircle size={16} />,
-    },
-    { label: t("PENDING"), value: "PENDING", icon: <Clock size={16} /> },
-    { label: t("REJECTED"), value: "REJECTED", icon: <XCircle size={16} /> },
-    { label: t("cancel"), value: "CANCELLED", icon: <XCircle size={16} /> },
-  ];
-
   const showSkeleton = isReallyLoading && !hasExistingItems;
+
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative">
+    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-5 animate-in fade-in duration-500">
       {/* 1. Header */}
-      <header className="flex justify-between items-end border-b border-border pb-6">
-        <div>
-          <h2 className="text-3xl font-black text-on-surface-variant tracking-tight">
-            {t("helpRequests")}
-          </h2>
-          <p className="text-gray-500 font-medium mt-1.5 text-sm">
-            {t("manageRequestsDescription")}
-          </p>
-        </div>
+      <header className="flex flex-col gap-1 bg-white/60 backdrop-blur-md px-6 py-4 rounded-2xl border border-border/50 shadow-xs">
+        <h2 className="text-2xl font-black text-on-surface-variant tracking-tight">
+          {t("sponsorship_coverages")}
+        </h2>
+        <p className="text-gray-500 font-medium text-xs">
+          {t("sponsorshipSupportsSubtitle")}
+        </p>
       </header>
-      {helpRequestsStats && (
-        <section>
-          <StatsOverview stats={helpRequestsStats} />
-        </section>
-      )}
 
       {/* 2. Main Section */}
       <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
-        <div>
-          <div className="mb-8">
-            <FilterBar
-              filters={filters}
-              active={statusFilter}
-              onFilterChange={handleFilterChange}
-            />
-          </div>
-
-          {/* الجدول يعرض الهيد الحقيقي فوراً، والسكيليتون في الصفوف تحته */}
+        <div className="space-y-6">
           <div className="relative min-h-[300px] flex flex-col">
-            <HelpRequestsTable
+            <SponsorshipSupportsTable
               data={items}
               status={showSkeleton ? "loading" : status}
-              onRowClick={(req) =>
-                navigate(
-                  `/dashboard/help-requests/${req.id}?${searchParams.toString()}`,
-                )
+              onOrphanClick={(orphanId) =>
+                navigate(`/dashboard/orphan/details/${orphanId}`)
               }
             />
           </div>

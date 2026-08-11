@@ -29,7 +29,6 @@ export default function AddUser() {
 
   const rolesStatus = useSelector((state) => state.roles.status);
   useEffect(() => {
-    // إعادة جلب الأدوار فوراً عند تغير اللغة
     dispatch(fetchRoles());
   }, [dispatch, lang]);
   return (

@@ -21,13 +21,11 @@ export default function Dashboard() {
   useEffect(() => {
     dispatch(fetchDashboardStats());
     dispatch(fetchRequestsCharts());
-  }, [dispatch, lang]); // أضفنا lang هنا ليعيد الجلب عند تغيير اللغة
+  }, [dispatch, lang]); 
 
-  // 👈 جلب بيانات الرسوم البيانية عند تغير الـ period أو تغير اللغة
   useEffect(() => {
     dispatch(fetchCharts(period));
-  }, [dispatch, period, lang]); // أضفنا lang هنا أيضاً
-
+  }, [dispatch, period, lang]); 
   return (
     <main
       dir={lang === "ar" ? "rtl" : "ltr"}

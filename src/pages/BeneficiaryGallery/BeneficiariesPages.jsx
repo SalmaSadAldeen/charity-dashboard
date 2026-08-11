@@ -6,8 +6,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 import BeneficiaryTable from "./components/BeneficiaryTable";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
-import { fetchBeneficiaryStats } from "@/store/dashboardSlice";
-import StatsOverview from "@/pages/BeneficiaryGallery/StatsOverview";
 import { Clock, CheckCircle, XCircle } from "lucide-react";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 
@@ -15,7 +13,6 @@ export default function BeneficiariesPage() {
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
 
-  const { beneficiariesStats } = useSelector((state) => state.dashboard);
   const {
     items: beneficiaries,
     status,
@@ -30,10 +27,6 @@ export default function BeneficiariesPage() {
 
   const hasExistingItems = Array.isArray(beneficiaries) && beneficiaries.length > 0;
   const isReallyLoading = useDelayedLoading(status === "loading", 500);
-
-  useEffect(() => {
-    dispatch(fetchBeneficiaryStats());
-  }, [dispatch]);
 
   useEffect(() => {
     dispatch(
@@ -89,12 +82,7 @@ export default function BeneficiariesPage() {
           </div>
         </header>
 
-        {beneficiariesStats && (
-          <section>
-            <StatsOverview stats={beneficiariesStats} />
-          </section>
-        )}
-
+       
         <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border">
           <div className="mb-8">
             <FilterBar

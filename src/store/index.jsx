@@ -14,7 +14,12 @@ const profileSlice = createGenericSlice("profile");
 const donorsSlice = createGenericSlice("donors");
 const permissionsSlice = createGenericSlice("permissions");
 const sponsorshipsSlice = createGenericSlice("sponsorships");
-
+const sponsorshipFundCoveragesSlice = createGenericSlice(
+  "sponsorshipFundCoverages",
+);
+const sponsorshipFundSupportsSlice = createGenericSlice(
+  "sponsorshipFundSupports",
+);
 export const {
   setSelectedItem: setEmployee,
   clearSelected: clearEmployee,
@@ -85,6 +90,11 @@ export const {
   deleteItem: deleteRole,
 } = rolesSlice.actions;
 
+export const { fetchItems: fetchSponsorshipFundSupports } =
+  sponsorshipFundSupportsSlice.actions;
+export const { fetchItems: fetchSponsorshipFundCoverages } =
+  sponsorshipFundCoveragesSlice.actions;
+
 export const { fetchItems: fetchPermissions } = permissionsSlice.actions;
 
 export const { fetchItems: fetchDonors, fetchItemById: fetchDonorHistory } =
@@ -119,5 +129,7 @@ export const store = configureStore({
     donors: donorsSlice.slice.reducer,
     permissions: permissionsSlice.slice.reducer,
     sponsorships: sponsorshipsSlice.slice.reducer,
+    sponsorshipFundCoverages: sponsorshipFundCoveragesSlice.slice.reducer,
+    sponsorshipFundSupports: sponsorshipFundSupportsSlice.slice.reducer, // <-- أضفناه هون
   },
 });

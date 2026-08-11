@@ -1,12 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { adminService } from "@/services/adminService";
 import { beneficiaryService } from "@/services/beneficiaryService";
-
+import { sponsorshipFundService } from "@/services/sponsorshipFundService.jsx"; // حسب مسارك الصحيح
 export const fetchDashboardStats = createAsyncThunk(
   "dashboard/fetchStats",
   async () => {
     const response = await adminService.getDashboardStats();
     return response.data;
+  },
+);
+export const fetchSponsorshipFundSummary = createAsyncThunk(
+  "dashboard/fetchSponsorshipFundSummary",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await sponsorshipFundService.fetchSummary();
+      return response.data; // أو response حسب شكل الـ API
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
   },
 );
 
@@ -42,8 +53,8 @@ export const fetchOrphansStats = createAsyncThunk(
   },
 );
 
-export const fetchBeneficiaryStats = createAsyncThunk(
-  "dashboard/fetchBeneficiaryStats",
+export const fetchHelpRequestsStats = createAsyncThunk(
+  "dashboard/help-requests",
   async () => {
     const response = await beneficiaryService.getHelpRequestStats();
     return response.data;
@@ -55,10 +66,11 @@ const initialState = {
   charts: [],
   isLoading: false,
   error: null,
-  beneficiariesStats: null,
+  helpRequestsStats: null,
   requestsCharts: [],
   sponsorshipsStats: null,
   orphansStats: null,
+  sponsorshipFundSummary: null,
 };
 
 const dashboardSlice = createSlice({
@@ -106,10 +118,14 @@ const dashboardSlice = createSlice({
       })
 
       // Beneficiary Stats
-      .addCase(fetchBeneficiaryStats.fulfilled, (state, action) => {
-        state.beneficiariesStats = action.payload;
+      .addCase(fetchHelpRequestsStats.fulfilled, (state, action) => {
+        state.helpRequestsStats = action.payload;
       })
-      .addCase(fetchBeneficiaryStats.rejected, (state, action) => {
+      .addCase(fetchSponsorshipFundSummary.fulfilled, (state, action) => {
+        // في حال كان الـ response يرجع الكائن مغلفاً داخل data
+        state.sponsorshipFundSummary = action.payload?.data || action.payload;
+      })
+      .addCase(fetchHelpRequestsStats.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
         console.error("خطأ في السيرفر:", action.error);

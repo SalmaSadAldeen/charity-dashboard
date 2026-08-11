@@ -5,7 +5,7 @@ import { beneficiaryService } from "@/services/beneficiaryService";
 import { requestsService } from "@/services/requestsService";
 import { donorService } from "@/services/donorService";
 import { sponsorshipsService } from "@/services/sponsorshipsService.jsx";
-
+import { sponsorshipFundService } from "@/services/sponsorshipFundService.jsx"; // حسب مسارك الصحيح
 export const createGenericActions = (resource) => ({
   fetchItems: createAsyncThunk(
     `${resource}/fetchAll`,
@@ -68,6 +68,24 @@ export const createGenericActions = (resource) => ({
               params.page || 1,
               params.limit || 10,
               params.status,
+            )
+          ).data;
+        }
+        if (resource === "sponsorshipFundCoverages") {
+          return (
+            await sponsorshipFundService.fetchCoverages(
+              params.page || 1,
+              params.limit || 10,
+              params.status,
+            )
+          ).data;
+        }
+
+        if (resource === "sponsorshipFundSupports") {
+          return (
+            await sponsorshipFundService.fetchSupports(
+              params.page || 1,
+              params.limit || 10,
             )
           ).data;
         }

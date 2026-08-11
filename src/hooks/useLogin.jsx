@@ -28,7 +28,7 @@ export const useLogin = () => {
 
       localStorage.setItem("token", accessToken);
       localStorage.setItem("userType", userType);
-      localStorage.setItem("roles", JSON.stringify(roles)); // هنا انحفظت الـ roles والـ permissions جواتها
+      localStorage.setItem("roles", JSON.stringify(roles)); 
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("rememberedEmail", email);
 

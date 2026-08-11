@@ -32,7 +32,7 @@ export default function RoleDetailsPage() {
         setHasLoadedAtLeastOnce(true);
       });
     }
-  }, [dispatch, id, lang, hasExistingRole]);
+  }, [dispatch, id, lang]);
 
   const showSkeleton =
     isReallyLoading || !role || String(role.id) !== String(id);

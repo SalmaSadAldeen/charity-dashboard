@@ -28,7 +28,6 @@ export default function HelpRequestDetailsPage() {
 
   const isReallyLoading = useDelayedLoading(detailsStatus === "loading", 400);
 
-  // استخراج البيانات بحماية تامة
   const data = selectedDetails?.data || selectedDetails || null;
   const hasExistingData =
     data && typeof data === "object" && Object.keys(data).length > 0;

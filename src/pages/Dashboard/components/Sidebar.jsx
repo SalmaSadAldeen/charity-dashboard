@@ -47,8 +47,8 @@ export default function Sidebar() {
     ],
     beneficiaries: ["/dashboard/beneficiaries"],
     requests: [
-      "/dashboard/requests", // صفحة عرض الطلبات الأساسية
-      "/dashboard/help-requests", // مسار صفحة تفاصيل الطلب (لأنها تبدأ بهذا)
+      "/dashboard/requests", 
+      "/dashboard/help-requests",
     ],
     roles: ["/dashboard/roles"],
   };
@@ -87,6 +87,21 @@ export default function Sidebar() {
         icon: "child_care",
         path: "/dashboard/sponsorships",
         permission: "read:sponsorships",
+      },
+
+      {
+        id: "sponsorship_coverages",
+        name: t("sponsorship_coverages"),
+        icon: "verified_user",
+        path: "/dashboard/sponsorship-coverages",
+        permission: "read:sponsorship_fund",
+      },
+      {
+        id: "sponsorship_supports",
+        name: t("sponsorship_supports"), 
+        icon: "receipt_long", 
+        path: "/dashboard/sponsorship-supports",
+        permission: "read:sponsorship_fund",
       },
     ],
     administrative: [
