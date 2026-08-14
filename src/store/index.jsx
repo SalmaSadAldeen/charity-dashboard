@@ -100,6 +100,8 @@ export const { fetchItems: fetchPermissions } = permissionsSlice.actions;
 export const { fetchItems: fetchDonors, fetchItemById: fetchDonorHistory } =
   donorsSlice.actions;
 export const { fetchItems: getProfile } = profileSlice.actions;
+export const { updateItem: updateProfile } = profileSlice.actions;
+
 
 export const {
   setSelectedItem: setSponsorship,

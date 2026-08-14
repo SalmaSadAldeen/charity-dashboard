@@ -2,7 +2,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useLogin } from "../../hooks/useLogin";
 import LoginHeader from "./components/LoginHeader";
 import InputField from "./components/InputField";
-
+import { Link } from "react-router-dom"; // <-- تأكدي من استيراد Link
 const LoginPage = () => {
   const { t, lang } = useTranslation();
   const {
@@ -59,8 +59,17 @@ const LoginPage = () => {
             </button>
           </InputField>
 
-          {/* <RememberMeToggle checked={rememberMe} onToggle={toggleRememberMe} /> */}
-
+          <div
+            className={`flex ${lang === "ar" ? "justify-start" : "justify-end"} -mt-2`}
+          >
+            <Link
+              to="/forgot-password"
+              className="text-xs font-semibold text-[#8c8275] hover:text-[#544e3b] transition-colors"
+            >
+              {t("forgotPasswordPrompt") ||
+                (lang === "ar" ? "هل نسيت كلمة المرور؟" : "Forgot password?")}
+            </Link>
+          </div>
           <button
             type="submit"
             disabled={isLoading}

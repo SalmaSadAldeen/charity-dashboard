@@ -19,7 +19,7 @@ export const useUserFormLogic = (t, initialData = null, onClose) => {
 
   const validateEmployee = (data) => {
     let errors = {};
-    const phoneRegex = /^\d{10}$/;
+    const phoneRegex = /^\d{9}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!data.firstName?.trim()) errors.firstName = t("firstNameIsRequired");

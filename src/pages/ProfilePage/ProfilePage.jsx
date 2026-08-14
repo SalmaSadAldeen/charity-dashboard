@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; // <-- أضفنا الـ navigate للتنقل
 import { getProfile } from "@/store/index";
 import { useTranslation } from "@/hooks/useTranslation";
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, Edit3, Lock } from "lucide-react"; // <-- أضفنا أيقونات التعديل والقفل
 import { ProfileHero } from "@/pages/ProfilePage/components/ProfileHero";
 import { ProfileInfo } from "@/pages/ProfilePage/components/ProfileInfo";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 
 export function ProfilePage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // <-- تفعيل التنقل بين الصفحات
   const { t, lang } = useTranslation();
   const isRTL = lang === "ar";
 
@@ -76,6 +78,29 @@ export function ProfilePage() {
       className="min-h-full w-full max-w-[1240px] mx-auto p-4 sm:p-6 md:p-8 flex flex-col gap-6 select-none box-border bg-transparent text-slate-800 transition-all duration-300"
       dir={isRTL ? "rtl" : "ltr"}
     >
+      {/* شريط الأزرار العلوي (تعديل الملف الشخصي وتغيير كلمة المرور) */}
+      {!showSkeleton && (
+        <div className="flex flex-wrap items-center justify-end gap-3 bg-surface-lowest p-4 rounded-2xl border border-border/60 shadow-xs">
+          {/* زر تعديل الملف الشخصي */}
+          <button
+            onClick={() => navigate("edit")} 
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold transition-all cursor-pointer"
+          >
+            <Edit3 size={16} />
+            <span>{t("editProfile") || "تعديل الملف الشخصي"}</span>
+          </button>
+
+          {/* زر تغيير كلمة المرور */}
+          <button
+            onClick={() => navigate("change-password")} 
+            className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+          >
+            <Lock size={16} />
+            <span>{t("changePassword") || "تغيير كلمة المرور"}</span>
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* القسم الأول: البروفايل الجانبي */}
@@ -95,6 +120,7 @@ export function ProfilePage() {
           )}
         </div>
 
+        {/* القسم الثاني: تفاصيل البروفايل */}
         <div className="lg:col-span-8 xl:col-span-8 w-full">
           {showSkeleton ? (
             <div className="bg-surface-lowest rounded-3xl p-8 min-h-[420px] border border-border/60 shadow-sm flex flex-col gap-8 animate-pulse">

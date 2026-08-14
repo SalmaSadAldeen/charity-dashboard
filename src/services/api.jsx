@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const API = axios.create({
   baseURL: "http://localhost:3000",
 });
@@ -15,12 +16,24 @@ API.interceptors.request.use((config) => {
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // إذا انتهى التوكن، امسحي كل شيء ووجهي المستخدم لصفحة اللوجن
+    // التحقق هل الخطأ جاء من مسار تغيير كلمة المرور؟
+    const isPasswordRoute = error.config?.url?.includes("/api/profile/password");
+
+    // إذا كان الخطأ 401 ولم يكن بسبب تغيير كلمة المرور، نقوم بتسجيل الخروج وتحويله للوجن
+    if (error.response?.status === 401 && !isPasswordRoute) {
+      const savedLang = localStorage.getItem("preferredLang") || "ar";
+
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      localStorage.removeItem("userType");
+      localStorage.removeItem("roles");
+      localStorage.setItem("preferredLang", savedLang);
+
+      if (!window.location.pathname.includes("/login")) {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   },
 );
+
 export { API };

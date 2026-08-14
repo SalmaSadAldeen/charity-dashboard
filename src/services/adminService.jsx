@@ -19,6 +19,16 @@ export const adminService = {
   getOrphansStats: () => API.get("/api/admin/dashboard/orphans"),
   getProfile: () => API.get("/api/profile"),
 
+  updateProfile: (formData) => {
+    return API.patch("/api/profile", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  changePassword: (passwordsData) => {
+    return API.patch("/api/profile/password", passwordsData);
+  },
+
   getRoles: () => API.get("/roles").then((res) => res.data.data),
   getRoleById: (id) => API.get(`/roles/${id}`),
   addRole: (data) => API.post("/roles", data),
@@ -34,4 +44,10 @@ export const adminService = {
   },
 
   logout: () => API.post("/auth/logout"),
+
+  requestOtp: (phoneNumber) =>
+    API.post("/auth/forgot-password/request-otp", { phoneNumber }),
+
+  resetPassword: (credentials) =>
+    API.post("/auth/forgot-password/reset", credentials),
 };

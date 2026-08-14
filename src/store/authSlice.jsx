@@ -1,15 +1,53 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { adminService } from "@/services/adminService";
-
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await adminService.logout();
-      localStorage.clear();
+      const savedLang = localStorage.getItem("preferredLang") || "ar";
+      await adminService.logout();
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("userType");
+      localStorage.removeItem("roles");
+
+      localStorage.setItem("preferredLang", savedLang);
+      return true;
+    } catch (error) {
+      const savedLang = localStorage.getItem("preferredLang") || "ar";
+      localStorage.removeItem("token");
+      localStorage.removeItem("userType");
+      localStorage.removeItem("roles");
+      localStorage.setItem("preferredLang", savedLang);
+
+      return rejectWithValue(error.response?.data?.message || "Logout failed");
+    }
+  },
+);
+export const requestOtpUser = createAsyncThunk(
+  "auth/requestOtpUser",
+  async (phoneNumber, { rejectWithValue }) => {
+    try {
+      const response = await adminService.requestOtp(phoneNumber);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Logout failed");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to send OTP",
+      );
+    }
+  },
+);
+
+export const resetPasswordUser = createAsyncThunk(
+  "auth/resetPasswordUser",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await adminService.resetPassword(credentials);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to reset password",
+      );
     }
   },
 );
@@ -59,6 +97,10 @@ const authSlice = createSlice({
       }
       if (action.payload?.userType) {
         localStorage.setItem("userType", action.payload.userType);
+      } // لحماية لغتك الحالية والتأكد أنها لن تتغير حتى لو سجلتي دخول من جديد
+      const savedLang = localStorage.getItem("preferredLang");
+      if (savedLang) {
+        localStorage.setItem("preferredLang", savedLang);
       }
     },
     loginFailure: (state, action) => {
@@ -82,6 +124,29 @@ const authSlice = createSlice({
         state.roles = [];
       })
       .addCase(logoutUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      // Request OTP
+      .addCase(requestOtpUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(requestOtpUser.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(requestOtpUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(resetPasswordUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(resetPasswordUser.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(resetPasswordUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });

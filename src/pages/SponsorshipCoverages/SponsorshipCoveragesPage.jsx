@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -42,24 +42,17 @@ export default function SponsorshipCoveragesPage() {
   );
 
   const hasExistingItems = Array.isArray(items) && items.length > 0;
-  const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
-    useState(hasExistingItems);
   const isReallyLoading = useDelayedLoading(status === "loading", 100);
+  const showSkeleton = isReallyLoading && !hasExistingItems;
 
   useEffect(() => {
-    if (!hasExistingItems) {
-      setHasLoadedAtLeastOnce(false);
-    }
-
     dispatch(
       fetchSponsorshipFundCoverages({
         status: statusFilter || "",
         page: currentPage,
         limit: ITEMS_PER_PAGE,
       }),
-    ).then(() => {
-      setHasLoadedAtLeastOnce(true);
-    });
+    );
   }, [statusFilter, currentPage, lang, dispatch]);
 
   useEffect(() => {
@@ -103,11 +96,9 @@ export default function SponsorshipCoveragesPage() {
     },
   ];
 
-  const showSkeleton = isReallyLoading && !hasExistingItems;
-
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-5 animate-in fade-in duration-500">
-      {/* 1. Header (خلفية فاتحة ومرتبة، وبدون فراغ كبير للأعلى) */}
+      {/* 1. Header */}
       <header className="flex flex-col gap-1 bg-white/60 backdrop-blur-md px-6 py-4 rounded-2xl border border-border/50 shadow-xs">
         <h2 className="text-2xl font-black text-on-surface-variant tracking-tight">
           {t("sponsorshipFundCoverages")}
@@ -124,11 +115,10 @@ export default function SponsorshipCoveragesPage() {
         </section>
       )}
 
-      {/* 2. Main Section (Table Card containing Filter Bar inside) */}
+      {/* 2. Main Section */}
       <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border min-h-[500px] flex flex-col justify-between">
         <div className="space-y-6">
-          {/* Filter Bar داخل الإطار الرئيسي */}
-          <div >
+          <div>
             <FilterBar
               filters={filters}
               active={statusFilter}
@@ -139,7 +129,7 @@ export default function SponsorshipCoveragesPage() {
           <div className="relative min-h-[300px] flex flex-col">
             <SponsorshipCoveragesTable
               data={items}
-              status={showSkeleton ? "loading" : status}
+              isLoading={showSkeleton}
               onOrphanClick={(orphanId) =>
                 navigate(`/dashboard/orphan/details/${orphanId}`)
               }

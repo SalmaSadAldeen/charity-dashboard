@@ -221,6 +221,10 @@ export const createGenericActions = (resource) => ({
             id,
             formData,
           );
+        } else if (resource === "profile") {
+          response = await adminService.updateProfile(data); // الـ data قادمة مجهزة كـ FormData من الهوك
+        } else if (resource === "changePassword") {
+          response = await adminService.changePassword(data);
         } else {
           throw new Error(`Update action not defined for ${resource}`);
         }

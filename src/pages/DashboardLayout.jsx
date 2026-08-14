@@ -3,12 +3,15 @@ import Sidebar from "@/pages/Dashboard/components/Sidebar";
 import Topbar from "@/pages/Dashboard/components/TopBar";
 import { useSelector } from "react-redux";
 import { Toaster } from "react-hot-toast";
-
+import { useNotificationListener } from "@/hooks/useNotificationListener"; // حسب مسار الملف لديكِ
 export default function DashboardLayout() {
-  const lang = useSelector((state) => state.language?.lang || "en");
-
+  const lang =
+    useSelector((state) => state.language?.lang) ||
+    localStorage.getItem("preferredLang") ||
+    "ar";
   const isRtl = lang === "ar";
 
+  useNotificationListener();
 
   return (
     <div

@@ -22,14 +22,16 @@ import SponsorshipsPage from "@/pages/Sponsorships/SponsorshipsPage";
 import SponsorshipDetailsPage from "@/pages/SponsorshipDetails/SponsorshipDetailsPage";
 import SponsorshipCoveragesPage from "@/pages/SponsorshipCoverages/SponsorshipCoveragesPage";
 import SponsorshipSupportsPage from "@/pages/SponsorshipSupports/SponsorshipSupportsPage";
-
+import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
+import EditProfilePage from "@/pages/EditProfilePage.jsx/EditProfilePage";
+import ChangePasswordPage from "@/pages/EditProfilePage.jsx/ChangePasswordPage"; // صفحة تغيير كلمة المرور المستقلة
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
 
       <Route path="/" element={<Navigate to="/login" replace />} />
-
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route
         path="/dashboard"
         element={
@@ -59,6 +61,7 @@ export default function AppRoutes() {
           path="sponsorship-supports"
           element={<SponsorshipSupportsPage />}
         />
+
         <Route
           path="sponsorship-coverages"
           element={<SponsorshipCoveragesPage />}
@@ -67,6 +70,12 @@ export default function AppRoutes() {
         <Route
           path="sponsorships/:sponsorshipId"
           element={<SponsorshipDetailsPage />}
+        />
+
+        <Route path="profile/edit" element={<EditProfilePage />} />
+        <Route
+          path="profile/change-password"
+          element={<ChangePasswordPage />}
         />
         {/* <Route path="donors/:id" element={<DonorHistoryModal />} /> */}
       </Route>
