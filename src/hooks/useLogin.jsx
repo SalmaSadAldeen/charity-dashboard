@@ -6,7 +6,6 @@ import { API } from "@/services/api";
 import { useNavigate } from "react-router-dom";
 import { getToken } from "firebase/messaging";
 
-
 export const useLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,12 +18,13 @@ export const useLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-
   const registerNotificationToken = async () => {
     try {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
-        // جلب التوكن مباشرة بدون انتظار الـ serviceWorker.ready لتجنب أي تعليق
+        console.log("⏳ جاري جلب التوكن من فايربيز...");
+
+        // جلب التوكن مباشرة بدون انتظار الـ ready لمنع أي تعليق
         const token = await getToken(messaging, {
           vapidKey:
             "BD2IU2XiRhPo7K5e_kz5gvSVbTEtHqa93Kkkh8rMUbl_v9h59gEbyHIoS0N4NAIPYHRL_F68UNgWEtrWPgvplm8",
@@ -36,24 +36,27 @@ export const useLogin = () => {
             token,
           );
 
-          // إرسال التوكن مباشرة للباك إند بالـ PUT
-          await API.put("/notifications/registration", {
+          // إرسال التوكن للباك إند
+          const res = await API.put("/notifications/registration", {
             registrationId: token,
           });
           console.log(
             "🚀 تم إرسال الـ registrationId وتسجيله في السيرفر بنجاح!",
+            res.data,
           );
         } else {
-          console.log("⚠️ التحذير: التوكن رجع فارغاً");
+          console.log("⚠️ التحذير: التوكن رجع فارغاً من فايربيز");
         }
       } else {
         console.log("⚠️ المستخدم رفض إذن الإشعارات");
       }
     } catch (err) {
-      console.error("❌ خطأ أثناء تسجيل التوكن في السيرفر:", err);
+      console.error(
+        "❌ خطأ تفصيلي أثناء تسجيل التوكن في السيرفر:",
+        err.response?.data || err.message,
+      );
     }
   };
-
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     dispatch(loginStart());

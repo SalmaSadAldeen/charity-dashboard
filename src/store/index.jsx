@@ -4,6 +4,7 @@ import layoutReducer from "./layoutSlice";
 import languageReducer from "./languageSlice";
 import dashboardReducer from "./dashboardSlice";
 import { createGenericSlice } from "./genericSlice";
+import notificationsReducer from "./notificationsSlice"; // عدلي المسار حسب هيكلة مشروعك
 
 const employeesSlice = createGenericSlice("employees");
 const orphansSlice = createGenericSlice("orphans");
@@ -55,6 +56,7 @@ export const {
 } = beneficiariesData.slice.actions;
 
 export const {
+  addItem: addBeneficiary,
   fetchItems: fetchBeneficiaries,
   fetchItemById: fetchBeneficiariesById,
   updateItemStatus: updateBeneficiaryStatus,
@@ -102,7 +104,6 @@ export const { fetchItems: fetchDonors, fetchItemById: fetchDonorHistory } =
 export const { fetchItems: getProfile } = profileSlice.actions;
 export const { updateItem: updateProfile } = profileSlice.actions;
 
-
 export const {
   setSelectedItem: setSponsorship,
   clearSelected: clearSponsorship,
@@ -132,6 +133,7 @@ export const store = configureStore({
     permissions: permissionsSlice.slice.reducer,
     sponsorships: sponsorshipsSlice.slice.reducer,
     sponsorshipFundCoverages: sponsorshipFundCoveragesSlice.slice.reducer,
-    sponsorshipFundSupports: sponsorshipFundSupportsSlice.slice.reducer, // <-- أضفناه هون
+    sponsorshipFundSupports: sponsorshipFundSupportsSlice.slice.reducer,
+    notifications: notificationsReducer,
   },
 });

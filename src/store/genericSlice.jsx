@@ -153,6 +153,8 @@ export const createGenericActions = (resource) => ({
           response = await orphanService.addOrphan(data);
         else if (resource === "roles")
           response = await adminService.addRole(data);
+        else if (resource === "beneficiaries")
+          response = await beneficiaryService.createBeneficiary(data);
         else throw new Error(`Add action not defined for ${resource}`);
         return response.data;
       } catch (err) {

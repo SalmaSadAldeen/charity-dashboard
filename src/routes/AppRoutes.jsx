@@ -23,6 +23,7 @@ import SponsorshipDetailsPage from "@/pages/SponsorshipDetails/SponsorshipDetail
 import SponsorshipCoveragesPage from "@/pages/SponsorshipCoverages/SponsorshipCoveragesPage";
 import SponsorshipSupportsPage from "@/pages/SponsorshipSupports/SponsorshipSupportsPage";
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
+import AddBeneficiaryPage from "@/pages/AddBeneficiaries/AddBeneficiaryPage";
 import EditProfilePage from "@/pages/EditProfilePage.jsx/EditProfilePage";
 import ChangePasswordPage from "@/pages/EditProfilePage.jsx/ChangePasswordPage"; // صفحة تغيير كلمة المرور المستقلة
 export default function AppRoutes() {
@@ -71,7 +72,10 @@ export default function AppRoutes() {
           path="sponsorships/:sponsorshipId"
           element={<SponsorshipDetailsPage />}
         />
-
+        <Route
+          path="add-beneficiary"
+          element={<AddBeneficiaryPage/>}
+        />
         <Route path="profile/edit" element={<EditProfilePage />} />
         <Route
           path="profile/change-password"

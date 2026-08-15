@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBeneficiaries } from "@/store/index";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, UserPlus } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import BeneficiaryTable from "./components/BeneficiaryTable";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -25,7 +25,8 @@ export default function BeneficiariesPage() {
   const ITEMS_PER_PAGE = 5;
   const navigate = useNavigate();
 
-  const hasExistingItems = Array.isArray(beneficiaries) && beneficiaries.length > 0;
+  const hasExistingItems =
+    Array.isArray(beneficiaries) && beneficiaries.length > 0;
   const isReallyLoading = useDelayedLoading(status === "loading", 500);
 
   useEffect(() => {
@@ -80,9 +81,18 @@ export default function BeneficiariesPage() {
               {t("manageAndReviewBeneficiaries")}
             </p>
           </div>
+
+          <button
+            onClick={() => navigate("/dashboard/add-beneficiary")}
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold shadow-md hover:opacity-90 transition-all cursor-pointer"
+          >
+            <UserPlus size={18} />
+            <span>
+              {lang === "ar" ? "إضافة مستفيد جديد" : "Add New Beneficiary"}
+            </span>
+          </button>
         </header>
 
-       
         <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border">
           <div className="mb-8">
             <FilterBar

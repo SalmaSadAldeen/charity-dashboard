@@ -58,7 +58,7 @@ export const useOrphanFormLogic = (t, initialData = null, onClose = null) => {
       motherName: "",
       guardianName: "",
       birthOfDate: "",
-      gender: "MALE",
+      gender: "",
       brotherAndSisterNumber: "",
       bodySize: "",
       shoesSize: "",

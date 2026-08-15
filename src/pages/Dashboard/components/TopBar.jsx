@@ -2,6 +2,7 @@ import { useLayout } from "../../../hooks/useLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleLanguage } from "../../../store/languageSlice";
 import { useTranslation } from "@/hooks/useTranslation";
+import NotificationBell from "@/pages/NotificationBell/NotificationBell"; // 1. استيراد مكون الجرس
 export default function TopBar() {
   const { searchQuery, handleSearch } = useLayout();
   const { t, lang } = useTranslation();
@@ -34,6 +35,7 @@ export default function TopBar() {
     >
       <div></div>
       <div className="flex items-center gap-4">
+        <NotificationBell />
         <button
           onClick={handleLangChange}
           className="w-12 h-10 rounded-2xl font-bold text-xs transition-all duration-300 flex items-center justify-center border border-white/10 bg-surface-lowest/5 hover:bg-surface-lowest/10 active:scale-90"
@@ -61,4 +63,3 @@ export default function TopBar() {
     </header>
   );
 }
-

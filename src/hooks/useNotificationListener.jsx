@@ -1,27 +1,34 @@
 import { useEffect } from 'react';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '@/firebase';
-import toast from 'react-hot-toast'; // أو أي مكتبة تستانس بها للتنبيهات
+import toast from 'react-hot-toast';
 
 export const useNotificationListener = () => {
   useEffect(() => {
-    // الاستماع للإشعارات القادمة من فايربيز لحظياً وأنتِ فاتحة الموقع
     const unsubscribe = onMessage(messaging, (payload) => {
-      console.log('📬 وصل إشعار جديد:', payload);
+      console.log('📬 وصل إشعار جديد وأنتِ داخل التطبيق:', payload);
 
-      // استخراج العنوان والرسالة (حسب البيانات المرسلة من السيرفر)
-      const title = payload.data?.titleAr || payload.notification?.title || 'إشعار جديد';
-      const message = payload.data?.messageAr || payload.notification?.body || '';
+      // قراءة العنوان والنص بدقة من الـ notification أو الـ data
+      const title = 
+        payload.notification?.title || 
+        payload.data?.titleAr || 
+        payload.data?.title || 
+        'إشعار جديد';
 
-      // إظهار نافذة منبثقة (Toast Popup) على الشاشة فوراً!
+      const message = 
+        payload.notification?.body || 
+        payload.data?.messageAr || 
+        payload.data?.body || 
+        '';
+
       toast.success(
         <div>
           <p className="font-bold">{title}</p>
           <p className="text-sm">{message}</p>
         </div>,
         {
-          duration: 5000, // تضل ظاهرة لمدة 5 ثوانٍ
-          position: 'top-left', // مكان ظهور النافذة (حسب رغبتك)
+          duration: 5000,
+          position: 'top-left',
         }
       );
     });

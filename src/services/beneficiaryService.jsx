@@ -1,8 +1,6 @@
-
 import { API } from "./api";
 
 export const beneficiaryService = {
-
   getBeneficiaries: (page = 1, limit, status = "ACCEPTED") =>
     API.get(
       `/api/admin/beneficiaries?status=${status}&page=${page}&limit=${limit}`,
@@ -22,4 +20,10 @@ export const beneficiaryService = {
   },
 
   getHelpRequestStats: () => API.get(`/api/admin/help-requests/stats`),
+createBeneficiary: (formData) => {
+    return API.post(`/api/admin/beneficiaries`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  
+  },
 };

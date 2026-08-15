@@ -196,7 +196,11 @@ export const translations = {
     confirm_acceptance_message:
       "Are you sure you want to accept this beneficiary request?",
     confirm_acceptance: "Confirm Acceptance",
-
+    notifications: "Notifications",
+    new: "New",
+    markAllAsRead: "Mark all as read",
+    unread: "Unread",
+    noNotifications: "No notifications",
     orphans: "Orphans & Sponsorships",
     orphansList: "Orphan Records",
     orphansDescription: "Manage and track registered orphans records.",
@@ -818,6 +822,12 @@ export const translations = {
     english_version: "English Version",
     charity_foundation: "جمعية أثر ",
 
+    notifications: "الإشعارات",
+    new: "جديدة",
+    markAllAsRead: "تحديد الكل كمقروء",
+    all: "الكل",
+    unread: "غير المقروءة",
+    noNotifications: "لا توجد إشعارات",
     foundation_en: "Athar Association  ",
     annual_orphan_report: "استمارة اليتيم السنوية",
     detailed_information: "معلومات تفصيلية",
@@ -840,7 +850,7 @@ export const translations = {
     resetPasswordSubtitle: "أدخل رمز التحقق وكلمة المرور الجديدة",
     backToLogin: "العودة إلى تسجيل الدخول",
     from: "من",
-    all: "الكل",
+
     sponsorshipsStatistics: "إحصائيات الكفالات",
     days: "يوم",
     years: "سنة",
