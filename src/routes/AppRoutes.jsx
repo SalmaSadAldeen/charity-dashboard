@@ -25,6 +25,7 @@ import SponsorshipSupportsPage from "@/pages/SponsorshipSupports/SponsorshipSupp
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 import AddBeneficiaryPage from "@/pages/AddBeneficiaries/AddBeneficiaryPage";
 import EditProfilePage from "@/pages/EditProfilePage.jsx/EditProfilePage";
+import CreateAidRequestPage from "@/pages/AddAidRequests/CreateAidRequestPage";
 import ChangePasswordPage from "@/pages/EditProfilePage.jsx/ChangePasswordPage"; // صفحة تغيير كلمة المرور المستقلة
 export default function AppRoutes() {
   return (
@@ -72,14 +73,15 @@ export default function AppRoutes() {
           path="sponsorships/:sponsorshipId"
           element={<SponsorshipDetailsPage />}
         />
-        <Route
-          path="add-beneficiary"
-          element={<AddBeneficiaryPage/>}
-        />
+        <Route path="add-beneficiary" element={<AddBeneficiaryPage />} />
         <Route path="profile/edit" element={<EditProfilePage />} />
         <Route
           path="profile/change-password"
           element={<ChangePasswordPage />}
+        />
+        <Route
+          path="beneficiaries/:id/create-request"
+          element={<CreateAidRequestPage />}
         />
         {/* <Route path="donors/:id" element={<DonorHistoryModal />} /> */}
       </Route>

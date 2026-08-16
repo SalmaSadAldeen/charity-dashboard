@@ -78,12 +78,15 @@ export const useLogin = () => {
       );
 
       // الانتقال الفوري للوحة التحكم
-      navigate("/dashboard/employees");
+      // 2. استدعي دالة تسجيل التوكن حصراً "بعد" ما يتخزن التوكن ويثبت، مع انتظار ثانية أو تنفيذها بوضوح
+      try {
+        await registerNotificationToken();
+      } catch (err) {
+        console.error("فشل تسجيل الإشعارات:", err);
+      }
 
-      // إرسال التوكن في الخلفية بصمت تام بدون أن يؤثر على الانتقال
-      registerNotificationToken().catch((err) => {
-        console.error("فشل تسجيل الإشعارات في الخلفية:", err);
-      });
+      // 3. انتقل للوحة التحكم بعد ما يخلص تسجيل التوكن بنجاح
+      navigate("/dashboard/employees");
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Login Failed";
       dispatch(loginFailure(errorMessage));

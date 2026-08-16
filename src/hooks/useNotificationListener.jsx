@@ -1,25 +1,25 @@
-import { useEffect } from 'react';
-import { onMessage } from 'firebase/messaging';
-import { messaging } from '@/firebase';
-import toast from 'react-hot-toast';
+import { useEffect } from "react";
+import { onMessage } from "firebase/messaging";
+import { messaging } from "@/firebase";
+import toast from "react-hot-toast";
 
 export const useNotificationListener = () => {
   useEffect(() => {
     const unsubscribe = onMessage(messaging, (payload) => {
-      console.log('📬 وصل إشعار جديد وأنتِ داخل التطبيق:', payload);
+      // طبعنا كل تفاصيل الـ Push الفوري بالكونسول لترى النتيجة بوضوح
+      console.log("🔥 [PUSH NOTIFICATION RECEIVED]:", payload);
+      console.log(
+        "📌 Title:",
+        payload.notification?.title || payload.data?.title,
+      );
+      console.log(
+        "💬 Body:",
+        payload.notification?.body || payload.data?.messageAr,
+      );
 
-      // قراءة العنوان والنص بدقة من الـ notification أو الـ data
-      const title = 
-        payload.notification?.title || 
-        payload.data?.titleAr || 
-        payload.data?.title || 
-        'إشعار جديد';
-
-      const message = 
-        payload.notification?.body || 
-        payload.data?.messageAr || 
-        payload.data?.body || 
-        '';
+      const title =
+        payload.notification?.title || payload.data?.title || "إشعار فوري جديد";
+      const message = payload.notification?.body || payload.data?.body || "";
 
       toast.success(
         <div>
@@ -28,8 +28,8 @@ export const useNotificationListener = () => {
         </div>,
         {
           duration: 5000,
-          position: 'top-left',
-        }
+          position: "top-left",
+        },
       );
     });
 

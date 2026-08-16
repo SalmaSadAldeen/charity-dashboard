@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -20,7 +20,7 @@ export default function HeaderSection({ data }) {
   };
 
   const status = data?.beneficiary?.status;
-
+  const beneficiaryId = data?.beneficiary?.id || data?.id;
   return (
     <div className="flex justify-between items-center bg-white p-6 rounded-3xl border border-border shadow-sm">
       <div className="flex items-center gap-6">
@@ -48,6 +48,18 @@ export default function HeaderSection({ data }) {
           )}
         </div>
       </div>
+      {/* يظهر الزر حصراً إذا كانت الحالة ACCEPTED */}
+      {status === "ACCEPTED" && (
+        <button
+          onClick={() =>
+            navigate(`/dashboard/beneficiaries/${beneficiaryId}/create-request`)
+          }
+          className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl font-black text-xs transition-all shadow-md shrink-0"
+        >
+          <Plus size={16} />
+          {t("add_aid_request_btn")}
+        </button>
+      )}
     </div>
   );
 }

@@ -3,6 +3,9 @@ import Sidebar from "@/pages/Dashboard/components/Sidebar";
 import Topbar from "@/pages/Dashboard/components/TopBar";
 import { useSelector } from "react-redux";
 import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
+
 import { useNotificationListener } from "@/hooks/useNotificationListener"; // حسب مسار الملف لديكِ
 export default function DashboardLayout() {
   const lang =
@@ -12,7 +15,13 @@ export default function DashboardLayout() {
   const isRtl = lang === "ar";
 
   useNotificationListener();
-
+  // أضيفي هذا السطر مؤقتاً للتجربة فقط داخل DashboardLayout.jsx
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      toast.success("🚀 تجربة إشعار فوري مباشر على الشاشة!");
+    }, 3000); // بعد 3 ثواني من فتح الداشبورد سيظهر التنبيه تلقائياً
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div
       className="flex h-screen w-full font-sans overflow-hidden"

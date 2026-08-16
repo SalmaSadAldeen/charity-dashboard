@@ -1,6 +1,8 @@
-/* global firebase, importScripts */
-importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js");
-importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js");
+/* global importScripts, firebase */
+
+// استيراد إصدارات فايربيز الحديثة للـ Service Worker (Modular SDK v10)
+importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
 firebase.initializeApp({
   apiKey: "AIzaSyCMwYNRlo_xlSvyqcJMWiYeVqZJ7-usMio",
@@ -13,27 +15,27 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-messaging.setBackgroundMessageHandler((payload) => {
+// التعامل مع الإشعارات في الخلفية (Background)
+messaging.onBackgroundMessage((payload) => {
   console.log("[firebase-messaging-sw.js] Received background message: ", payload);
 
-  // قراءة العنوان والنص سواء كانت داخل notification أو data
-  const notificationTitle = 
-    payload.notification?.title || 
-    payload.data?.titleAr || 
-    payload.data?.title || 
+  const notificationTitle =
+    payload.notification?.title ||
+    payload.data?.titleAr ||
+    payload.data?.title ||
     "إشعار جديد";
 
-  const notificationBody = 
-    payload.notification?.body || 
-    payload.data?.messageAr || 
-    payload.data?.body || 
+  const notificationBody =
+    payload.notification?.body ||
+    payload.data?.messageAr ||
+    payload.data?.body ||
     "لديك تنبيه جديد";
 
   const notificationOptions = {
     body: notificationBody,
-    icon: "/logo192.png",
-    data: payload.data, // حفظ البيانات لاستخدامها لاحقاً عند النقر على الإشعار
+    // icon: "/logo192.png", // تأكدي أن الأيقونة موجودة بمجلد public، أو بدليها لرابط صحيح
+    data: payload.data,
   };
 
-  return self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });

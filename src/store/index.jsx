@@ -69,6 +69,7 @@ export const {
 } = helpRequestsSlice.slice.actions;
 
 export const {
+  addItem: addHelpRequest,
   fetchItems: fetchHelpRequests,
   fetchItemById: fetchHelpRequestById,
   updateItemStatus: updateHelpRequestStatus,
