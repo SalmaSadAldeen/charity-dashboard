@@ -86,7 +86,8 @@ export const useLogin = () => {
       }
 
       // 3. انتقل للوحة التحكم بعد ما يخلص تسجيل التوكن بنجاح
-      navigate("/dashboard/employees");
+      // 3. انتقل للوحة التحكم واستبدل صفحة الـ Login في تاريخ المتصفح
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Login Failed";
       dispatch(loginFailure(errorMessage));

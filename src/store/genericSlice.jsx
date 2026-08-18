@@ -156,37 +156,23 @@ export const createGenericActions = (resource) => ({
         else if (resource === "beneficiaries")
           response = await beneficiaryService.createBeneficiary(data);
         else if (resource === "helpRequests") {
-          const { beneficiaryId, aidType, formData } = data; // <--- أضيفي beneficiaryId هنا ليتم استخراجه بشكل صحيح
+          const { beneficiaryId, aidType, formData } = data;
 
-          if (aidType === "HEALTH") {
-            response = await requestsService.createHealthRequest(
-              beneficiaryId,
-              formData,
-            );
-          } else if (aidType === "FOOD") {
-            response = await requestsService.createFoodRequest(
-              beneficiaryId,
-              formData,
-            );
-          } else if (aidType === "EDUCATION") {
-            response = await requestsService.createEducationRequest(
-              beneficiaryId,
-              formData,
-            );
-          } else if (aidType === "HOUSING") {
-            response = await requestsService.createHousingRequest(
-              beneficiaryId,
-              formData,
-            );
-          } else if (aidType === "SMALL_PROJECTS") {
-            response = await requestsService.createSmallProjectsRequest(
-              beneficiaryId,
-              formData,
-            );
+          // تعريف خريطة الدوال
+          const aidActions = {
+            HEALTH: requestsService.createHealthAidRequest,
+            FOOD: requestsService.createFoodAidRequest,
+            EDUCATION: requestsService.createEducationAidRequest,
+            HOUSING: requestsService.createHousingAidRequest,
+            SMALL_PROJECTS: requestsService.createSmallProjectAidRequest,
+          };
+
+          const action = aidActions[aidType];
+
+          if (action) {
+            response = await action(beneficiaryId, formData);
           } else {
-            throw new Error(
-              `Invalid or missing aidType for helpRequests: ${aidType}`,
-            );
+            console.error("Invalid aid type");
           }
         } else throw new Error(`Add action not defined for ${resource}`);
         return response.data;

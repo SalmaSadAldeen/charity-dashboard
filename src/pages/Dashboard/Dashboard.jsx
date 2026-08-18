@@ -4,6 +4,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import StatCard from "./components/StatCard";
 import DonationChart from "./components/DonationChart";
 import RequestsChart from "./components/RequestsChart";
+import { useNavigate } from "react-router-dom";
 import {
   fetchDashboardStats,
   fetchCharts,
@@ -13,19 +14,36 @@ import {
 export default function Dashboard() {
   const [period, setPeriod] = useState("monthly"); // 👈 استخدام period بدلاً من view
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { t, lang } = useTranslation();
   const { stats, charts, requestsCharts } = useSelector(
     (state) => state.dashboard,
   );
+
+  useEffect(() => {
+    // منع الرجوع عبر حشو التاريخ
+    window.history.pushState(null, "", window.location.href);
+
+    const handlePopState = () => {
+      window.history.pushState(null, "", window.location.href);
+      // إجبار البقاء في الداشبورد دائماً مهما حاول الرجوع
+      navigate("/dashboard", { replace: true });
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [navigate]);
   useEffect(() => {
     dispatch(fetchDashboardStats());
     dispatch(fetchRequestsCharts());
-  }, [dispatch, lang]); 
+  }, [dispatch, lang]);
 
   useEffect(() => {
     dispatch(fetchCharts(period));
-  }, [dispatch, period, lang]); 
+  }, [dispatch, period, lang]);
   return (
     <main
       dir={lang === "ar" ? "rtl" : "ltr"}

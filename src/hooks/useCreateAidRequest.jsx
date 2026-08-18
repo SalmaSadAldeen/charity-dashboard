@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
-import { addHelpRequest } from "@/store/index"; // عدلي المسار حسب مكان الـ store لديكِ
+import { addHelpRequest } from "@/store/index";
 import { useState } from "react";
+
 export const useCreateAidRequest = (beneficiaryId) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -13,20 +14,25 @@ export const useCreateAidRequest = (beneficiaryId) => {
     try {
       const formData = new FormData();
 
-      // 1. الحقول المشتركة لكل الطلبات
       formData.append("categoryId", rawData.categoryId);
-      if (rawData.subCategoryId)
+
+      // إرسال subCategoryId فقط إذا كان موجوداً (الخاص بقسم السكن)
+      if (
+        rawData.subCategoryId !== undefined &&
+        rawData.subCategoryId !== null &&
+        rawData.subCategoryId !== ""
+      ) {
         formData.append("subCategoryId", rawData.subCategoryId);
+      }
+
       formData.append("beneficiaryFatherName", rawData.beneficiaryFatherName);
       formData.append("cost", rawData.cost);
       formData.append("isUrgent", rawData.isUrgent ?? false);
 
-      // حقول الـ JSON (ar / en) المشتركة
       formData.append("details", JSON.stringify(rawData.details));
       formData.append("title", JSON.stringify(rawData.title));
       formData.append("description", JSON.stringify(rawData.description));
 
-      // الملفات والصور المشتركة
       if (rawData.donorImage) {
         formData.append("donorImage", rawData.donorImage);
       }
@@ -34,58 +40,60 @@ export const useCreateAidRequest = (beneficiaryId) => {
         rawData.media.forEach((file) => formData.append("media", file));
       }
 
-      // 2. الحقول الخاصة بكل نوع طلب بناءً على الـ Endpoint
       if (aidType === "HEALTH") {
-        formData.append("typeAid", rawData.typeAid || "MEDICINE_INSURANCE");
+        formData.append("typeAid", rawData.typeAid);
       } else if (aidType === "FOOD") {
-        formData.append("typeAid", rawData.typeAid || "FOOD_BASKET");
-        formData.append("numberIndividuals", rawData.numberIndividuals);
+        // *** التعديل هنا: إضافة typeAid لقسم الغذاء أيضاً ***
+        if (rawData.typeAid) {
+          formData.append("typeAid", rawData.typeAid);
+        }
+        if (rawData.numberIndividuals) {
+          formData.append("numberIndividuals", rawData.numberIndividuals);
+        }
       } else if (aidType === "EDUCATION") {
-        formData.append(
-          "academicAchievement",
-          rawData.academicAchievement || "BACHELOR",
-        );
+        formData.append("academicAchievement", rawData.academicAchievement);
         formData.append(
           "institutionName",
           JSON.stringify(rawData.institutionName),
         );
         formData.append("year", rawData.year);
       } else if (aidType === "HOUSING") {
-        if (rawData.currentHousingSituation)
+        if (rawData.currentHousingSituation) {
           formData.append(
             "currentHousingSituation",
             JSON.stringify(rawData.currentHousingSituation),
           );
-        if (rawData.currentRent)
+        }
+        if (rawData.currentRent !== undefined && rawData.currentRent !== "") {
           formData.append("currentRent", rawData.currentRent);
-        if (rawData.currentPlaceOfResidence)
+        }
+        if (rawData.currentPlaceOfResidence) {
           formData.append(
             "currentPlaceOfResidence",
             JSON.stringify(rawData.currentPlaceOfResidence),
           );
-        if (rawData.reasonForLock)
-          formData.append(
-            "reasonForLock",
-            JSON.stringify(rawData.reasonForLock),
-          );
-        if (rawData.housingSpecifications)
-          formData.append(
-            "housingSpecifications",
-            JSON.stringify(rawData.housingSpecifications),
-          );
+        }
       } else if (aidType === "SMALL_PROJECTS") {
-        formData.append("projectName", JSON.stringify(rawData.projectName));
-        formData.append(
-          "projectCategory",
-          JSON.stringify(rawData.projectCategory),
-        );
-        formData.append(
-          "numberOfPeopleSupported",
-          rawData.numberOfPeopleSupported,
-        );
+        if (rawData.projectName) {
+          formData.append("projectName", JSON.stringify(rawData.projectName));
+        }
+        if (rawData.projectCategory) {
+          formData.append(
+            "projectCategory",
+            JSON.stringify(rawData.projectCategory),
+          );
+        }
+        if (
+          rawData.numberOfPeopleSupported !== undefined &&
+          rawData.numberOfPeopleSupported !== ""
+        ) {
+          formData.append(
+            "numberOfPeopleSupported",
+            rawData.numberOfPeopleSupported,
+          );
+        }
       }
 
-      // إرسال الطلب عبر الـ Redux Thunk الذي أضفناه سابقاً
       const resultAction = await dispatch(
         addHelpRequest({
           beneficiaryId,

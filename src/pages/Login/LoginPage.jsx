@@ -1,10 +1,18 @@
+import { useEffect } from "react"; // <-- تأكدي من استيراد useEffect
 import { useTranslation } from "@/hooks/useTranslation";
 import { useLogin } from "../../hooks/useLogin";
 import LoginHeader from "./components/LoginHeader";
 import InputField from "./components/InputField";
-import { Link } from "react-router-dom"; // <-- تأكدي من استيراد Link
+import { Link, useNavigate } from "react-router-dom"; // <-- تأكدي من استيراد Link
 const LoginPage = () => {
   const { t, lang } = useTranslation();
+  const navigate = useNavigate(); // <-- عرفي الـ navigate هنا
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
   const {
     email,
     setEmail,
