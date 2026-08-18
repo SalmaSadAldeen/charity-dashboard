@@ -683,6 +683,8 @@ export const translations = {
     personal_info_tab: "البيانات الشخصية",
     request_details_tab: "تفاصيل الدعم",
     attachments_tab: "المرفقات",
+        donorName: "اسم المتبرع",
+
     urgent: "عاجل",
     loading_data: "جاري تحميل البيانات...",
     error_loading_data: "حدث خطأ أثناء تحميل البيانات",
@@ -691,7 +693,7 @@ export const translations = {
     manageAndReviewDonors: "إدارة ومتابعة المتبرعين وكفالاتهم في النظام",
     activeSponsor: "كافل نشط",
     generalDonor: "متبرع عام",
-    donorName: "اسم المتبرع",
+
     contactInfo: "معلومات الاتصال",
     sponsorStatus: "حالة الكفالة",
     joinDate: "تاريخ الانضمام",
