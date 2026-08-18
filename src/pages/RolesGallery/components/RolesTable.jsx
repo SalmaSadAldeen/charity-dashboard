@@ -73,7 +73,7 @@ export default function RolesTable({
             </tr>
           ) : (
             roles.map((role) => {
-              const isProtected = role.id <= 7;
+              const isProtected = role.id <= 8;
 
               const displayLabel =
                 typeof role.label === "object"

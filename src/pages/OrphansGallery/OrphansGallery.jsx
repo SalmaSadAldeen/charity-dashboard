@@ -14,6 +14,8 @@ import {
   Check,
   CheckCircle,
   XCircle,
+  Star,
+  ChevronDown,
 } from "lucide-react";
 import {
   fetchOrphans,
@@ -22,6 +24,7 @@ import {
 } from "@/store/index";
 import OrphansStatsCard from "./components/OrphansStatsCard";
 import { hasPermission } from "@/utils/permissions";
+
 export default function OrphansGallery() {
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
@@ -38,15 +41,18 @@ export default function OrphansGallery() {
   // 1. نقرأ الفلتر ورقم الصفحة من الرابط (ولو مافي بنحط قيم افتراضية)
   const currentPage = Number(searchParams.get("page")) || 1;
   const supportedParam = searchParams.get("supported");
-  const supportedFilter = selectMode
-    ? false
-    : supportedParam === "true"
+  const priorityParam = searchParams.get("priority");
+  const supportedFilter =
+    supportedParam === "true"
       ? true
       : supportedParam === "false"
         ? false
         : null;
 
+  const priorityFilter = priorityParam ? Number(priorityParam) : null;
+
   const [selectedOrphanId, setSelectedOrphanId] = useState(null);
+  const [isPriorityDropdownOpen, setIsPriorityDropdownOpen] = useState(false);
 
   const ITEMS_PER_PAGE = 2;
   const {
@@ -72,12 +78,20 @@ export default function OrphansGallery() {
       fetchOrphans({
         page: currentPage,
         limit: ITEMS_PER_PAGE,
-        supported: selectMode ? false : supportedFilter,
+        supported: supportedFilter,
+        priority: priorityFilter,
       }),
     ).then(() => {
       setHasLoadedAtLeastOnce(true);
     });
-  }, [dispatch, lang, supportedFilter, currentPage, selectMode]);
+  }, [
+    dispatch,
+    lang,
+    supportedFilter,
+    priorityFilter,
+    currentPage,
+    selectMode,
+  ]);
 
   useEffect(() => {
     dispatch(fetchOrphansStats());
@@ -91,12 +105,35 @@ export default function OrphansGallery() {
     if (val !== null && val !== undefined) {
       newParams.supported = String(val);
     }
+    if (priorityParam) {
+      newParams.priority = priorityParam;
+    }
     if (selectMode) {
       newParams.mode = "select";
       if (targetSponsorshipId) newParams.sponsorshipId = targetSponsorshipId;
     }
 
     setSearchParams(newParams);
+  };
+
+  // تغيير فلتر الأولوية من القائمة المنسدلة
+  const handlePriorityChange = (val) => {
+    if (selectMode) return;
+
+    const newParams = { page: 1 };
+    if (supportedParam !== null && supportedParam !== undefined) {
+      newParams.supported = supportedParam;
+    }
+    if (val !== null && val !== undefined && val !== "") {
+      newParams.priority = String(val);
+    }
+    if (selectMode) {
+      newParams.mode = "select";
+      if (targetSponsorshipId) newParams.sponsorshipId = targetSponsorshipId;
+    }
+
+    setSearchParams(newParams);
+    setIsPriorityDropdownOpen(false);
   };
 
   // 3. بنحدث رقم الصفحة بالـ URL مع المحافظة على الفلتر الحالي
@@ -108,6 +145,9 @@ export default function OrphansGallery() {
       supportedParam !== ""
     ) {
       newParams.supported = supportedParam;
+    }
+    if (priorityParam) {
+      newParams.priority = priorityParam;
     }
     if (selectMode) {
       newParams.mode = "select";
@@ -207,13 +247,64 @@ export default function OrphansGallery() {
         />
       </div>
 
-      {/* شريط الفلترة */}
-      <div className={`${selectMode ? "opacity-60 pointer-events-none" : ""}`}>
+      {/* شريط الفلترة مع قائمة الأولوية المنسدلة */}
+      <div
+        className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${selectMode ? "opacity-60 pointer-events-none" : ""}`}
+      >
         <FilterBar
           filters={filters}
           active={supportedFilter}
           onFilterChange={handleFilterChange}
         />
+
+        {/* زر وقائمة الأولوية المنسدلة */}
+        <div className="relative">
+          <button
+            onClick={() => setIsPriorityDropdownOpen(!isPriorityDropdownOpen)}
+            className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-2xl border border-gray-200 shadow-sm text-gray-700 font-bold hover:border-amber-400 transition-all cursor-pointer"
+          >
+            <Star size={16} className="text-amber-500 fill-amber-400" />
+            <span>{priorityFilter}</span>
+            <ChevronDown size={16} className="text-gray-400" />
+          </button>
+          {isPriorityDropdownOpen && (
+            <div className="absolute left-0 md:right-0 md:left-auto mt-2 w-48 bg-white rounded-2xl border border-gray-100 shadow-xl z-30 py-2">
+              <button
+                onClick={() => handlePriorityChange(null)}
+                className={`w-full text-start px-4 py-2.5 text-sm font-bold transition-all hover:bg-amber-50 hover:text-amber-700 flex items-center gap-2 ${
+                  priorityFilter === null
+                    ? "bg-amber-50 text-amber-700"
+                    : "text-gray-700"
+                }`}
+              >
+                <LayoutGrid size={14} />
+                <span>{t("all") || "الكل"}</span>
+              </button>
+              {[1, 2, 3, 4, 5].map((num) => (
+                <button
+                  key={num}
+                  onClick={() => handlePriorityChange(num)}
+                  className={`w-full text-start px-4 py-2.5 text-sm font-bold transition-all hover:bg-amber-50 hover:text-amber-700 flex items-center gap-2 ${
+                    priorityFilter === num
+                      ? "bg-amber-50 text-amber-700"
+                      : "text-gray-700"
+                  }`}
+                >
+                  {/* طباعة النجوم بعدد الـ num */}
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: num }).map((_, i) => (
+                      <Star
+                        key={i}
+                        size={14}
+                        className="text-amber-500 fill-amber-400"
+                      />
+                    ))}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* منطقة عرض الكاردات */}

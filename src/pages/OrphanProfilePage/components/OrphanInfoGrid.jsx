@@ -9,15 +9,13 @@ import {
   Clock,
 } from "lucide-react";
 
-export default function OrphanInfoGrid({ orphan,t,lang }) {
+export default function OrphanInfoGrid({ orphan, t, lang }) {
   const isRTL = lang === "ar";
-
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "";
-
 
     const locale = isRTL ? "ar-EG" : "en-GB";
 
@@ -68,6 +66,7 @@ export default function OrphanInfoGrid({ orphan,t,lang }) {
       val: orphan.shoesSize,
       icon: <Footprints size={16} />,
     },
+  
   ];
 
   return (

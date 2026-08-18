@@ -27,6 +27,7 @@ export const createGenericActions = (resource) => ({
               params.page || 1,
               params.limit || 10,
               params.supported,
+              params.priority,
             )
           ).data;
         if (resource === "beneficiaries") {

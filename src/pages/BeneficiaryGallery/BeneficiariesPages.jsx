@@ -8,11 +8,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
 import { Clock, CheckCircle, XCircle } from "lucide-react";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
-
+import { hasPermission } from "@/utils/permissions";
 export default function BeneficiariesPage() {
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
-
+  const { roles } = useSelector((state) => state.auth);
   const {
     items: beneficiaries,
     status,
@@ -82,15 +82,17 @@ export default function BeneficiariesPage() {
             </p>
           </div>
 
-          <button
-            onClick={() => navigate("/dashboard/add-beneficiary")}
-            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold shadow-md hover:opacity-90 transition-all cursor-pointer"
-          >
-            <UserPlus size={18} />
-            <span>
-              {lang === "ar" ? "إضافة مستفيد جديد" : "Add New Beneficiary"}
-            </span>
-          </button>
+          {hasPermission(roles, "create::beneficiaries") && (
+            <button
+              onClick={() => navigate("/dashboard/add-beneficiary")}
+              className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold shadow-md hover:opacity-90 transition-all cursor-pointer"
+            >
+              <UserPlus size={18} />
+              <span>
+                {lang === "ar" ? "إضافة مستفيد جديد" : "Add New Beneficiary"}
+              </span>
+            </button>
+          )}
         </header>
 
         <section className="bg-surface-lowest p-6 rounded-3xl shadow-sm border border-border">

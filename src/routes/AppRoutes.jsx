@@ -26,6 +26,7 @@ import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 import AddBeneficiaryPage from "@/pages/AddBeneficiaries/AddBeneficiaryPage";
 import EditProfilePage from "@/pages/EditProfilePage.jsx/EditProfilePage";
 import CreateAidRequestPage from "@/pages/AddAidRequests/CreateAidRequestPage";
+import QuickAidPage from "@/pages/QuickAid/QuickAidPage";
 import ChangePasswordPage from "@/pages/EditProfilePage.jsx/ChangePasswordPage"; // صفحة تغيير كلمة المرور المستقلة
 export default function AppRoutes() {
   return (
@@ -83,6 +84,7 @@ export default function AppRoutes() {
           path="beneficiaries/:id/create-request"
           element={<CreateAidRequestPage />}
         />
+        <Route path="quick-aid-fund" element={<QuickAidPage />} />
         {/* <Route path="donors/:id" element={<DonorHistoryModal />} /> */}
       </Route>
       {/* 4. معالجة أي مسار غير معروف */}

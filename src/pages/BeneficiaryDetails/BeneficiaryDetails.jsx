@@ -14,12 +14,15 @@ import { CheckCircle2 } from "lucide-react";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import { hasPermission } from "@/utils/permissions";
 
+// استيراد مودال المساعدات العاجلة الخاص بكِ (تأكدي من مساره الصحيح)
+import QuickAidModal from "@/pages/QuickAid/components/QuickAidModal";
+
 export default function BeneficiaryDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
-const { roles } = useSelector((state) => state.auth);
+  const { roles } = useSelector((state) => state.auth);
   const { selectedDetails: beneficiary, detailsStatus: status } = useSelector(
     (state) => state.beneficiaries,
   );
@@ -34,6 +37,10 @@ const { roles } = useSelector((state) => state.auth);
     useState(hasExistingData);
 
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null });
+
+  // حالات خاصة بمودال المساعدة العاجلة لضمان جلب الـ ID تلقائياً
+  const [isQuickAidModalOpen, setIsQuickAidModalOpen] = useState(false);
+  const [targetBeneficiaryId, setTargetBeneficiaryId] = useState(null);
 
   const [rejectData, setRejectData] = useState({
     status: "REJECTED",
@@ -61,7 +68,6 @@ const { roles } = useSelector((state) => state.auth);
       const requestData = isReject ? rejectData : { status: "ACCEPTED" };
 
       const targetId = beneficiary?.id;
-      console.log("الـ ID الرئيسي الصحيح المعتمد للإرسال:", targetId);
 
       await dispatch(
         updateBeneficiaryStatus({
@@ -79,6 +85,12 @@ const { roles } = useSelector((state) => state.auth);
     }
   };
 
+  // دالة فتح مودال المساعدة العاجلة وسحب الـ ID تلقائياً
+  const handleOpenQuickAidModal = (beneficiaryId) => {
+    setTargetBeneficiaryId(beneficiaryId);
+    setIsQuickAidModalOpen(true);
+  };
+
   const showSkeleton =
     (isReallyLoading || !hasLoadedAtLeastOnce) && !hasExistingData;
 
@@ -89,16 +101,11 @@ const { roles } = useSelector((state) => state.auth);
         dir={lang === "ar" ? "rtl" : "ltr"}
       >
         <div className="space-y-8 w-full">
-          {/* Header Skeleton */}
           <div className="h-28 bg-gray-200 rounded-3xl w-full" />
-
-          {/* Cards Grid Skeleton (PersonalInfo & Financial) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
             <div className="h-[420px] bg-gray-200 rounded-3xl" />
             <div className="h-[420px] bg-gray-200 rounded-3xl" />
           </div>
-
-          {/* Documents Card Skeleton */}
           <div className="h-56 bg-gray-200 rounded-3xl w-full" />
         </div>
       </div>
@@ -123,7 +130,11 @@ const { roles } = useSelector((state) => state.auth);
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="space-y-8 w-full">
-        <HeaderSection data={beneficiary} />
+        {/* تمرير دالة فتح المودال مع التقاط الـ ID تلقائياً */}
+        <HeaderSection
+          data={beneficiary}
+          onOpenQuickAidModal={handleOpenQuickAidModal}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           <div className="h-full">
@@ -133,7 +144,7 @@ const { roles } = useSelector((state) => state.auth);
             <FinancialCard
               data={beneficiary.beneficiary}
               parentData={beneficiary}
-            />{" "}
+            />
           </div>
         </div>
 
@@ -163,6 +174,7 @@ const { roles } = useSelector((state) => state.auth);
         />
       )}
 
+      {/* مودال الرفض */}
       <RejectActionModal
         isOpen={modalConfig.isOpen && modalConfig.type === "reject"}
         onClose={() => setModalConfig({ isOpen: false, type: null })}
@@ -173,6 +185,7 @@ const { roles } = useSelector((state) => state.auth);
         t={t}
       />
 
+      {/* مودال القبول */}
       {modalConfig.isOpen && modalConfig.type === "accept" && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
@@ -199,7 +212,7 @@ const { roles } = useSelector((state) => state.auth);
                 onClick={() => setModalConfig({ isOpen: false, type: null })}
                 className="flex-1 py-3 px-4 rounded-2xl border border-border bg-slate-50 text-slate-700 hover:bg-slate-100 font-black text-sm transition-all"
               >
-                {t("cancel")}
+                {t("design_cancel") || t("cancel")}
               </button>
               <button
                 type="button"
@@ -215,6 +228,13 @@ const { roles } = useSelector((state) => state.auth);
           </div>
         </div>
       )}
+
+      {/* مودال صرف المساعدة العاجلة (يتم فتحة وتعبئة الـ ID تلقائياً بدون إدخال يدوي) */}
+      <QuickAidModal
+        isOpen={isQuickAidModalOpen}
+        onClose={() => setIsQuickAidModalOpen(false)}
+        defaultBeneficiaryId={targetBeneficiaryId}
+      />
     </div>
   );
 }

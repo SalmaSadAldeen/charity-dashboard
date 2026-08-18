@@ -14,6 +14,7 @@ export const useOrphanFormLogic = (t, initialData = null, onClose = null) => {
     "bodySize",
     "shoesSize",
     "guaranteedPhone",
+    "priority",
   ];
 
   const validateOrphan = (data) => {
@@ -33,7 +34,6 @@ export const useOrphanFormLogic = (t, initialData = null, onClose = null) => {
     if (!data.previousAddress?.ar?.trim())
       errors.previousAddress = t("fieldIsRequired");
     if (!data.talent?.ar?.trim()) errors.talent = t("fieldIsRequired");
-
     numericFields.forEach((field) => {
       const val = data[field];
       if (val === null || val === undefined || val === "") {
@@ -45,6 +45,14 @@ export const useOrphanFormLogic = (t, initialData = null, onClose = null) => {
         parseInt(val) <= 0
       ) {
         errors[field] = t("mustBeGreaterThanZero");
+      } else if (
+        field === "priority" &&
+        (parseInt(val) < 1 || parseInt(val) > 5)
+      ) {
+        errors[field] = t(
+          "priorityMustBeBetween1And5",
+          "الأولوية يجب أن تكون بين 1 و 5",
+        ); // <-- شرط الأولوية الجديد
       }
     });
     return errors;
@@ -64,6 +72,7 @@ export const useOrphanFormLogic = (t, initialData = null, onClose = null) => {
       shoesSize: "",
       guaranteedPhone: "",
       isSupported: false,
+      priority: "",
       class: { ar: "", en: "" },
       Diseases: { ar: "", en: "" },
       currentAddress: { ar: "", en: "" },
@@ -94,6 +103,7 @@ export const useOrphanFormLogic = (t, initialData = null, onClose = null) => {
         ...initialData,
         birthOfDate: initialData.birthOfDate?.substring(0, 10) || "",
         brotherAndSisterNumber: initialData.brotherAndSisterNumber ?? "",
+        priority: initialData.priority ?? "",
       });
     }
   }, [initialData]);

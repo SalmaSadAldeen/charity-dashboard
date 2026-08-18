@@ -1,6 +1,7 @@
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, Star } from "lucide-react"; // <-- 1. استيراد أيقونة النجمة
 import { hasPermission } from "@/utils/permissions";
 import { useSelector } from "react-redux";
+
 export default function OrphanHeader({ orphan, onEdit, onDelete, t }) {
   const calculateAge = (birthDate) => {
     const birth = new Date(birthDate);
@@ -22,7 +23,7 @@ export default function OrphanHeader({ orphan, onEdit, onDelete, t }) {
         <h1 className="text-4xl font-black text-gray-900">
           {orphan.firstName} {orphan.lastName}
         </h1>
-        <div className="flex items-center gap-3 font-bold text-sm">
+        <div className="flex items-center gap-3 font-bold text-sm flex-wrap">
           <span className="bg-gray-50 px-4 py-1.5 rounded-full text-gray-600">
             {calculateAge(orphan.birthOfDate)} {t("years")}
           </span>
@@ -37,6 +38,16 @@ export default function OrphanHeader({ orphan, onEdit, onDelete, t }) {
           >
             {orphan.isSupported ? t("isSupported") : t("notSupported")}
           </span>
+
+          {/* شارة الأولوية الجديدة مع النجمة الصفراء */}
+          {orphan.priority && (
+            <span className="bg-amber-50 text-amber-700 px-4 py-1.5 rounded-full flex items-center gap-1.5 border border-amber-200/50">
+              <Star size={14} className="text-amber-500 fill-amber-400" />
+              <span>
+                {t("priority")}: {orphan.priority} / 5
+              </span>
+            </span>
+          )}
         </div>
       </div>
 
@@ -45,7 +56,7 @@ export default function OrphanHeader({ orphan, onEdit, onDelete, t }) {
         {hasPermission(roles, "update:orphans") && (
           <button
             onClick={onEdit}
-            className="flex items-center gap-2 px-6 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-2xl font-bold transition-all"
+            className="flex items-center gap-2 px-6 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-2xl font-bold transition-all cursor-pointer"
           >
             <Edit2 size={18} /> {t("edit")}
           </button>
@@ -54,7 +65,7 @@ export default function OrphanHeader({ orphan, onEdit, onDelete, t }) {
         {hasPermission(roles, "delete:orphans") && (
           <button
             onClick={onDelete}
-            className="flex items-center gap-2 px-6 py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-2xl font-bold transition-all"
+            className="flex items-center gap-2 px-6 py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-2xl font-bold transition-all cursor-pointer"
           >
             <Trash2 size={18} /> {t("delete")}
           </button>

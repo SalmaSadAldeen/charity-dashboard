@@ -46,10 +46,7 @@ export default function Sidebar() {
       "/dashboard/orphan/edit",
     ],
     beneficiaries: ["/dashboard/beneficiaries"],
-    requests: [
-      "/dashboard/requests", 
-      "/dashboard/help-requests",
-    ],
+    requests: ["/dashboard/requests", "/dashboard/help-requests"],
     roles: ["/dashboard/roles"],
   };
   const menuItems = {
@@ -98,10 +95,17 @@ export default function Sidebar() {
       },
       {
         id: "sponsorship_supports",
-        name: t("sponsorship_supports"), 
-        icon: "receipt_long", 
+        name: t("sponsorship_supports"),
+        icon: "receipt_long",
         path: "/dashboard/sponsorship-supports",
         permission: "read:sponsorship_fund",
+      },
+      {
+        id: "quick-aid-fund",
+        name: t("quickAidFund"),
+        icon: "volunteer_activism", // أو الأيقونة المناسبة لديكِ
+        path: "/dashboard/quick-aid-fund",
+        permission: "read:quick_aid_fund",
       },
     ],
     administrative: [
