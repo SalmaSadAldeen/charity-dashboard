@@ -14,7 +14,6 @@ export default function ResetPasswordStep({
   isArabic,
   t,
 }) {
-  // حالات لإظهار أو إخفاء كلمة المرور لكل حقل بشكل مستقل
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -24,7 +23,6 @@ export default function ResetPasswordStep({
       className="space-y-5"
       dir={isArabic ? "rtl" : "ltr"}
     >
-      {/* حقل رمز التحقق */}
       <div className="space-y-2">
         <label className="text-xs font-black uppercase tracking-wider text-on-surface-variant/80 block">
           {t("verificationCode")}
@@ -37,7 +35,8 @@ export default function ResetPasswordStep({
           </span>
           <input
             type="text"
-            autoComplete="off"
+            name="otp-code" 
+            autoComplete="one-time-code"
             maxLength={4}
             dir="ltr"
             placeholder="1234"
@@ -48,7 +47,6 @@ export default function ResetPasswordStep({
         </div>
       </div>
 
-      {/* حقل كلمة المرور الجديدة مع زر الإظهار والإخفاء */}
       <div className="space-y-2">
         <label className="text-xs font-black uppercase tracking-wider text-on-surface-variant/80 block">
           {t("newPassword")}
@@ -79,7 +77,6 @@ export default function ResetPasswordStep({
         </div>
       </div>
 
-      {/* حقل تأكيد كلمة المرور مع زر الإظهار والإخفاء */}
       <div className="space-y-2">
         <label className="text-xs font-black uppercase tracking-wider text-on-surface-variant/80 block">
           {t("confirmPassword")}
@@ -110,7 +107,6 @@ export default function ResetPasswordStep({
         </div>
       </div>
 
-      {/* أزرار التحكم */}
       <div className="flex gap-3 pt-2">
         <button
           type="button"

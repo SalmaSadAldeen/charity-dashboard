@@ -16,7 +16,6 @@ export function useProfile() {
     (state) => state.profile || {},
   );
 
-  // الحقول الشخصية
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -25,19 +24,16 @@ export function useProfile() {
   const [personalPhoto, setPersonalPhoto] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
 
-  // حقول كلمة المرور
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loadingPassword, setLoadingPassword] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
 
-  // جلب البيانات عند التحميل
   useEffect(() => {
     dispatch(getProfile());
   }, [dispatch]);
 
-  // تعبئة الحقول بالبيانات القادمة من السيرفر
   useEffect(() => {
     if (profileData) {
       setFirstName(profileData.firstName || "");
@@ -51,7 +47,6 @@ export function useProfile() {
     }
   }, [profileData]);
 
-  // معاينة الصورة المحلية
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -60,7 +55,6 @@ export function useProfile() {
     }
   };
 
-  // إرسال التعديلات الشخصية مع الانتظار والتوجيه
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setLoadingProfile(true);
@@ -81,7 +75,6 @@ export function useProfile() {
       );
       dispatch(getProfile());
 
-      // الانتظار لمدة ثانيتين ثم التوجيه التلقائي لصفحة البروفايل
       setTimeout(() => {
         navigate("/dashboard/profile");
       }, 2000);
@@ -128,7 +121,6 @@ export function useProfile() {
       setNewPassword("");
       setConfirmPassword("");
 
-      // الانتظار لمدة ثانيتين ثم التوجيه التلقائي لصفحة البروفايل
       setTimeout(() => {
         navigate("/dashboard/profile");
       }, 2000);

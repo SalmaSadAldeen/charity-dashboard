@@ -77,7 +77,6 @@ const authSlice = createSlice({
   initialState,
 
   reducers: {
-    // دال الـ Login تبعتك مثل ما هي تماماً بدون أي تغيير
     loginStart: (state) => {
       state.isLoading = true;
       state.error = null;
@@ -88,16 +87,14 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.userType = action.payload?.userType;
 
-      // أضيفي هذا السطر لتحديث الـ roles بالستيت مباشرة عند تسجيل الدخول
       state.roles = action.payload?.roles || [];
 
-      // وتأكدي أنكِ خزنتِهم بالـ localStorage وقت تسجيل الدخول (إذا ما كنتِ خزنتِهم بالكومبوننت تبع صفحة الـ Login)
       if (action.payload?.roles) {
         localStorage.setItem("roles", JSON.stringify(action.payload.roles));
       }
       if (action.payload?.userType) {
         localStorage.setItem("userType", action.payload.userType);
-      } // لحماية لغتك الحالية والتأكد أنها لن تتغير حتى لو سجلتي دخول من جديد
+      }
       const savedLang = localStorage.getItem("preferredLang");
       if (savedLang) {
         localStorage.setItem("preferredLang", savedLang);
@@ -108,7 +105,6 @@ const authSlice = createSlice({
 
       state.error = action.payload;
     },
-    // شلنا الـ logout العادية لأن الـ Thunk تحت صار يقوم بالمهمة لحاله!
   },
   extraReducers: (builder) => {
     builder

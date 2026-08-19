@@ -2,7 +2,7 @@ import { KeyRound, ShieldCheck } from "lucide-react";
 import { useForgotPassword } from "@/hooks/useForgotPassword";
 import RequestOtpStep from "./components/RequestOtpStep";
 import ResetPasswordStep from "./components/ResetPasswordStep";
-import { Toaster } from "react-hot-toast"; // <-- 1. استيراد التوست هنا
+import { Toaster } from "react-hot-toast"; 
 export default function ForgotPasswordPage() {
   const {
     step,
@@ -45,7 +45,6 @@ export default function ForgotPasswordPage() {
           </p>
         </div>
 
-        {/* Dynamic Step Component */}
         {step === 1 ? (
           <RequestOtpStep
             phoneNumber={phoneNumber}
@@ -71,7 +70,6 @@ export default function ForgotPasswordPage() {
           />
         )}
 
-        {/* Footer Link */}
         <div className="text-center pt-2 border-t border-border">
           <button
             type="button"

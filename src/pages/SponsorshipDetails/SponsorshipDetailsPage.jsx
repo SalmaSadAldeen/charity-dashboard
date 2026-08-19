@@ -141,8 +141,8 @@ export default function SponsorshipDetailsPage() {
       </div>
     );
   }
-  const orphansList =
-    sponsorship?.orphans || (sponsorship?.orphan ? [sponsorship.orphan] : []);
+  const currentOrphan =
+    sponsorship?.orphan || sponsorship?.orphans?.[0] || null;
   return (
     <div
       className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative"
@@ -182,8 +182,7 @@ export default function SponsorshipDetailsPage() {
             }`}
           >
             <User size={18} />
-            {t("orphan_info")}{" "}
-            {orphansList.length > 0 && `(${orphansList.length})`}
+            {t("orphan_info")} {currentOrphan && "(1)"}{" "}
           </button>
           <button
             onClick={() => setActiveTab("history")}
@@ -236,7 +235,11 @@ export default function SponsorshipDetailsPage() {
 
                 {activeTab === "orphan" && (
                   <div className="animate-fade-in">
-                    <OrphanInfoCard orphans={orphansList} t={t} lang={lang} />
+                    <OrphanInfoCard
+                      orphan={currentOrphan}
+                      t={t}
+                      lang={lang}
+                    />{" "}
                   </div>
                 )}
 

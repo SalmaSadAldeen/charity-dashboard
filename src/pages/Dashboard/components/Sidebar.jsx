@@ -13,7 +13,6 @@ export default function Sidebar() {
   const { userType, roles } = useSelector((state) => state.auth);
   console.log("Full Auth State:", userType);
 
-  // اطبعي هدول بالكونسول وشوفي شو عم يطلع معك
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const isLockedRef = useRef(false);
@@ -45,7 +44,7 @@ export default function Sidebar() {
       "/dashboard/add-orphan",
       "/dashboard/orphan/edit",
     ],
-    beneficiaries: ["/dashboard/beneficiaries"],
+    beneficiaries: ["/dashboard/beneficiaries", "/dashboard/add-beneficiary"],
     requests: ["/dashboard/requests", "/dashboard/help-requests"],
     roles: ["/dashboard/roles"],
   };
@@ -103,7 +102,7 @@ export default function Sidebar() {
       {
         id: "quick-aid-fund",
         name: t("quickAidFund"),
-        icon: "volunteer_activism", // أو الأيقونة المناسبة لديكِ
+        icon: "volunteer_activism", 
         path: "/dashboard/quick-aid-fund",
         permission: "read:quick_aid_fund",
       },
@@ -155,14 +154,11 @@ export default function Sidebar() {
 
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
           {Object.entries(menuItems).map(([key, items]) => {
-            // تصفية عناصر القائمة حسب الصلاحيات وحسب استثناء البروفايل للأدمن
             const filteredItems = items.filter((item) => {
-              // 1. الشرط القديم: إخفاء البروفايل حصراً إذا كان المستخدم ADMIN
               if (userType === "ADMIN" && item.id === "profile") {
                 return false;
               }
 
-              // 2. الشرط الجديد: التحقق من وجود الصلاحية (read) إذا كانت متوفرة في العنصر
               if (item.permission) {
                 return hasPermission(roles, item.permission);
               }
@@ -170,7 +166,6 @@ export default function Sidebar() {
               return true;
             });
 
-            // إذا أصبحت القائمة فارغة بعد التصفية (مثل قسم الحساب للأدمن)، لا تعرض القسم أبداً
             if (filteredItems.length === 0) {
               return null;
             }
@@ -226,7 +221,6 @@ export default function Sidebar() {
           })}
         </div>
 
-        {/* زر تسجيل الخروج */}
         <div className="p-4 border-t border-white/10">
           <button
             onClick={() => setShowLogoutModal(true)}
@@ -242,7 +236,6 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* نافذة التأكيد */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fadeIn">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl flex flex-col gap-4 text-center">

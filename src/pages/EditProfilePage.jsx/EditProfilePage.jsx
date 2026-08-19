@@ -32,7 +32,6 @@ export default function EditProfilePage() {
     );
   }
 
-  // معالجة الحفظ أصبحت بالكامل داخل الـ Hook
   const handleSubmit = (e) => {
     handleUpdateProfile(e);
   };
@@ -42,7 +41,6 @@ export default function EditProfilePage() {
       className="max-w-2xl mx-auto p-6 space-y-6"
       dir={isArabic ? "rtl" : "ltr"}
     >
-      {/* رأس الصفحة مع زر الرجوع وزر تغيير كلمة المرور */}
       <div className="flex items-center justify-between border-b border-border pb-4">
         <div>
           <h1 className="text-2xl font-black text-on-surface-variant">
@@ -54,7 +52,6 @@ export default function EditProfilePage() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* زر تغيير كلمة المرور */}
           <button
             onClick={() => navigate("/dashboard/profile/change-password")}
             className="flex items-center gap-2 py-2 px-3.5 bg-gray-100 hover:bg-gray-200 text-on-surface-variant rounded-2xl text-xs font-bold transition-colors cursor-pointer"
@@ -63,7 +60,6 @@ export default function EditProfilePage() {
             <span>{t("changePassword") || "تغيير كلمة المرور"}</span>
           </button>
 
-          {/* زر الرجوع */}
      <button
             onClick={() => navigate("/dashboard/profile")}
             className="flex items-center gap-1.5 py-2 px-3.5 bg-gray-100 hover:bg-gray-200 text-on-surface-variant rounded-2xl text-xs font-bold transition-colors cursor-pointer"
@@ -74,12 +70,10 @@ export default function EditProfilePage() {
         </div>
       </div>
 
-      {/* نموذج تعديل البروفايل */}
       <form
         onSubmit={handleSubmit}
         className="bg-surface-lowest border border-border rounded-3xl p-6 space-y-6 shadow-sm"
       >
-        {/* الصورة الشخصية */}
         <div className="flex items-center gap-4">
           <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-border bg-gray-100 flex items-center justify-center shadow-xs">
             {previewImage ? (

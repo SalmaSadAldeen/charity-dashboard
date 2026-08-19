@@ -24,7 +24,6 @@ export const useLogin = () => {
       if (permission === "granted") {
         console.log("⏳ جاري جلب التوكن من فايربيز...");
 
-        // جلب التوكن مباشرة بدون انتظار الـ ready لمنع أي تعليق
         const token = await getToken(messaging, {
           vapidKey:
             "BD2IU2XiRhPo7K5e_kz5gvSVbTEtHqa93Kkkh8rMUbl_v9h59gEbyHIoS0N4NAIPYHRL_F68UNgWEtrWPgvplm8",
@@ -36,7 +35,6 @@ export const useLogin = () => {
             token,
           );
 
-          // إرسال التوكن للباك إند
           const res = await API.put("/notifications/registration", {
             registrationId: token,
           });
@@ -59,6 +57,18 @@ export const useLogin = () => {
   };
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      dispatch(loginFailure("يرجى إدخال بريد إلكتروني صالح"));
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      dispatch(
+        loginFailure("كلمة المرور يجب أن تكون 6 أحرف أو أرقام على الأقل"),
+      );
+      return;
+    }
     dispatch(loginStart());
 
     try {
@@ -77,16 +87,13 @@ export const useLogin = () => {
         }),
       );
 
-      // الانتقال الفوري للوحة التحكم
-      // 2. استدعي دالة تسجيل التوكن حصراً "بعد" ما يتخزن التوكن ويثبت، مع انتظار ثانية أو تنفيذها بوضوح
       try {
         await registerNotificationToken();
       } catch (err) {
         console.error("فشل تسجيل الإشعارات:", err);
       }
 
-      // 3. انتقل للوحة التحكم بعد ما يخلص تسجيل التوكن بنجاح
-      // 3. انتقل للوحة التحكم واستبدل صفحة الـ Login في تاريخ المتصفح
+   
       navigate("/dashboard", { replace: true });
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Login Failed";

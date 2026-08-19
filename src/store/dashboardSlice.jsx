@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { adminService } from "@/services/adminService";
 
 import { beneficiaryService } from "@/services/beneficiaryService";
-import { sponsorshipFundService } from "@/services/sponsorshipFundService.jsx"; // حسب مسارك الصحيح
+import { sponsorshipFundService } from "@/services/sponsorshipFundService.jsx";
 export const fetchDashboardStats = createAsyncThunk(
   "dashboard/fetchStats",
   async () => {
@@ -15,7 +15,7 @@ export const fetchSponsorshipFundSummary = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await sponsorshipFundService.fetchSummary();
-      return response.data; // أو response حسب شكل الـ API
+      return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -109,12 +109,12 @@ const dashboardSlice = createSlice({
         state.charts = action.payload;
       })
 
-      // 🌟 Sponsorships Stats (הتم إضافتها هنا)
+      //  Sponsorships Stats (הتم إضافتها هنا)
       .addCase(fetchSponsorshipsStats.fulfilled, (state, action) => {
         state.sponsorshipsStats = action.payload;
       })
 
-      // 🌟 Orphans Stats (تم إضافتها هنا)
+      //  Orphans Stats (تم إضافتها هنا)
       .addCase(fetchOrphansStats.fulfilled, (state, action) => {
         state.orphansStats = action.payload;
       })
@@ -124,7 +124,6 @@ const dashboardSlice = createSlice({
         state.helpRequestsStats = action.payload;
       })
       .addCase(fetchSponsorshipFundSummary.fulfilled, (state, action) => {
-        // في حال كان الـ response يرجع الكائن مغلفاً داخل data
         state.sponsorshipFundSummary = action.payload?.data || action.payload;
       })
       .addCase(fetchHelpRequestsStats.rejected, (state, action) => {

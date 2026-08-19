@@ -5,13 +5,13 @@ import OrphanIdentitySection from "@/pages/AddOrphan/components/OrphanIdentitySe
 import JsonFieldsSection from "@/pages/AddOrphan/components/JsonFieldsSection";
 import ExtraDataSection from "@/pages/AddOrphan/components/ExtraDataSection";
 import FamilyActionsSection from "@/pages/AddOrphan/components/FamilyActionsSection";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
 import AppButton from "@/pages/Dashboard/components/AppButton";
 import { useNavigate } from "react-router-dom";
 export default function AddOrphan() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const navigate = useNavigate();
-
+  const isArabic = lang === "ar";
   const [currentStep, setCurrentStep] = useState(1);
   const { formData, handleInputChange, handleSubmit, isLoading, errors } =
     useOrphanFormLogic(t, null, () => {
@@ -25,7 +25,6 @@ export default function AddOrphan() {
     "previousAddress",
     "talent",
   ];
-
 
   const hasErrorInStep = (step) => {
     const fieldsByStep = {
@@ -53,6 +52,17 @@ export default function AddOrphan() {
   return (
     <div className="min-h-screen bg-[#fcfaf7] py-12 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-border/40 rounded-2xl text-on-surface-variant font-bold shadow-sm hover:bg-gray-50 transition-all"
+          >
+            {isArabic ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
+            <span>{t("back") || "Back"}</span>
+          </button>
+        </div>
+
         {/* العداد الذكي */}
         <div className="sticky top-4 z-50 bg-surface-lowest p-4 rounded-3xl border border-border/30 flex justify-center gap-8 shadow-xl shadow-[#4d4636]/5">
           {[1, 2, 3].map((step) => (
@@ -99,6 +109,7 @@ export default function AddOrphan() {
                 handleInputChange={handleInputChange}
                 t={t}
                 errors={errors}
+                lang={lang}
               />
               <FamilyActionsSection
                 formData={formData}

@@ -22,7 +22,6 @@ export default function QuickAidModal({
     reason: { ar: "", en: "" },
   });
 
-  // تعبئة الـ ID وتثبيته بالخلفية تلقائياً فور فتحه من صفحة المستفيد
   useEffect(() => {
     if (defaultBeneficiaryId) {
       setFormData((prev) => ({

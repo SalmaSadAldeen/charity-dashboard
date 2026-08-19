@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { quickAidService } from "@/services/quickAidService";
 
-// 1. جلب الملخص (الإحصائيات) الخاص بصندوق المساعدات العاجلة
 export const fetchQuickAidSummary = createAsyncThunk(
   "quickAid/fetchSummary",
   async (_, { rejectWithValue }) => {
@@ -14,7 +13,6 @@ export const fetchQuickAidSummary = createAsyncThunk(
   },
 );
 
-// 2. جلب قائمة عمليات الصرف مع الـ Pagination
 export const fetchQuickAidDisbursements = createAsyncThunk(
   "quickAid/fetchDisbursements",
   async ({ page = 1, limit = 10 }, { rejectWithValue }) => {

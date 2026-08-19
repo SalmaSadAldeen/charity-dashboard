@@ -38,7 +38,6 @@ export default function OrphansGallery() {
   const selectMode = searchParams.get("mode") === "select";
   const targetSponsorshipId = searchParams.get("sponsorshipId");
 
-  // 1. نقرأ الفلتر ورقم الصفحة من الرابط (ولو مافي بنحط قيم افتراضية)
   const currentPage = Number(searchParams.get("page")) || 1;
   const supportedParam = searchParams.get("supported");
   const priorityParam = searchParams.get("priority");
@@ -97,7 +96,6 @@ export default function OrphansGallery() {
     dispatch(fetchOrphansStats());
   }, [dispatch]);
 
-  // 2. لما يغير الفلتر، بنحدث الـ URL وبنحط بقلبو الفلتر الجديد ومنصفر الصفحة لـ 1 مع الحفاظ على وضع الselect إن وجد
   const handleFilterChange = (val) => {
     if (selectMode) return;
 
@@ -116,7 +114,6 @@ export default function OrphansGallery() {
     setSearchParams(newParams);
   };
 
-  // تغيير فلتر الأولوية من القائمة المنسدلة
   const handlePriorityChange = (val) => {
     if (selectMode) return;
 
@@ -136,7 +133,6 @@ export default function OrphansGallery() {
     setIsPriorityDropdownOpen(false);
   };
 
-  // 3. بنحدث رقم الصفحة بالـ URL مع المحافظة على الفلتر الحالي
   const handlePageChange = (newPage) => {
     const newParams = { page: newPage };
     if (
@@ -193,7 +189,6 @@ export default function OrphansGallery() {
       className="p-6 max-w-7xl mx-auto space-y-6 pb-24"
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
-      {/* شريط التنبيه وزر التأكيد إذا كنا بوضع اختيار الكفالة */}
       {selectMode && (
         <div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-between text-primary font-bold shadow-sm">
           <span>
@@ -219,7 +214,6 @@ export default function OrphansGallery() {
         </div>
       )}
 
-      {/* العنوان وزر الإضافة */}
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-black text-on-surface-variant">
@@ -247,7 +241,6 @@ export default function OrphansGallery() {
         />
       </div>
 
-      {/* شريط الفلترة مع قائمة الأولوية المنسدلة */}
       <div
         className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${selectMode ? "opacity-60 pointer-events-none" : ""}`}
       >
@@ -257,7 +250,6 @@ export default function OrphansGallery() {
           onFilterChange={handleFilterChange}
         />
 
-        {/* زر وقائمة الأولوية المنسدلة */}
         <div className="relative">
           <button
             onClick={() => setIsPriorityDropdownOpen(!isPriorityDropdownOpen)}
@@ -290,7 +282,6 @@ export default function OrphansGallery() {
                       : "text-gray-700"
                   }`}
                 >
-                  {/* طباعة النجوم بعدد الـ num */}
                   <div className="flex items-center gap-0.5">
                     {Array.from({ length: num }).map((_, i) => (
                       <Star
@@ -307,11 +298,9 @@ export default function OrphansGallery() {
         </div>
       </div>
 
-      {/* منطقة عرض الكاردات */}
       <div className="relative min-h-[300px] flex flex-col">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {showSkeleton ? (
-            /* 1. حالة التحميل الأولي */
             Array.from({ length: 8 }).map((_, index) => (
               <div
                 key={index}
@@ -346,7 +335,6 @@ export default function OrphansGallery() {
               </div>
             ))
           ) : items && items.length > 0 ? (
-            /* 2. حالة وجود بيانات */
             items.map((orphan) => {
               const isSelected = selectedOrphanId === orphan.id;
               return (
@@ -384,7 +372,6 @@ export default function OrphansGallery() {
               );
             })
           ) : !isReallyLoading && hasLoadedAtLeastOnce ? (
-            /* 3. رسالة الفراغ تظهر حصرياً بعد انتهاء التحميل وثبوت خلو القائمة تماماً */
             <div className="col-span-full text-center py-16 bg-surface-lowest rounded-2xl border border-border text-on-surface-variant/60 font-medium text-base shadow-sm">
               {t("noData") ||
                 (lang === "ar" ? "لا توجد بيانات متاحة" : "No data available")}
@@ -393,7 +380,6 @@ export default function OrphansGallery() {
         </div>
       </div>
 
-      {/* الـ Pagination */}
       {pagination?.lastPage > 1 && (
         <div className="flex justify-center items-center gap-4 mt-10">
           <button

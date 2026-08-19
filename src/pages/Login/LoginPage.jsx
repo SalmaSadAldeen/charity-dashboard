@@ -1,12 +1,12 @@
-import { useEffect } from "react"; // <-- تأكدي من استيراد useEffect
+import { useEffect } from "react"; 
 import { useTranslation } from "@/hooks/useTranslation";
 import { useLogin } from "../../hooks/useLogin";
 import LoginHeader from "./components/LoginHeader";
 import InputField from "./components/InputField";
-import { Link, useNavigate } from "react-router-dom"; // <-- تأكدي من استيراد Link
+import { Link, useNavigate } from "react-router-dom";
 const LoginPage = () => {
   const { t, lang } = useTranslation();
-  const navigate = useNavigate(); // <-- عرفي الـ navigate هنا
+  const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -39,6 +39,7 @@ const LoginPage = () => {
         <form onSubmit={handleLoginSubmit} className="px-8 pb-8 space-y-5">
           <InputField
             label={t("email")}
+            autoComplete="username"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -53,7 +54,8 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             icon="lock"
-            autoComplete="current-password"
+            autoComplete="new-password"
+            minLength={6} // 👈 قيد منع الأقل من 6 خانات
           >
             {/* هنا التعديل: قمنا بإزالة absolute و right-3 */}
             <button

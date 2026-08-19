@@ -4,7 +4,7 @@ import Topbar from "@/pages/Dashboard/components/TopBar";
 import { useSelector } from "react-redux";
 import { Toaster } from "react-hot-toast";
 
-import { useNotificationListener } from "@/hooks/useNotificationListener"; // حسب مسار الملف لديكِ
+import { useNotificationListener } from "@/hooks/useNotificationListener"; 
 export default function DashboardLayout() {
   const lang =
     useSelector((state) => state.language?.lang) ||
@@ -13,7 +13,6 @@ export default function DashboardLayout() {
   const isRtl = lang === "ar";
 
   useNotificationListener();
-  // أضيفي هذا السطر مؤقتاً للتجربة فقط داخل DashboardLayout.jsx
 
   return (
     <div

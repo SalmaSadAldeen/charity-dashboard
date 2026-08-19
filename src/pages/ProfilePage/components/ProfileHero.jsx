@@ -17,7 +17,6 @@ export function ProfileHero({ profileData, t, lang }) {
     if (isLockedRef.current) return;
     isLockedRef.current = true;
 
-    // تفعيل قفل الحراسة لكي لا يتدخل الـ PrivateRoute ويطردك
     localStorage.setItem("isLoggingOut", "true");
     setIsLoggingOut(true);
 
@@ -85,7 +84,6 @@ export function ProfileHero({ profileData, t, lang }) {
         </div>
       </div>
 
-      {/* نافذة التأكيد */}
       {showLogoutModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fadeIn"

@@ -4,8 +4,8 @@ import layoutReducer from "./layoutSlice";
 import languageReducer from "./languageSlice";
 import dashboardReducer from "./dashboardSlice";
 import { createGenericSlice } from "./genericSlice";
-import notificationsReducer from "./notificationsSlice"; // عدلي المسار حسب هيكلة مشروعك
-import quickAidReducer from "./quickAidSlice"; // استيراد الـ slice الجديدة
+import notificationsReducer from "./notificationsSlice"; 
+import quickAidReducer from "./quickAidSlice"; 
 const employeesSlice = createGenericSlice("employees");
 const orphansSlice = createGenericSlice("orphans");
 const rolesSlice = createGenericSlice("roles");

@@ -16,7 +16,6 @@ export const useCreateAidRequest = (beneficiaryId) => {
 
       formData.append("categoryId", rawData.categoryId);
 
-      // إرسال subCategoryId فقط إذا كان موجوداً (الخاص بقسم السكن)
       if (
         rawData.subCategoryId !== undefined &&
         rawData.subCategoryId !== null &&
@@ -43,7 +42,6 @@ export const useCreateAidRequest = (beneficiaryId) => {
       if (aidType === "HEALTH") {
         formData.append("typeAid", rawData.typeAid);
       } else if (aidType === "FOOD") {
-        // *** التعديل هنا: إضافة typeAid لقسم الغذاء أيضاً ***
         if (rawData.typeAid) {
           formData.append("typeAid", rawData.typeAid);
         }
@@ -52,10 +50,13 @@ export const useCreateAidRequest = (beneficiaryId) => {
         }
       } else if (aidType === "EDUCATION") {
         formData.append("academicAchievement", rawData.academicAchievement);
-        formData.append(
-          "institutionName",
-          JSON.stringify(rawData.institutionName),
-        );
+
+        const institutionNameObj = {
+          ar: rawData.institutionNameAr || "",
+          en: rawData.institutionNameEn || "",
+        };
+        formData.append("institutionName", JSON.stringify(institutionNameObj));
+
         formData.append("year", rawData.year);
       } else if (aidType === "HOUSING") {
         if (rawData.currentHousingSituation) {

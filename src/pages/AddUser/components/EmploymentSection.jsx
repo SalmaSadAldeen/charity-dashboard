@@ -1,7 +1,8 @@
-
 import { useRef } from "react";
 import { Briefcase } from "lucide-react";
 import { FileUp } from "lucide-react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 export default function EmploymentSection({
   formData,
   setFormData,
@@ -9,10 +10,9 @@ export default function EmploymentSection({
   errors,
   handleInputChange,
   clearError,
+  lang,
 }) {
-
   const fileInputRef = useRef(null);
-
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -35,18 +35,35 @@ export default function EmploymentSection({
           <label className="block text-sm font-semibold mb-2">
             {t("dateOfBirth")}
           </label>
-          <input
-            type="date"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={handleInputChange}
+          <DatePicker
+            selected={
+              formData.dateOfBirth ? new Date(formData.dateOfBirth) : null
+            }
+            onChange={(date) => {
+              const formattedDate = date
+                ? date.toISOString().split("T")[0]
+                : "";
+              handleInputChange({
+                target: {
+                  name: "dateOfBirth",
+                  value: formattedDate,
+                },
+              });
+            }}
+            showYearDropdown
+            showMonthDropdown
+            dropdownMode="select"
+            scrollableYearDropdown
+            yearDropdownItemNumber={100}
+            dateFormat="dd/MM/yyyy"
+            placeholderText={lang === "ar" ? "أدخل التاريخ" : "Enter date"}
             className="w-full p-4 border border-border rounded-2xl shadow-inner focus:border-secondary outline-none transition-all"
+            wrapperClassName="w-full"
           />
           {errors.dateOfBirth && (
             <p className="text-error text-xs mt-1">{errors.dateOfBirth}</p>
           )}
         </div>
-
         {/* حقل رفع الصورة - بعد التعديل */}
         <div
           onClick={() => fileInputRef.current.click()}
@@ -61,7 +78,6 @@ export default function EmploymentSection({
                     src={formData.personalPhoto}
                     alt="Preview"
                     className="w-full h-full object-cover"
-
                     onError={(e) => {
                       e.target.style.display = "none";
                       e.target.nextSibling?.classList.remove("hidden");

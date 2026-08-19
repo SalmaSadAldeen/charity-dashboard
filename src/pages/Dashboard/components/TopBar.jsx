@@ -2,7 +2,7 @@ import { useLayout } from "../../../hooks/useLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleLanguage } from "../../../store/languageSlice";
 import { useTranslation } from "@/hooks/useTranslation";
-import NotificationBell from "@/pages/NotificationBell/NotificationBell"; // 1. استيراد مكون الجرس
+import NotificationBell from "@/pages/NotificationBell/NotificationBell"; 
 export default function TopBar() {
   const { searchQuery, handleSearch } = useLayout();
   const { t, lang } = useTranslation();
@@ -11,9 +11,8 @@ export default function TopBar() {
     dispatch(toggleLanguage());
   };
   const getDisplayUserType = (type) => {
-    if (lang !== "ar") return type; // إذا كان إنجليزي يعرض القيمة كما هي تماماً (مثل Admin أو Employee)
+    if (lang !== "ar") return type; 
 
-    // إذا كان عربي، نقوم بالترجمة حسب القيمة القادمة من الـ API
     switch (type?.toLowerCase()) {
       case "admin":
         return "مدير نظام";
@@ -21,7 +20,7 @@ export default function TopBar() {
       case "staff":
         return "موظف";
       default:
-        return type; // لو كان شي تاني يعرضه كما هو احتياطاً
+        return type;
     }
   };
   const { userType } = useSelector((state) => state.auth);

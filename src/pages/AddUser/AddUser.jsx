@@ -53,6 +53,7 @@ export default function AddUser() {
           t={t}
           handleInputChange={handleInputChange}
           clearError={clearError}
+          lang={lang}
         />
         <RolesSection
           roles={roles}

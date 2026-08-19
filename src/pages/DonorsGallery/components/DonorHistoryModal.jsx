@@ -75,6 +75,21 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
           </div>
         );
 
+      case "GENERAL_DONATION":
+        return (
+          <div className="flex items-center gap-3 truncate">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+              <CreditCard size={18} />
+            </div>
+            <div className="truncate min-w-0">
+              <p className="font-bold text-sm text-on-surface truncate">
+                {t("GENERAL_DONATION") ||
+                  (lang === "ar" ? "تبرع عام" : "GENERAL_DONATION")}
+              </p>
+            </div>
+          </div>
+        );
+
       case "WALLET_TOP_UP":
         return (
           <div className="flex items-center gap-3 truncate">

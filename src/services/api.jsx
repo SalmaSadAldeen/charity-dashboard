@@ -12,14 +12,11 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// التعامل مع الخطأ 401 (Unauthorized) تلقائياً
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    // التحقق هل الخطأ جاء من مسار تغيير كلمة المرور؟
     const isPasswordRoute = error.config?.url?.includes("/api/profile/password");
 
-    // إذا كان الخطأ 401 ولم يكن بسبب تغيير كلمة المرور، نقوم بتسجيل الخروج وتحويله للوجن
     if (error.response?.status === 401 && !isPasswordRoute) {
       const savedLang = localStorage.getItem("preferredLang") || "ar";
 

@@ -90,21 +90,17 @@ export const useBeneficiaryFormLogic = (t, onClose = null) => {
     setIsLoading(true);
     const dataToSend = new FormData();
 
-    // 1. إرسال العنوان بالشكل الصحيح المطلوبة كـ JSON string
     const addressObject = {
       ar: formData.addressAr,
       en: formData.addressEn,
     };
     dataToSend.append("address", JSON.stringify(addressObject));
 
-    // 2. إرسال باقي الحقول مع ضمان إرسال الحقول الاختيارية حتى لو كانت فارغة (لتجنب خطأ السيرفر)
-    // 2. إرسال باقي الحقول مع استبعاد الحقول الاختيارية الفارغة تماماً
     Object.keys(formData).forEach((key) => {
       if (key === "addressAr" || key === "addressEn") return;
 
       const value = formData[key];
 
-      // إذا كان الحقل اختيارياً (مثل الدخل أو عدد الأطفال) وكان فارغاً، نتجاهله ولا نرسله أبداً
       if (
         (key === "monthlyIncome" || key === "numberOfChildren") &&
         (value === "" || value === null || value === undefined)
@@ -131,7 +127,6 @@ export const useBeneficiaryFormLogic = (t, onClose = null) => {
 
       let errorMessage = t("errorOccurred");
 
-      // معالجة تفصيلية لرسائل أخطاء السيرفر (NestJS Validation)
       const errorResponseData = error?.response?.data || error;
 
       if (errorResponseData && Array.isArray(errorResponseData.message)) {

@@ -21,12 +21,10 @@ export default function Dashboard() {
   );
 
   useEffect(() => {
-    // منع الرجوع عبر حشو التاريخ
     window.history.pushState(null, "", window.location.href);
 
     const handlePopState = () => {
       window.history.pushState(null, "", window.location.href);
-      // إجبار البقاء في الداشبورد دائماً مهما حاول الرجوع
       navigate("/dashboard", { replace: true });
     };
 
@@ -58,7 +56,6 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* الكاردات العليا */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="lg:col-span-3 bg-primary-container p-6 rounded-3xl shadow-sm text-primary relative overflow-hidden border border-white/30 flex flex-col justify-between">
           <span className="material-symbols-outlined absolute right-4 -bottom-4 text-[120px] opacity-10 pointer-events-none select-none">
@@ -117,7 +114,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* الرسوم البيانية */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         <div className="bg-surface-lowest p-3 rounded-3xl shadow-sm border border-border flex flex-col h-[480px]">
           <div className="flex-1 w-full h-full flex flex-col [&>div]:h-full [&>div]:flex-1">

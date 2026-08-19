@@ -14,7 +14,6 @@ import { CheckCircle2 } from "lucide-react";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import { hasPermission } from "@/utils/permissions";
 
-// استيراد مودال المساعدات العاجلة الخاص بكِ (تأكدي من مساره الصحيح)
 import QuickAidModal from "@/pages/QuickAid/components/QuickAidModal";
 
 export default function BeneficiaryDetails() {
@@ -38,7 +37,6 @@ export default function BeneficiaryDetails() {
 
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null });
 
-  // حالات خاصة بمودال المساعدة العاجلة لضمان جلب الـ ID تلقائياً
   const [isQuickAidModalOpen, setIsQuickAidModalOpen] = useState(false);
   const [targetBeneficiaryId, setTargetBeneficiaryId] = useState(null);
 
@@ -85,7 +83,6 @@ export default function BeneficiaryDetails() {
     }
   };
 
-  // دالة فتح مودال المساعدة العاجلة وسحب الـ ID تلقائياً
   const handleOpenQuickAidModal = (beneficiaryId) => {
     setTargetBeneficiaryId(beneficiaryId);
     setIsQuickAidModalOpen(true);
@@ -130,7 +127,6 @@ export default function BeneficiaryDetails() {
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="space-y-8 w-full">
-        {/* تمرير دالة فتح المودال مع التقاط الـ ID تلقائياً */}
         <HeaderSection
           data={beneficiary}
           onOpenQuickAidModal={handleOpenQuickAidModal}
@@ -174,7 +170,6 @@ export default function BeneficiaryDetails() {
         />
       )}
 
-      {/* مودال الرفض */}
       <RejectActionModal
         isOpen={modalConfig.isOpen && modalConfig.type === "reject"}
         onClose={() => setModalConfig({ isOpen: false, type: null })}
@@ -185,7 +180,6 @@ export default function BeneficiaryDetails() {
         t={t}
       />
 
-      {/* مودال القبول */}
       {modalConfig.isOpen && modalConfig.type === "accept" && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
@@ -229,7 +223,6 @@ export default function BeneficiaryDetails() {
         </div>
       )}
 
-      {/* مودال صرف المساعدة العاجلة (يتم فتحة وتعبئة الـ ID تلقائياً بدون إدخال يدوي) */}
       <QuickAidModal
         isOpen={isQuickAidModalOpen}
         onClose={() => setIsQuickAidModalOpen(false)}

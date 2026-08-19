@@ -1,5 +1,6 @@
 import { User } from "lucide-react";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 export default function PersonalInfoSection({
   formData,
   onChange,
@@ -125,13 +126,35 @@ export default function PersonalInfoSection({
           <label className="block text-sm font-bold mb-2 text-gray-700">
             {t("dateOfBirth") || "Date of Birth"} *
           </label>
-          <input
-            type="date"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={onChange}
+
+          <DatePicker
+            selected={
+              formData.dateOfBirth ? new Date(formData.dateOfBirth) : null
+            }
+            onChange={(date) => {
+              const formattedDate = date
+                ? date.toISOString().split("T")[0]
+                : "";
+
+              onChange({
+                target: {
+                  name: "dateOfBirth",
+                  value: formattedDate,
+                },
+              });
+            }}
+            showYearDropdown 
+            showMonthDropdown 
+            dropdownMode="select" 
+            scrollableYearDropdown 
+            yearDropdownItemNumber={100}
+            dateFormat="dd/MM/YYYY"
+            placeholderText={
+              lang === "ar" ? "أدخل تاريخ الميلاد" : "Enter date of birth"
+            }
             className="w-full border border-gray-200 bg-white p-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
           />
+
           {errors.dateOfBirth && (
             <span className="text-red-500 text-xs mt-1 block font-medium">
               {errors.dateOfBirth}

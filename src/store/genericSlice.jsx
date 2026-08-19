@@ -159,7 +159,6 @@ export const createGenericActions = (resource) => ({
         else if (resource === "helpRequests") {
           const { beneficiaryId, aidType, formData } = data;
 
-          // تعريف خريطة الدوال
           const aidActions = {
             HEALTH: requestsService.createHealthAidRequest,
             FOOD: requestsService.createFoodAidRequest,
@@ -244,7 +243,7 @@ export const createGenericActions = (resource) => ({
             formData,
           );
         } else if (resource === "profile") {
-          response = await adminService.updateProfile(data); // الـ data قادمة مجهزة كـ FormData من الهوك
+          response = await adminService.updateProfile(data);
         } else if (resource === "changePassword") {
           response = await adminService.changePassword(data);
         } else {

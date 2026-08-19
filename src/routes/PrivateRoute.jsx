@@ -6,7 +6,6 @@ export const PrivateRoute = ({ children }) => {
 
   const hasToken = !!localStorage.getItem("token");
 
-  // إذا كان المستخدم ضغط على خروج وبدأ العد التنازلي، نثبت الواجهة ولا نحوله أبداً للوجن
   const isLoggingOut = localStorage.getItem("isLoggingOut") === "true";
 
   if (isLoading && !isLoggingOut) return <div>Loading...</div>;

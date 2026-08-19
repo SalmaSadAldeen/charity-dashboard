@@ -6,7 +6,6 @@ import toast from "react-hot-toast";
 export const useNotificationListener = () => {
   useEffect(() => {
     const unsubscribe = onMessage(messaging, (payload) => {
-      // طبعنا كل تفاصيل الـ Push الفوري بالكونسول لترى النتيجة بوضوح
       console.log("🔥 [PUSH NOTIFICATION RECEIVED]:", payload);
       console.log(
         "📌 Title:",

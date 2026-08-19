@@ -52,7 +52,6 @@ export default function CreateAidRequestPage() {
       SMALL_PROJECTS: { categoryId: 5 },
     };
 
-    // تجهيز الـ payload الأساسي مع تحويل حقول المشاريع الصغيرة إلى كائنات لغوية
     const payload = {
       ...commonForm,
       ...specificForm,
@@ -61,7 +60,6 @@ export default function CreateAidRequestPage() {
       details: { ar: commonForm.detailsAr, en: commonForm.detailsEn },
       description: { ar: commonForm.descAr, en: commonForm.descEn },
 
-      // تجهيز projectName بصيغة كائن تماماً مثل title و description
       projectName:
         aidType === "SMALL_PROJECTS"
           ? {
@@ -70,7 +68,6 @@ export default function CreateAidRequestPage() {
             }
           : undefined,
 
-      // تجهيز projectCategory بصيغة كائن تماماً كما يطلب الـ Swagger
       projectCategory:
         aidType === "SMALL_PROJECTS"
           ? {
@@ -80,12 +77,10 @@ export default function CreateAidRequestPage() {
           : undefined,
     };
 
-    // إرسال typeAid في حال كان القسم غداء أو صحة
     if (aidType === "FOOD" || aidType === "HEALTH") {
       payload.typeAid = specificForm.typeAid;
     }
 
-    // تنظيف الحقول الزائدة التي لا تخص القسم الحالي
     if (aidType !== "HOUSING") {
       delete payload.currentHousingSituation;
       delete payload.currentPlaceOfResidence;

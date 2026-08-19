@@ -3,16 +3,13 @@ export function CommonAidFields({ commonForm, setCommonForm, t }) {
     setCommonForm({ ...commonForm, donorImage: e.target.files[0] });
   };
 
-  // دالة لمعالجة صور المستفيد (أكثر من ملف)
   const handleMediaChange = (e) => {
-    // تحويل الـ FileList إلى مصفوفة وتخزينها
     const files = Array.from(e.target.files);
     setCommonForm({ ...commonForm, media: files });
   };
 
   return (
     <div className="space-y-4">
-      {/* المعلومات الأساسية واسم الأب والتكلفة */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-black text-slate-700 mb-1">
@@ -47,7 +44,6 @@ export function CommonAidFields({ commonForm, setCommonForm, t }) {
         </div>
       </div>
 
-      {/* العناوين (عربي / إنجليزي) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-black text-slate-700 mb-1">
@@ -79,7 +75,6 @@ export function CommonAidFields({ commonForm, setCommonForm, t }) {
         </div>
       </div>
 
-      {/* التفاصيل (عربي / إنجليزي) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-black text-slate-700 mb-1">
@@ -109,7 +104,6 @@ export function CommonAidFields({ commonForm, setCommonForm, t }) {
         </div>
       </div>
 
-      {/* الوصف (عربي / إنجليزي) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-black text-slate-700 mb-1">
@@ -139,9 +133,7 @@ export function CommonAidFields({ commonForm, setCommonForm, t }) {
         </div>
       </div>
 
-      {/* حقول رفع الصور (المانح + المستفيد) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* مكان رفع صورة المانح - صورة واحدة فقط */}
         <div>
           <label className="block text-xs font-black text-slate-700 mb-1">
             {t("donor_image")}
@@ -154,7 +146,6 @@ export function CommonAidFields({ commonForm, setCommonForm, t }) {
           />
         </div>
 
-        {/* مكان رفع صور المستفيد - يمكن اختيار أكثر من ملف */}
         <div>
           <label className="block text-xs font-black text-slate-700 mb-1">
             {t("beneficiary_media")}
@@ -172,7 +163,6 @@ export function CommonAidFields({ commonForm, setCommonForm, t }) {
         </div>
       </div>
 
-      {/* خانة الطلب العاجل */}
       <div className="flex items-center gap-3 pt-5">
         <input
           type="checkbox"

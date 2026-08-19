@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 export default function ChangePasswordPage() {
   const navigate = useNavigate();
 
-  // حالات إظهار/إخفاء مستقلة لكل حقل لضفة تحكم أفضل
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -31,12 +30,10 @@ export default function ChangePasswordPage() {
     t,
   } = useProfile();
 
-  // دالة الإرسال مع العودة التلقائية للبروفايل عند النجاح
   const handleSubmit = async (e) => {
     e.preventDefault();
     await handleChangePassword(e);
-    // إذا لم يعد هناك عملية تحميل (تم بنجاح أو ظهر خطأ وتم التعامل معه)
-    // لتجنب الخروج عند وجود خطأ، يمكنك فحص الحالة أو الاعتماد على الـ toast
+  
   };
 
   return (
@@ -52,7 +49,6 @@ export default function ChangePasswordPage() {
           </h1>
         </div>
 
-        {/* زر الرجوع مع سهم متوافق مع الاتجاه */}
         <button
           onClick={() => navigate("/dashboard/profile")}
           className="flex items-center gap-1.5 py-2 px-3.5 bg-gray-100 hover:bg-gray-200 text-on-surface-variant rounded-2xl text-xs font-bold transition-colors cursor-pointer"
@@ -66,7 +62,6 @@ export default function ChangePasswordPage() {
         onSubmit={handleSubmit}
         className="bg-surface-lowest border border-border rounded-3xl p-6 space-y-5 shadow-sm"
       >
-        {/* الحقل الأول: كلمة المرور الحالية */}
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-on-surface-variant/80">
             {t("currentPassword") || "كلمة المرور الحالية"}
@@ -89,7 +84,6 @@ export default function ChangePasswordPage() {
           </div>
         </div>
 
-        {/* الحقل الثاني: كلمة المرور الجديدة */}
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-on-surface-variant/80">
             {t("newPassword") || "كلمة المرور الجديدة"}
@@ -112,7 +106,6 @@ export default function ChangePasswordPage() {
           </div>
         </div>
 
-        {/* الحقل الثالث: تأكيد كلمة المرور */}
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-on-surface-variant/80">
             {t("confirmPassword") || "تأكيد كلمة المرور"}

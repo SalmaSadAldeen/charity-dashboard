@@ -33,7 +33,6 @@ export function useForgotPassword() {
       toast.success(t("otpSentSuccess") || "تم إرسال رمز التحقق بنجاح");
       setStep(2);
     } catch (error) {
-      // إذا كان السيرفر يرد برسالة خطأ مثل "لم يتم العثور على المستخدم" أو خطأ 404
       const errorMessage =
         typeof error === "string"
           ? error

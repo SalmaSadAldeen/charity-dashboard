@@ -1,10 +1,12 @@
 import { User } from "lucide-react";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 export default function OrphanIdentitySection({
   formData,
   handleInputChange,
   t,
   errors,
+  lang,
 }) {
   const fields = [
     "firstName",
@@ -15,7 +17,6 @@ export default function OrphanIdentitySection({
     "gender",
     "guardianName",
   ];
-
 
   const inputStyle = (fieldName) =>
     `w-full p-4 bg-white border-2 rounded-2xl shadow-inner outline-none transition-all duration-300 ${
@@ -47,13 +48,32 @@ export default function OrphanIdentitySection({
                 <option value="FEMALE">{t("female")}</option>
               </select>
             ) : f === "birthOfDate" ? (
-              <input
-                type="date"
-                name={f}
-                value={formData[f] || ""}
-                onChange={handleInputChange}
-                className={inputStyle(f)}
-              />
+              <div className="relative w-full">
+                <DatePicker
+                  selected={formData[f] ? new Date(formData[f]) : null}
+                  onChange={(date) => {
+                    const formattedDate = date
+                      ? date.toISOString().split("T")[0]
+                      : "";
+                    handleInputChange({
+                      target: {
+                        name: f,
+                        value: formattedDate,
+                      },
+                    });
+                  }}
+                  showYearDropdown
+                  showMonthDropdown
+                  dropdownMode="select"
+                  scrollableYearDropdown
+                  yearDropdownItemNumber={100}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText={
+                    lang === "ar" ? "أدخل تاريخ الميلاد" : "Enter date of birth"
+                  }
+                  className={inputStyle(f)}
+                />
+              </div>
             ) : (
               <input
                 name={f}

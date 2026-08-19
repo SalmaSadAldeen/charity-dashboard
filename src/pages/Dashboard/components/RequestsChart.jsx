@@ -15,7 +15,6 @@ export default function RequestsChart({ t, dataFromBackend, lang }) {
     "bg-[#c29900]",
   ];
 
-  // إعدادات الدائرة البيانية
   const radius = 38;
   const circumference = 2 * Math.PI * radius;
   let accumulatedLength = 0;
@@ -41,9 +40,7 @@ export default function RequestsChart({ t, dataFromBackend, lang }) {
         {t("incomingRequests")}
       </h4>
 
-      {/* الدائرة البيانية مع تفاعل الـ Hover على القطاعات مباشرة */}
       <div className="relative flex items-center justify-center mb-6">
-        {/* Tooltip عائم يظهر عند الوقوف على قطاع الدائرة */}
         {activeTooltip && (
           <div className="absolute -top-12 z-20 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-lg shadow-lg pointer-events-none whitespace-nowrap transition-all">
             <span className="font-bold">{activeTooltip.category}</span>:{" "}
@@ -75,7 +72,6 @@ export default function RequestsChart({ t, dataFromBackend, lang }) {
             ))}
           </svg>
 
-          {/* الدائرة البيضاء في المنتصف بمقاس متناسق يغطي الفراغ */}
           <div className="absolute w-32 h-32 bg-surface-lowest rounded-full flex items-center justify-center z-10 shadow-sm pointer-events-none">
             <div className="text-center">
               <span className="text-2xl font-bold block text-on-surface-variant">
@@ -89,7 +85,6 @@ export default function RequestsChart({ t, dataFromBackend, lang }) {
         </div>
       </div>
 
-      {/* القائمة السفلية */}
       <div className="w-full space-y-2">
         {data.map((item, i) => {
           const percent =
