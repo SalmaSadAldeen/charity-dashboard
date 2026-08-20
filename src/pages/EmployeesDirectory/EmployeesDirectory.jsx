@@ -10,6 +10,8 @@ import EditUser from "../EditUser/EditUser";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useGenericDelete } from "@/hooks/useGenericDelete";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
+import { fetchUsersCount } from "@/store/dashboardSlice";
+
 import {
   setEmployee,
   clearEmployee,
@@ -30,14 +32,13 @@ export default function EmployeesDirectory() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [employeeToEdit, setEmployeeToEdit] = useState(null);
-
   const {
     items: employees = [],
     status,
     pagination,
     selectedItem,
   } = useSelector((state) => state.employees);
-
+  const { usersCount } = useSelector((state) => state.dashboard); // تأكدِ من اسم الـ slice في الـ store
   const hasExistingItems = Array.isArray(employees) && employees.length > 0;
   const [hasLoadedAtLeastOnce, setHasLoadedAtLeastOnce] =
     useState(hasExistingItems);
@@ -63,7 +64,9 @@ export default function EmployeesDirectory() {
       dispatch(fetchEmployeeById({ id: selectedItem.id }));
     }
   }, [dispatch, selectedItem?.id, lang]);
-
+  useEffect(() => {
+    dispatch(fetchUsersCount());
+  }, [dispatch, lang]);
   const handleEditClick = (e, emp) => {
     e.stopPropagation();
     setEmployeeToEdit(emp);
@@ -88,7 +91,7 @@ export default function EmployeesDirectory() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StatsCard
           title={t("totalDonors")}
-          count="1,284"
+          count={usersCount?.donors_count ?? "..."}
           icon={HeartHandshake}
           bgColor="bg-primary-container"
           textColor="text-on-surface-variant"
@@ -96,7 +99,7 @@ export default function EmployeesDirectory() {
         />
         <StatsCard
           title={t("totalBeneficiaries")}
-          count="3,450"
+          count={usersCount?.beneficiaries_count ?? "..."}
           icon={Users}
           bgColor="bg-primary"
           textColor="text-white"

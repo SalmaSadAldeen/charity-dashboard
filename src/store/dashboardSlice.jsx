@@ -22,6 +22,18 @@ export const fetchSponsorshipFundSummary = createAsyncThunk(
   },
 );
 
+// أضيفي هذا الـ Thunk الجديد
+export const fetchUsersCount = createAsyncThunk(
+  "dashboard/fetchUsersCount",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await adminService.getUsersCount();
+      return response.data; // سيرجع { donors_count, beneficiaries_count }
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  },
+);
 export const fetchCharts = createAsyncThunk(
   "dashboard/fetchCharts",
   async (period) => {
@@ -62,7 +74,6 @@ export const fetchHelpRequestsStats = createAsyncThunk(
   },
 );
 
-
 const initialState = {
   stats: null,
   charts: [],
@@ -73,6 +84,7 @@ const initialState = {
   sponsorshipsStats: null,
   orphansStats: null,
   sponsorshipFundSummary: null,
+  usersCount: null,
 };
 
 const dashboardSlice = createSlice({
@@ -130,6 +142,9 @@ const dashboardSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message;
         console.error("خطأ في السيرفر:", action.error);
+      })
+      .addCase(fetchUsersCount.fulfilled, (state, action) => {
+        state.usersCount = action.payload;
       });
   },
 });

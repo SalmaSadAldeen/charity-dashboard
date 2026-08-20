@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
+import { createPortal } from "react-dom";
 import {
   fetchNotifications,
   fetchUnreadCount,
@@ -13,25 +14,64 @@ import NotificationsDropdown from "@/pages/NotificationBell/components/Notificat
 export default function NotificationBell() {
   const { t, lang } = useTranslation();
   const dispatch = useDispatch();
+  const buttonRef = useRef(null);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState("all");
-  const dropdownRef = useRef(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
   const { list, unreadCount, loading } = useSelector(
-    (state) => state.notifications
+    (state) => state.notifications,
   );
 
   const isRTL = lang === "ar";
 
-  // جلب عداد غير المروءة فقط عند تحميل الداشبورد لأول مرة
+  // دالة حساب الموقع بدقة فورية
+  const updatePosition = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const dropdownWidth = 360;
+      const screenPadding = 16;
+
+      const buttonCenter = rect.left + rect.width / 2;
+      let leftPosition = buttonCenter - dropdownWidth / 2;
+
+      if (leftPosition < screenPadding) {
+        leftPosition = screenPadding;
+      }
+
+      if (leftPosition + dropdownWidth > window.innerWidth - screenPadding) {
+        leftPosition = window.innerWidth - dropdownWidth - screenPadding;
+      }
+
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: leftPosition,
+      });
+    }
+  };
+
+  // استخدام useLayoutEffect بدلاً من useEffect لتنفيذ الحساب قبل رسم الشاشة ومنع الوميض
+  useEffect(() => {
+    if (isOpen) {
+      updatePosition();
+    }
+  }, [isOpen, lang]);
+
   useEffect(() => {
     dispatch(fetchUnreadCount());
   }, [lang, dispatch]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      const isOutsideButton =
+        buttonRef.current && !buttonRef.current.contains(event.target);
+      const isOutsideDropdown =
+        dropdownRef.current && !dropdownRef.current.contains(event.target);
+
+      if (isOutsideButton && isOutsideDropdown) {
         setIsOpen(false);
       }
     };
@@ -41,16 +81,18 @@ export default function NotificationBell() {
 
   const handleToggleDropdown = () => {
     const nextState = !isOpen;
+    if (nextState) {
+      updatePosition(); // احسب المكان فوراً قبل فتح الحالة
+    }
     setIsOpen(nextState);
 
-    // جلب البيانات حصرياً عند الضغط على زر الجرس (Lazy Loading)
     if (nextState) {
       dispatch(
         fetchNotifications({
           page: 1,
           limit: 15,
           isRead: filter === "unread" ? false : undefined,
-        })
+        }),
       );
     }
   };
@@ -62,11 +104,10 @@ export default function NotificationBell() {
         page: 1,
         limit: 15,
         isRead: newFilter === "unread" ? false : undefined,
-      })
+      }),
     );
   };
 
-  // الانتقال السلس والاحترافي مع مهلة بسيطة لانسدال القائمة بسلاسة
   const handleNotificationClick = (item) => {
     if (!item.isRead) {
       dispatch(markAsRead(item.id));
@@ -76,36 +117,30 @@ export default function NotificationBell() {
     const { targetType, targetId } = item;
     if (!targetId) return;
 
-    // مهلة زمنية دقيقة جداً (80ms) لتفادي أي تقطيع بصري أثناء توجيه الصفحة
     setTimeout(() => {
       switch (targetType) {
         case "BENEFICIARY_REVIEW":
         case "NEW_BENEFICIARY":
           navigate(`/dashboard/beneficiaries/${targetId}`);
           break;
-
         case "HELP_REQUEST_REVIEW":
         case "NEW_HELP_REQUEST":
           navigate(`/dashboard/help-requests/${targetId}`);
           break;
-
         case "NEW_SPONSORSHIP_REQUEST":
         case "SPONSORSHIP_REQUEST":
           navigate(`/dashboard/sponsorships/${targetId}`);
           break;
-
         case "DONOR_CANCELLED_SPONSORSHIP":
         case "AUTOMATIC_SPONSORSHIP_CANCELLED":
         case "SPONSORSHIP_CANCELLED":
           navigate(`/dashboard/sponsorships/${targetId}`);
           break;
-
         case "ANNUAL_REPORT_REQUIRED":
         case "ORPHAN_UPDATE_REQUIRED":
         case "SPONSORSHIP_REPORT":
           navigate(`/dashboard/orphan/details/${targetId}`);
           break;
-
         default:
           break;
       }
@@ -123,12 +158,11 @@ export default function NotificationBell() {
 
   return (
     <div
-      className="relative inline-flex items-center text-left z-50"
-      ref={dropdownRef}
+      className="relative inline-flex items-center text-left"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      {/* زر الجرس */}
       <button
+        ref={buttonRef}
         onClick={handleToggleDropdown}
         className="relative p-2.5 rounded-full text-surface-lowest/90 hover:text-surface-lowest hover:bg-primary-container/20 focus:outline-none transition-all duration-200"
         aria-label={t("notifications")}
@@ -154,19 +188,31 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {/* قائمة الإشعارات */}
-      {isOpen && (
-        <NotificationsDropdown
-          list={filteredList}
-          unreadCount={unreadCount}
-          loading={loading}
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          onMarkAll={handleMarkAll}
-          onItemClick={handleNotificationClick}
-          isRTL={isRTL}
-        />
-      )}
+      {isOpen &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            style={{
+              position: "absolute",
+              top: `${dropdownPosition.top}px`,
+              left: `${dropdownPosition.left}px`,
+              zIndex: 999999,
+              visibility: dropdownPosition.top === 0 ? "hidden" : "visible", // إخفاء تام للحظة الحساب حتى لا تظهر في زاوية الشاشة الخاطئة
+            }}
+          >
+            <NotificationsDropdown
+              list={filteredList}
+              unreadCount={unreadCount}
+              loading={loading}
+              filter={filter}
+              onFilterChange={handleFilterChange}
+              onMarkAll={handleMarkAll}
+              onItemClick={handleNotificationClick}
+              isRTL={isRTL}
+            />
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

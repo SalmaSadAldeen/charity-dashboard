@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   createQuickAidDisbursement,
   fetchQuickAidSummary,
@@ -14,6 +15,7 @@ export default function QuickAidModal({
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { status } = useSelector((state) => state.quickAid);
 
   const [formData, setFormData] = useState({
@@ -32,14 +34,25 @@ export default function QuickAidModal({
   }, [defaultBeneficiaryId]);
 
   if (!isOpen) return null;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await dispatch(createQuickAidDisbursement(formData));
-    if (!result.error) {
+
+    // تحويل المبلغ إلى نص بمنزلتين عشريتين
+    const formattedAmount = parseFloat(formData.amount).toFixed(2);
+
+    const dataToSend = {
+      ...formData,
+      amount: formattedAmount, // نرسلها الآن كـ نص "10.00" كما يطلب الـ API
+    };
+
+    const result = await dispatch(createQuickAidDisbursement(dataToSend));
+
+    // تحقق من عدم وجود خطأ قبل إغلاق المودل والتوجيه
+    if (result && !result.error) {
       dispatch(fetchQuickAidSummary());
       dispatch(fetchQuickAidDisbursements({ page: 1, limit: 10 }));
-      onClose();
+      onClose(); // إغلاق المودل
+      navigate("/dashboard/quick-aid-fund"); // الانتقال إلى واجهة المساعدات/التبرع السريع
     }
   };
 
@@ -51,8 +64,6 @@ export default function QuickAidModal({
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* حقل معرف المستفيد مخفي تماماً عن الواجهة (تم حذفه من الـ JSX ليبقى مرسلاً بالخلفية فقط) */}
-
           <div>
             <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
               {t("amount", "المبلغ")}

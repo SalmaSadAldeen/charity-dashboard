@@ -81,7 +81,7 @@ export default function HeaderSection({ data, onOpenQuickAidModal }) {
                 className="transition-transform group-hover:scale-110"
               />
               <span className="hidden sm:inline">
-                {t("quick_aid_btn", "صرف عاجل")}
+                {t("quick_aid_btn")}
               </span>
             </button>
           )}

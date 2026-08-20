@@ -50,4 +50,5 @@ export const adminService = {
 
   resetPassword: (credentials) =>
     API.post("/auth/forgot-password/reset", credentials),
+  getUsersCount: () => API.get("/admin/dashboard/users-count"),
 };

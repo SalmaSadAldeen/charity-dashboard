@@ -14,11 +14,7 @@ export default function NotificationsDropdown({
   const { t } = useTranslation();
 
   return (
-    <div
-      className={`absolute top-full mt-2.5 w-[380px] max-w-[92vw] rounded-2xl bg-surface-lowest shadow-2xl ring-1 ring-border/50 z-[9999] overflow-hidden flex flex-col border border-border transform transition-all duration-300 ease-out origin-top-right animate-in fade-in zoom-in-95 ${
-        isRTL ? "right-0 sm:right-auto sm:left-0" : "right-0 sm:right-0 sm:left-auto"
-      }`}
-    >
+    <div className="w-[360px] max-w-[92vw] rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 z-[9999] overflow-hidden flex flex-col border border-gray-100 animate-in fade-in zoom-in-95">
       {/* رأس القائمة */}
       <div className="px-4 py-3.5 bg-surface border-b border-border flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
@@ -71,7 +67,10 @@ export default function NotificationsDropdown({
         {loading && list.length === 0 ? (
           <div className="p-4 flex flex-col gap-3">
             {[1, 2, 3, 4].map((item) => (
-              <div key={item} className="flex items-start gap-3 p-3 rounded-xl bg-surface/55 animate-pulse">
+              <div
+                key={item}
+                className="flex items-start gap-3 p-3 rounded-xl bg-surface/55 animate-pulse"
+              >
                 <div className="w-10 h-10 rounded-full bg-border/40 shrink-0" />
                 <div className="flex-1 space-y-2 py-1">
                   <div className="h-3 bg-border/40 rounded w-3/4" />
@@ -82,7 +81,12 @@ export default function NotificationsDropdown({
           </div>
         ) : list.length === 0 ? (
           <div className="p-10 text-center text-sm text-on-surface-variant flex flex-col items-center gap-2 opacity-70">
-            <svg className="w-10 h-10 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-10 h-10 mb-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
