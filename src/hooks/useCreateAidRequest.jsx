@@ -74,6 +74,18 @@ export const useCreateAidRequest = (beneficiaryId) => {
             JSON.stringify(rawData.currentPlaceOfResidence),
           );
         }
+        if (rawData.reasonForLock) {
+          formData.append(
+            "reasonForLock",
+            JSON.stringify(rawData.reasonForLock),
+          );
+        }
+        if (rawData.housingSpecifications) {
+          formData.append(
+            "housingSpecifications",
+            JSON.stringify(rawData.housingSpecifications),
+          );
+        }
       } else if (aidType === "SMALL_PROJECTS") {
         if (rawData.projectName) {
           formData.append("projectName", JSON.stringify(rawData.projectName));

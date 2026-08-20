@@ -60,6 +60,43 @@ export default function CreateAidRequestPage() {
       details: { ar: commonForm.detailsAr, en: commonForm.detailsEn },
       description: { ar: commonForm.descAr, en: commonForm.descEn },
 
+      // 1. تجميع حقول السكن الثنائية (عربي / إنجليزي)
+      currentHousingSituation:
+        aidType === "HOUSING"
+          ? {
+              ar: specificForm.currentHousingSituationAr || "",
+              en: specificForm.currentHousingSituationEn || "",
+            }
+          : undefined,
+
+      currentPlaceOfResidence:
+        aidType === "HOUSING"
+          ? {
+              ar: specificForm.currentPlaceOfResidenceAr || "",
+              en: specificForm.currentPlaceOfResidenceEn || "",
+            }
+          : undefined,
+
+      reasonForLock:
+        aidType === "HOUSING" &&
+        (specificForm.reasonForLockAr || specificForm.reasonForLockEn)
+          ? {
+              ar: specificForm.reasonForLockAr || "",
+              en: specificForm.reasonForLockEn || "",
+            }
+          : undefined,
+
+      housingSpecifications:
+        aidType === "HOUSING" &&
+        (specificForm.housingSpecificationsAr ||
+          specificForm.housingSpecificationsEn)
+          ? {
+              ar: specificForm.housingSpecificationsAr || "",
+              en: specificForm.housingSpecificationsEn || "",
+            }
+          : undefined,
+
+      // 2. تجميع حقول المشاريع الصغيرة الثنائية
       projectName:
         aidType === "SMALL_PROJECTS"
           ? {
@@ -77,16 +114,31 @@ export default function CreateAidRequestPage() {
           : undefined,
     };
 
+    // 3. تنظيف الحقول المؤقتة المنفصلة التي تسبب إزعاجاً للباك إند
     if (aidType === "FOOD" || aidType === "HEALTH") {
       payload.typeAid = specificForm.typeAid;
     }
 
     if (aidType !== "HOUSING") {
-      delete payload.currentHousingSituation;
-      delete payload.currentPlaceOfResidence;
-      delete payload.reasonForLock;
-      delete payload.housingSpecifications;
+      delete payload.currentHousingSituationAr;
+      delete payload.currentHousingSituationEn;
+      delete payload.currentPlaceOfResidenceAr;
+      delete payload.currentPlaceOfResidenceEn;
+      delete payload.reasonForLockAr;
+      delete payload.reasonForLockEn;
+      delete payload.housingSpecificationsAr;
+      delete payload.housingSpecificationsEn;
       delete payload.currentRent;
+    } else {
+      // حتى لو كنا في قسم السكن، نحذف النسخ المفردة ليبقى الكائن فقط
+      delete payload.currentHousingSituationAr;
+      delete payload.currentHousingSituationEn;
+      delete payload.currentPlaceOfResidenceAr;
+      delete payload.currentPlaceOfResidenceEn;
+      delete payload.reasonForLockAr;
+      delete payload.reasonForLockEn;
+      delete payload.housingSpecificationsAr;
+      delete payload.housingSpecificationsEn;
     }
 
     if (aidType !== "SMALL_PROJECTS") {
@@ -94,8 +146,12 @@ export default function CreateAidRequestPage() {
       delete payload.projectNameEn;
       delete payload.projectCategoryAr;
       delete payload.projectCategoryEn;
+    } else {
+      delete payload.projectNameAr;
+      delete payload.projectNameEn;
+      delete payload.projectCategoryAr;
+      delete payload.projectCategoryEn;
     }
-
     const res = await submitAidRequest(aidType, payload);
     if (res.success) {
       navigate("/dashboard/requests");
@@ -144,7 +200,6 @@ export default function CreateAidRequestPage() {
           <h1 className="text-lg font-black text-slate-900">
             {t("create_aid_request")}
           </h1>
-         
         </div>
       </div>
 
