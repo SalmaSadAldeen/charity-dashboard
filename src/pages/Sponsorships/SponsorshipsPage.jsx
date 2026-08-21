@@ -17,7 +17,7 @@ import {
 import SponsorshipsStatsCard from "./components/SponsorshipsStatsCard";
 import { fetchSponsorshipsStats } from "@/store/dashboardSlice";
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 4;
 
 export default function SponsorshipsPage() {
   const dispatch = useDispatch();

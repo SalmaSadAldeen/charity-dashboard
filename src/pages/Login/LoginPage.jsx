@@ -1,4 +1,4 @@
-import { useEffect } from "react"; 
+import { useEffect } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useLogin } from "../../hooks/useLogin";
 import LoginHeader from "./components/LoginHeader";
@@ -43,7 +43,7 @@ const LoginPage = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@foundation.org"
+            placeholder={t("emailPlaceholder")}
             icon="mail"
           />
 

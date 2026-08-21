@@ -1,6 +1,7 @@
 import { User } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
 export default function PersonalInfoSection({
   formData,
   onChange,
@@ -17,6 +18,7 @@ export default function PersonalInfoSection({
         <span>{t("personalInformation") || "Personal Information"}</span>
       </h3>
 
+      {/* الصف الأول: الاسم الأول والكنية */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-bold mb-2 text-gray-700">
@@ -27,7 +29,7 @@ export default function PersonalInfoSection({
             name="firstName"
             value={formData.firstName}
             onChange={onChange}
-            placeholder={isArabic ? "أدخل الاسم الأول" : "Enter first name"}
+            placeholder={t("firstNamePlaceholder")}
             className="w-full border border-gray-200 bg-white p-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
           />
           {errors.firstName && (
@@ -45,7 +47,7 @@ export default function PersonalInfoSection({
             name="lastName"
             value={formData.lastName}
             onChange={onChange}
-            placeholder={isArabic ? "أدخل الكنية" : "Enter last name"}
+            placeholder={t("lastNamePlaceholder")}
             className="w-full border border-gray-200 bg-white p-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
           />
           {errors.lastName && (
@@ -56,6 +58,7 @@ export default function PersonalInfoSection({
         </div>
       </div>
 
+      {/* الصف الثاني: البريد الإلكتروني وكلمة المرور */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-bold mb-2 text-gray-700">
@@ -67,7 +70,7 @@ export default function PersonalInfoSection({
             autoComplete="off"
             value={formData.email}
             onChange={onChange}
-            placeholder="name@example.com"
+            placeholder={t("emailPlaceholder")}
             className="w-full border border-gray-200 bg-white p-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
           />
           {errors.email && (
@@ -97,7 +100,8 @@ export default function PersonalInfoSection({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* الصف الثالث والأخير: الجنس، تاريخ الميلاد، والحالة الاجتماعية (موزعة على عامودين ليتطابق الشكل) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-bold mb-2 text-gray-700">
             {t("gender") || "Gender"} *
@@ -108,7 +112,6 @@ export default function PersonalInfoSection({
             onChange={onChange}
             className="w-full border border-gray-200 bg-white p-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm cursor-pointer"
           >
-            {/* خيار فارغ افتراضي لا يمثل قيمة مقبولة، ليجبر المستخدم على الاختيار */}
             <option value="" disabled>
               {t("selectGender") || "Select Gender..."}
             </option>
@@ -143,15 +146,14 @@ export default function PersonalInfoSection({
                 },
               });
             }}
-            showYearDropdown 
-            showMonthDropdown 
-            dropdownMode="select" 
-            scrollableYearDropdown 
+            showYearDropdown
+            showMonthDropdown
+            dropdownMode="select"
+            scrollableYearDropdown
             yearDropdownItemNumber={100}
-            dateFormat="dd/MM/YYYY"
-            placeholderText={
-              lang === "ar" ? "أدخل تاريخ الميلاد" : "Enter date of birth"
-            }
+            dateFormat="dd/MM/yyyy"
+            placeholderText={t("dateOfBirthPlaceholder")}
+            wrapperClassName="w-full"
             className="w-full border border-gray-200 bg-white p-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
           />
 
@@ -162,7 +164,7 @@ export default function PersonalInfoSection({
           )}
         </div>
 
-        <div>
+        <div className="md:col-span-2">
           <label className="block text-sm font-bold mb-2 text-gray-700">
             {t("socialStatus") || "Social Status"} *
           </label>

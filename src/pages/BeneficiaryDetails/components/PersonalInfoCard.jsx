@@ -3,7 +3,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 export default function PersonalInfoCard({ data }) {
   const { t, lang } = useTranslation();
-
   const address =
     data?.beneficiary?.address?.[lang] || data?.beneficiary?.address?.["ar"];
 
@@ -24,9 +23,7 @@ export default function PersonalInfoCard({ data }) {
       return dateString;
     }
   };
-  
 
-   
   return (
     <div
       className="bg-white p-8 rounded-[2rem] border border-border/30 shadow-[0_8px_30px_rgb(0,0,0,0.04)] 
@@ -42,7 +39,11 @@ export default function PersonalInfoCard({ data }) {
         <DetailRow label={t("email")} value={data?.email} />
         <DetailRow
           label={t("phoneNumber")}
-          value={`${data?.countryCode} ${data?.number}`}
+          value={
+            <span dir="ltr" className="inline-block text-left">
+              {data?.countryCode} {data?.number}
+            </span>
+          }
         />
         <DetailRow label={t("countryName")} value={t("syria")} />
         <DetailRow label={t("gender")} value={t(data?.gender?.toLowerCase())} />

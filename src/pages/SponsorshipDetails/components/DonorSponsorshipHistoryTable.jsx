@@ -10,44 +10,34 @@ export default function DonorSponsorshipHistoryTable({
     historyData.sponsorshipHistory.length === 0;
   const donor = historyData?.donor;
 
-  const getStatusBadge = (status) => {
+  const getAvatarColor = (id) => {
+    const palette = [
+      "bg-[#735c00]/15 text-[#735c00]",
+      "bg-[#5c630e]/15 text-[#5c630e]",
+      "bg-[#3b674c]/15 text-[#3b674c]",
+    ];
+    return palette[(id || 0) % palette.length];
+  };
+
+  const getStatusStyle = (status) => {
     switch (status) {
       case "ACCEPTED":
       case "ACTIVE":
-        return (
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 w-fit">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            {t("active") || status}
-          </span>
-        );
+        return "bg-[#eefcf4] text-[#1b6b3e] border-[#c8e6d5]";
       case "PENDING":
-        return (
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1.5 w-fit">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-            {t("pending") || status}
-          </span>
-        );
+        return "bg-[#fffcf0] text-[#856404] border-[#ffeeba]";
       case "CANCELLED":
       case "REJECTED":
-        return (
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1.5 w-fit">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-            {t("cancelled") || status}
-          </span>
-        );
+        return "bg-[#fff0f0] text-[#a94442] border-[#f5c6cb]";
       default:
-        return (
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 inline-block">
-            {t(status) || status}
-          </span>
-        );
+        return "bg-gray-50 text-gray-600 border-gray-200";
     }
   };
 
   return (
-    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50 space-y-5 mt-6">
+    <div className="bg-white p-6 rounded-[2.5rem] space-y-6 mt-3">
       {/* عنوان القسم */}
-      <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+      <div className="flex items-center justify-between border-b border-border/50 pb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
             <span className="material-symbols-outlined text-xl">
@@ -55,57 +45,65 @@ export default function DonorSponsorshipHistoryTable({
             </span>
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-800">
+            <h3 className="text-xl font-black text-on-surface-variant">
               {t("donorSponsorshipHistory")}
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-on-surface-variant/50 font-medium mt-0.5">
               {t("donorSponsorshipHistorySubtitle")}
             </p>
           </div>
         </div>
         {donor && (
-          <span className="text-sm font-semibold bg-slate-50 px-4 py-2 rounded-xl text-slate-600 border border-slate-100">
+          <span className="text-xs font-black bg-[#f9f7f4] px-4 py-2 rounded-xl text-on-surface-variant border border-border">
             {donor.firstName || ""} {donor.lastName || ""}
           </span>
         )}
       </div>
 
-      {/* الجدول */}
-      <div className="w-full overflow-hidden rounded-2xl border border-slate-100 shadow-sm bg-white">
-        <table className="w-full border-collapse">
-          <thead className="bg-slate-50/70 border-b border-slate-100">
-            <tr className="text-slate-500 text-xs uppercase tracking-wider font-semibold">
-              <th className="py-4 px-6 text-start">{t("orphanName")}</th>
-              <th className="py-4 px-6 text-start">{t("monthlyAmount")}</th>
-              <th className="py-4 px-6 text-start">{t("sponsorshipStatus")}</th>
-              <th className="py-4 px-6 text-start">{t("startDate")}</th>
-              <th className="py-4 px-6 text-start">
+      {/* الجدول بالتصميم الموحد */}
+      <div className="w-full overflow-hidden rounded-2xl border border-border shadow-sm bg-white">
+        <table className="w-full border-collapse table-fixed">
+          <thead className="bg-[#f9f7f4] border-b border-border">
+            <tr className="text-on-surface-variant/90">
+              <th className="p-5 text-right font-black uppercase text-[11px] tracking-widest w-[30%]">
+                {t("orphanName")}
+              </th>
+              <th className="p-5 text-center font-black uppercase text-[11px] tracking-widest w-[17%]">
+                {t("monthlyAmount")}
+              </th>
+              <th className="p-5 text-center font-black uppercase text-[11px] tracking-widest w-[18%]">
+                {t("sponsorshipStatus")}
+              </th>
+              <th className="p-5 text-center font-black uppercase text-[11px] tracking-widest w-[18%]">
+                {t("startDate")}
+              </th>
+              <th className="p-5 text-center font-black uppercase text-[11px] tracking-widest w-[17%]">
                 {t("cancellationSource")}
               </th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-border bg-white">
             {isLoading ? (
               [...Array(4)].map((_, index) => (
                 <tr key={`skeleton-${index}`} className="animate-pulse">
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-slate-200 rounded-full"></div>
-                      <div className="h-4 bg-slate-200 rounded-md w-32"></div>
+                  <td className="p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-gray-200 shrink-0" />
+                      <div className="h-4 bg-gray-200 rounded-lg w-32" />
                     </div>
                   </td>
-                  <td className="py-4 px-6">
-                    <div className="h-4 bg-slate-200 rounded-md w-16"></div>
+                  <td className="p-4 text-center">
+                    <div className="h-7 bg-gray-200 rounded-xl w-16 mx-auto" />
                   </td>
-                  <td className="py-4 px-6">
-                    <div className="h-6 bg-slate-200 rounded-full w-20"></div>
+                  <td className="p-4 text-center">
+                    <div className="h-7 bg-gray-200 rounded-xl w-20 mx-auto" />
                   </td>
-                  <td className="py-4 px-6">
-                    <div className="h-4 bg-slate-200 rounded-md w-24"></div>
+                  <td className="p-4 text-center">
+                    <div className="h-7 bg-gray-200 rounded-xl w-24 mx-auto" />
                   </td>
-                  <td className="py-4 px-6">
-                    <div className="h-4 bg-slate-200 rounded-md w-16"></div>
+                  <td className="p-4 text-center">
+                    <div className="h-7 bg-gray-200 rounded-xl w-16 mx-auto" />
                   </td>
                 </tr>
               ))
@@ -113,10 +111,10 @@ export default function DonorSponsorshipHistoryTable({
               <tr>
                 <td
                   colSpan="5"
-                  className="text-center py-16 text-slate-400 font-medium text-sm"
+                  className="text-center py-12 text-gray-400 font-medium text-base"
                 >
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <span className="material-symbols-outlined text-3xl text-slate-300">
+                    <span className="material-symbols-outlined text-3xl text-gray-300">
                       history_off
                     </span>
                     <span>{t("noDonorHistoryFound")}</span>
@@ -127,27 +125,40 @@ export default function DonorSponsorshipHistoryTable({
               historyData.sponsorshipHistory.map((item) => (
                 <tr
                   key={item.id}
-                  className="group transition-all duration-150 hover:bg-slate-50/80 text-sm"
+                  className="group hover:bg-primary-container/5 transition-all text-xs"
                 >
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-500 font-bold flex items-center justify-center text-xs group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                        {item.orphan?.firstName?.[0] || "O"}
+                  <td className="p-4 truncate">
+                    <div className="flex items-center gap-4">
+                      {/* إضافة shrink-0 لمنع انكماش الأفاتار مهما كان طول الاسم */}
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs border shrink-0 ${getAvatarColor(
+                          item.id,
+                        )}`}
+                      >
+                        {item.orphan?.firstName?.charAt(0) || "O"}
                       </div>
-                      <span className="font-semibold text-slate-800">
+                      <span className="font-bold text-sm text-on-surface-variant truncate">
                         {item.orphan?.firstName || ""}{" "}
                         {item.orphan?.lastName || ""}
                       </span>
                     </div>
                   </td>
 
-                  <td className="py-4 px-6 font-bold text-slate-700">
-                    <span className="text-primary">{item.monthlyAmount}</span>
+                  <td className="p-4 text-center font-black text-primary truncate">
+                    {item.monthlyAmount}
                   </td>
 
-                  <td className="py-4 px-6">{getStatusBadge(item.status)}</td>
+                  <td className="p-4 text-center">
+                    <span
+                      className={`inline-block px-4 py-1.5 rounded-xl text-[10px] font-black border uppercase ${getStatusStyle(
+                        item.status,
+                      )}`}
+                    >
+                      {t(item.status) || item.status}
+                    </span>
+                  </td>
 
-                  <td className="py-4 px-6 text-xs text-slate-500 font-medium">
+                  <td className="p-4 text-center text-xs font-bold text-on-surface-variant/70 truncate">
                     {item.startDate
                       ? new Date(item.startDate).toLocaleDateString(
                           lang === "ar" ? "ar-EG" : "en-US",
@@ -155,13 +166,13 @@ export default function DonorSponsorshipHistoryTable({
                       : "-"}
                   </td>
 
-                  <td className="py-4 px-6 text-xs text-slate-500">
+                  <td className="p-4 text-center text-xs truncate">
                     {item.cancellationSource ? (
-                      <span className="bg-slate-100 px-2.5 py-1 rounded-md text-slate-600 font-medium">
+                      <span className="inline-block px-3 py-1 bg-[#fdfaf0] text-[#5e5846] rounded-xl font-bold border border-[#f2e9d0]">
                         {item.cancellationSource}
                       </span>
                     ) : (
-                      <span className="text-slate-300">-</span>
+                      <span className="text-gray-300">-</span>
                     )}
                   </td>
                 </tr>

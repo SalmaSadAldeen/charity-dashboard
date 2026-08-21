@@ -19,7 +19,7 @@ import {
 import SponsorshipCoveragesTable from "./components/SponsorshipCoveragesTable";
 import FilterBar from "@/pages/Dashboard/components/FilterBar";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 4;
 
 export default function SponsorshipCoveragesPage() {
   const { t, lang } = useTranslation();

@@ -72,6 +72,7 @@ export default function OrphanIdentitySection({
                     lang === "ar" ? "أدخل تاريخ الميلاد" : "Enter date of birth"
                   }
                   className={inputStyle(f)}
+                  wrapperClassName="w-full block"
                 />
               </div>
             ) : (

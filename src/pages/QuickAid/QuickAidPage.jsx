@@ -12,9 +12,9 @@ import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import QuickAidStats from "./components/QuickAidStats";
 import QuickAidTable from "./components/QuickAidTable";
 import QuickAidModal from "./components/QuickAidModal"; // تعديل المسار حسب مكان المودال لديكِ
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 4;
 
 export default function QuickAidPage() {
   const { t, lang } = useTranslation();
@@ -90,7 +90,7 @@ export default function QuickAidPage() {
               )}
             </p>
           </div>
-          {canCreate && (
+          {/* {canCreate && (
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center gap-2 bg-primary text-white px-5 py-3 rounded-2xl font-black text-sm shadow-sm hover:bg-primary/90 transition-all cursor-pointer"
@@ -98,7 +98,7 @@ export default function QuickAidPage() {
               <Plus size={18} />
               {t("create_disbursement", "إنشاء صرف جديد")}
             </button>
-          )}
+          )} */}
         </header>
 
         {/* 1. قسم الإحصائيات (منفصل) */}

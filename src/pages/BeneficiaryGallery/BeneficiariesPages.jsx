@@ -22,7 +22,7 @@ export default function BeneficiariesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentStatus = searchParams.get("status") || null;
   const currentPage = Number(searchParams.get("page")) || 1;
-  const ITEMS_PER_PAGE = 5;
+  const ITEMS_PER_PAGE = 4;
   const navigate = useNavigate();
 
   const hasExistingItems =

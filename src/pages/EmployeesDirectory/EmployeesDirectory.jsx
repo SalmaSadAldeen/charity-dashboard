@@ -21,7 +21,7 @@ import {
 import { Users, HeartHandshake } from "lucide-react";
 import { hasPermission } from "@/utils/permissions";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 4;
 
 export default function EmployeesDirectory() {
   const { t, lang } = useTranslation();

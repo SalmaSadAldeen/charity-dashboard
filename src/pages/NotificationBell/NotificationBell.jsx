@@ -107,17 +107,16 @@ export default function NotificationBell() {
       }),
     );
   };
-
   const handleNotificationClick = (item) => {
+    const { targetType, targetId } = item;
+
+    // 1. تعليم الإشعار كمقروء
     if (!item.isRead) {
       dispatch(markAsRead(item.id));
     }
-    setIsOpen(false);
 
-    const { targetType, targetId } = item;
-    if (!targetId) return;
-
-    setTimeout(() => {
+    // 2. التوجيه المباشر حسب نوع الإشعار
+    if (targetId) {
       switch (targetType) {
         case "BENEFICIARY_REVIEW":
         case "NEW_BENEFICIARY":
@@ -129,6 +128,7 @@ export default function NotificationBell() {
           break;
         case "NEW_SPONSORSHIP_REQUEST":
         case "SPONSORSHIP_REQUEST":
+        case "SPONSORSHIP_REVIEW":
           navigate(`/dashboard/sponsorships/${targetId}`);
           break;
         case "DONOR_CANCELLED_SPONSORSHIP":
@@ -144,7 +144,10 @@ export default function NotificationBell() {
         default:
           break;
       }
-    }, 80);
+    }
+
+    // 3. إغلاق القائمة في النهاية بعد بدء الانتقال
+    setIsOpen(false);
   };
 
   const handleMarkAll = () => {

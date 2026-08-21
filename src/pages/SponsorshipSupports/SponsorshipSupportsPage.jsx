@@ -7,7 +7,7 @@ import SponsorshipSupportsTable from "./components/SponsorshipSupportsTable";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 4;
 
 export default function SponsorshipSupportsPage() {
   const { t, lang } = useTranslation();

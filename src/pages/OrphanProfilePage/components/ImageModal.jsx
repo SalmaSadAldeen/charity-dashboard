@@ -16,7 +16,7 @@ export default function ImageModal({ isOpen, onClose, imageUrl ,t}) {
       >
         <div className="flex justify-between items-center mb-6">
           <h4 className="font-black text-lg text-gray-800">
-            {t("previewImage")}
+            {t("personalPhoto")}
           </h4>
           <button
             onClick={onClose}
