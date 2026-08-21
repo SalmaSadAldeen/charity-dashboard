@@ -133,11 +133,11 @@ export default function DonorHistoryModal({ donorId, onClose, t, lang }) {
                     ? "السجل المالي للمتبرع"
                     : "Donor Financial History")}
               </h3>
-              <p className="text-xs text-[#735c00]/80 font-medium">
+              {/* <p className="text-xs text-[#735c00]/80 font-medium">
                 {lang === "ar"
                   ? `معرف المتبرع: ${donorId}`
                   : `Donor ID: ${donorId}`}
-              </p>
+              </p> */}
             </div>
           </div>
           <button

@@ -113,7 +113,7 @@ export default function QuickAidTable({ disbursements, isLoading }) {
 
                   {/* السبب حسب اللغة */}
                   <td
-                    className={`p-4 px-6 text-slate-500 text-sm font-medium ${isArabic ? "text-right" : "text-left"} truncate`}
+                    className={`p-4 px-6 text-slate-500 text-sm font-medium ${isArabic ? "text-right" : "text-left"} `}
                   >
                     {isArabic
                       ? item.reason?.ar || item.reason
@@ -122,7 +122,7 @@ export default function QuickAidTable({ disbursements, isLoading }) {
 
                   {/* اسم الموظف المسؤول */}
                   <td
-                    className={`p-4 px-6 text-slate-600 font-semibold text-xs ${isArabic ? "text-right" : "text-left"} truncate`}
+                    className={`p-4 px-6 text-slate-600 font-semibold text-xs ${isArabic ? "text-right" : "text-left"} `}
                   >
                     {item.employee
                       ? `${item.employee.firstName} ${item.employee.lastName}`

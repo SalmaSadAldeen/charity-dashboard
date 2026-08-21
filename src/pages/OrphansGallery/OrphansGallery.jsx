@@ -53,7 +53,7 @@ export default function OrphansGallery() {
   const [selectedOrphanId, setSelectedOrphanId] = useState(null);
   const [isPriorityDropdownOpen, setIsPriorityDropdownOpen] = useState(false);
 
-  const ITEMS_PER_PAGE = 8;
+  const ITEMS_PER_PAGE = 4;
   const {
     items = [],
     pagination,

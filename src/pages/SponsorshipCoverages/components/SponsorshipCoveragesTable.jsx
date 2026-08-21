@@ -117,7 +117,7 @@ export default function SponsorshipCoveragesTable({
                 </td>
 
                 <td
-                  className="p-4 text-center text-gray-500 font-medium text-xs truncate"
+                  className="p-4 text-center text-gray-500 font-medium text-xs "
                   title={item.reason ? t(item.reason) : "-"}
                 >
                   {item.reason ? t(item.reason) : "-"}
