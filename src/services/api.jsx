@@ -1,7 +1,11 @@
 import axios from "axios";
 
+// const API = axios.create({
+//   baseURL: "http://localhost:3000",
+// });
+
 const API = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://buying-trained-ratios-hoping.trycloudflare.com",
 });
 
 API.interceptors.request.use((config) => {
@@ -15,7 +19,9 @@ API.interceptors.request.use((config) => {
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isPasswordRoute = error.config?.url?.includes("/api/profile/password");
+    const isPasswordRoute = error.config?.url?.includes(
+      "/api/profile/password",
+    );
 
     if (error.response?.status === 401 && !isPasswordRoute) {
       const savedLang = localStorage.getItem("preferredLang") || "ar";

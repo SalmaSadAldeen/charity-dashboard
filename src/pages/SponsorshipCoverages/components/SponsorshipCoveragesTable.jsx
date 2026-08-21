@@ -51,11 +51,21 @@ export default function SponsorshipCoveragesTable({
                     <div className="h-4 bg-gray-200 rounded-lg w-28" />
                   </div>
                 </td>
-                <td className="p-4 text-center"><div className="h-5 bg-gray-200 rounded-xl w-12 mx-auto" /></td>
-                <td className="p-4 text-center"><div className="h-5 bg-gray-200 rounded-xl w-12 mx-auto" /></td>
-                <td className="p-4 text-center"><div className="h-5 bg-gray-200 rounded-xl w-10 mx-auto" /></td>
-                <td className="p-4 text-center"><div className="h-6 bg-gray-200 rounded-xl w-16 mx-auto" /></td>
-                <td className="p-4 text-center"><div className="h-4 bg-gray-200 rounded-xl w-20 mx-auto" /></td>
+                <td className="p-4 text-center">
+                  <div className="h-5 bg-gray-200 rounded-xl w-12 mx-auto" />
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-5 bg-gray-200 rounded-xl w-12 mx-auto" />
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-5 bg-gray-200 rounded-xl w-10 mx-auto" />
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-6 bg-gray-200 rounded-xl w-16 mx-auto" />
+                </td>
+                <td className="p-4 text-center">
+                  <div className="h-4 bg-gray-200 rounded-xl w-20 mx-auto" />
+                </td>
               </tr>
             ))
           ) : data && data.length > 0 ? (
@@ -108,9 +118,9 @@ export default function SponsorshipCoveragesTable({
 
                 <td
                   className="p-4 text-center text-gray-500 font-medium text-xs truncate"
-                  title={item.reason || "-"}
+                  title={item.reason ? t(item.reason) : "-"}
                 >
-                  {item.reason || "-"}
+                  {item.reason ? t(item.reason) : "-"}
                 </td>
               </tr>
             ))
@@ -121,7 +131,9 @@ export default function SponsorshipCoveragesTable({
                 className="text-center py-12 text-gray-400 font-medium text-base"
               >
                 {t("noData") ||
-                  (lang === "ar" ? "لا توجد بيانات متاحة" : "No data available")}
+                  (lang === "ar"
+                    ? "لا توجد بيانات متاحة"
+                    : "No data available")}
               </td>
             </tr>
           ) : null}

@@ -124,11 +124,13 @@ export default function NotificationBell() {
           break;
         case "HELP_REQUEST_REVIEW":
         case "NEW_HELP_REQUEST":
+        case "AID_REQUEST_REVIEW":
           navigate(`/dashboard/help-requests/${targetId}`);
           break;
         case "NEW_SPONSORSHIP_REQUEST":
         case "SPONSORSHIP_REQUEST":
         case "SPONSORSHIP_REVIEW":
+        case "ACCEPTED_SPONSORSHIP_CANCELLED":
           navigate(`/dashboard/sponsorships/${targetId}`);
           break;
         case "DONOR_CANCELLED_SPONSORSHIP":

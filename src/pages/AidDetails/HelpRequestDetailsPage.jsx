@@ -78,7 +78,7 @@ export default function HelpRequestDetailsPage() {
             ar: data?.description?.ar || "تفاصيل الطلب",
             en: data?.description?.en || "Request details",
           };
-      const urgentFlag = Boolean(isUrgent);
+      const urgentFlag = Boolean(formData.isUrgent);
       const rejectionReason = formData.rejectionReason || { ar: "", en: "" };
 
       formDataObj.append("status", status);
