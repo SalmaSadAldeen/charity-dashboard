@@ -146,6 +146,7 @@ export default function PersonalInfoSection({
                 },
               });
             }}
+            maxDate={new Date(new Date().setDate(new Date().getDate() - 1))}
             showYearDropdown
             showMonthDropdown
             dropdownMode="select"
